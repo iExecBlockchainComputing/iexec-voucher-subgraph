@@ -1,0 +1,77 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: VoucherHub
+    network: test
+    source:
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+      abi: VoucherHub
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - DefaultAdminDelayChangeCanceled
+        - DefaultAdminDelayChangeScheduled
+        - DefaultAdminTransferCanceled
+        - DefaultAdminTransferScheduled
+        - EligibleAssetAdded
+        - EligibleAssetRemoved
+        - Initialized
+        - RoleAdminChanged
+        - RoleGranted
+        - RoleRevoked
+        - Transfer
+        - Upgraded
+        - VoucherCreated
+        - VoucherDebited
+        - VoucherTypeCreated
+        - VoucherTypeDescriptionUpdated
+        - VoucherTypeDurationUpdated
+      abis:
+        - name: VoucherHub
+          file: ./abis/VoucherHub.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: DefaultAdminDelayChangeCanceled()
+          handler: handleDefaultAdminDelayChangeCanceled
+        - event: DefaultAdminDelayChangeScheduled(uint48,uint48)
+          handler: handleDefaultAdminDelayChangeScheduled
+        - event: DefaultAdminTransferCanceled()
+          handler: handleDefaultAdminTransferCanceled
+        - event: DefaultAdminTransferScheduled(indexed address,uint48)
+          handler: handleDefaultAdminTransferScheduled
+        - event: EligibleAssetAdded(indexed uint256,address)
+          handler: handleEligibleAssetAdded
+        - event: EligibleAssetRemoved(indexed uint256,address)
+          handler: handleEligibleAssetRemoved
+        - event: Initialized(uint64)
+          handler: handleInitialized
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: Upgraded(indexed address)
+          handler: handleUpgraded
+        - event: VoucherCreated(indexed address,address,uint256,uint256)
+          handler: handleVoucherCreated
+        - event: VoucherDebited(indexed address,uint256)
+          handler: handleVoucherDebited
+        - event: VoucherTypeCreated(indexed uint256,string,uint256)
+          handler: handleVoucherTypeCreated
+        - event: VoucherTypeDescriptionUpdated(indexed uint256,string)
+          handler: handleVoucherTypeDescriptionUpdated
+        - event: VoucherTypeDurationUpdated(indexed uint256,uint256)
+          handler: handleVoucherTypeDurationUpdated
+      file: ./src/voucher-hub.ts

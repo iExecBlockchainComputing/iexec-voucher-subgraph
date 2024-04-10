@@ -1,0 +1,9 @@
+node_modules
+abis
+generated
+build
+# Ignore generated tests
+tests
+
+# TODO: Remove package-lock.json from .gitignore
+package-lock.json
