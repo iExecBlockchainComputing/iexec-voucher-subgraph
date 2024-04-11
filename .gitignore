@@ -4,6 +4,13 @@ generated
 build
 # Ignore generated tests
 tests
+# Ignore since we generate it
+schema.graphql
+subgraph.yaml
+abis/*
+!abis/Default.json
+src/*
+!src/default.ts
 
 # TODO: Remove package-lock.json from .gitignore
 package-lock.json

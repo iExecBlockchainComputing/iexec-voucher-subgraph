@@ -1,0 +1,24 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Default
+    network: test
+    source:
+      abi: Default
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Default
+      abis:
+        - name: Default
+          file: ./abis/Default.json
+      eventHandlers:
+        - event: Default()
+          handler: handleDefault
+      file: ./src/default.ts

@@ -12,6 +12,7 @@
   },
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph#readme",
   "scripts": {
+    "schema": "./scripts/generate-schema.sh",
     "codegen": "graph codegen",
     "build": "graph build",
     "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ iexec-voucher",

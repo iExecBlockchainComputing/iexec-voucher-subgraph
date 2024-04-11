@@ -2,8 +2,7 @@
 
 cd $(dirname $0)
 
-./fetch-abis.sh
-
+npm run schema
 npm run codegen
 npm run build
 docker-compose up -d
