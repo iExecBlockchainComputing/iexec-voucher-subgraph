@@ -1,6 +1,6 @@
 #!/bin/sh
 cd "$(dirname "$0")" || exit
-# TODO: Get contracts ABIs from on npm
+# TODO: Get contracts ABIs from npm
 IN=$HOME/iexecdev/iexec-voucher-contracts/artifacts/contracts
 OUT=../abis
 mkdir -p $OUT
