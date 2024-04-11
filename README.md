@@ -1,16 +1,27 @@
 # iexec-voucher-subgraph
-Subgraph for iExec Voucher contracts
+Subgraph for iExec Voucher contracts.
 
 ## Local
 
-- Start node from `iexec-voucher-contracts`:
+- Start node
 
-`npx hardhat node --hostname 0.0.0.0`
-- Deploy contracts from `iexec-voucher-contracts`:
+From `iexec-voucher-contracts`,
+```
+npx hardhat node --hostname 0.0.0.0
+```
+- Deploy contracts
 
-`npx hardhat run scripts/deploy.ts --network external-hardhat`
-- Deploy subgraph from current repository:
+From `iexec-voucher-contracts`,
+```
+npx hardhat run scripts/deploy.ts --network external-hardhat
+```
+- Boot local stack, generate config and deploy subgraph
 
-`./scripts/deploy-subgraph.sh`
+From `iexec-voucher-subgraph`,
+```
+npm i
+npm run all-local
+```
+- Run queries
 
-- Test queries on http://localhost:8000/subgraphs/name/iexec-voucher
+Go to http://localhost:8000/subgraphs/name/iexec-voucher

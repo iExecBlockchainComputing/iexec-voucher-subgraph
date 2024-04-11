@@ -12,14 +12,15 @@
   },
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph#readme",
   "scripts": {
-    "schema": "./scripts/generate-schema.sh",
+    "schema": "./scripts/generate-schema-and-subgraph.sh",
     "codegen": "graph codegen",
     "build": "graph build",
     "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ iexec-voucher",
     "create-local": "graph create --node http://localhost:8020/ iexec-voucher",
     "remove-local": "graph remove --node http://localhost:8020/ iexec-voucher",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 iexec-voucher --version-label 0.1.0",
-    "test": "graph test"
+    "test": "graph test",
+    "all-local": "./scripts/all-local.sh"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.69.2",
