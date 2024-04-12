@@ -5,19 +5,19 @@ Subgraph for iExec Voucher contracts.
 
 - Start node
 
-From `iexec-voucher-contracts`,
+Inside `iexec-voucher-contracts`,
 ```
 npx hardhat node --hostname 0.0.0.0
 ```
 - Deploy contracts
 
-From `iexec-voucher-contracts`,
+Inside `iexec-voucher-contracts`,
 ```
 npx hardhat run scripts/deploy.ts --network external-hardhat
 ```
 - Boot local stack, generate config and deploy subgraph
 
-From `iexec-voucher-subgraph`,
+Inside `iexec-voucher-subgraph`,
 ```
 npm i
 npm run all-local
