@@ -12,7 +12,8 @@ cp subgraph.template.yaml subgraph.yaml
 npx graph add --abi abis/VoucherHub.json --contract-name VoucherHub \
     --start-block 0 \
     0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
-# Dummy block and address required here for Voucher generation
+# Since Voucher contracts are later deployed by the VoucherHub,
+# a dummy block and address are used here for Voucher generation
 npx graph add --abi abis/Voucher.json --contract-name Voucher \
     --start-block 123456789 \
     0x0000000000000000000000000000000123456789
