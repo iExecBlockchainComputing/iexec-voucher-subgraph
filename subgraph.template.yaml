@@ -1,24 +1,112 @@
-specVersion: 1.0.0
-indexerHints:
-  prune: auto
+specVersion: 0.0.6
+description: Subgraph for voucher smart contract
+
 schema:
   file: ./schema.graphql
+
 dataSources:
-  - kind: ethereum
-    name: Default
-    network: test
+  - name: VoucherHub
+    kind: ethereum/contract
+    network: bellecour
     source:
-      abi: Default
+      #VOUCHER_HUB_ADDRESS#
+      abi: VoucherHub
+      #VOUCHER_HUB_START_BLOCK#
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - Default
+        - Account
+        - Voucher
+        - VoucherType
+        - VoucherCreation
+        - VoucherTopUp
+        - App
+        - Dataset
+        - Workerpool
       abis:
-        - name: Default
-          file: ./abis/Default.json
+        - name: VoucherHub
+          file: ./abis/VoucherHub.json
+        - name: PoCo
+          file: node_modules/@iexec/poco/build/contracts/IexecInterfaceNative.json
+        - name: AppRegistry
+          file: node_modules/@iexec/poco/build/contracts/AppRegistry.json
+        - name: DatasetRegistry
+          file: node_modules/@iexec/poco/build/contracts/DatasetRegistry.json
+        - name: WorkerpoolRegistry
+          file: node_modules/@iexec/poco/build/contracts/WorkerpoolRegistry.json
+        - name: App
+          file: node_modules/@iexec/poco/build/contracts/AppInterface.json
+        - name: Dataset
+          file: node_modules/@iexec/poco/build/contracts/DatasetInterface.json
+        - name: Workerpool
+          file: node_modules/@iexec/poco/build/contracts/WorkerpoolInterface.json
       eventHandlers:
-        - event: Default()
-          handler: handleDefault
-      file: ./src/default.ts
+        - event: EligibleAssetAdded(indexed uint256,address)
+          handler: handleEligibleAssetAdded
+        - event: EligibleAssetRemoved(indexed uint256,address)
+          handler: handleEligibleAssetRemoved
+        - event: VoucherCreated(indexed address,address,uint256,uint256,uint256)
+          handler: handleVoucherCreated
+        - event: VoucherDebited(indexed address,uint256)
+          handler: handleVoucherDebited
+        - event: VoucherDrained(indexed address,uint256)
+          handler: handleVoucherDrained
+        - event: VoucherRefunded(indexed address,uint256)
+          handler: handleVoucherRefunded
+        - event: VoucherToppedUp(indexed address,uint256,uint256)
+          handler: handleVoucherToppedUp
+        - event: VoucherTypeCreated(indexed uint256,string,uint256)
+          handler: handleVoucherTypeCreated
+        - event: VoucherTypeDescriptionUpdated(indexed uint256,string)
+          handler: handleVoucherTypeDescriptionUpdated
+        - event: VoucherTypeDurationUpdated(indexed uint256,uint256)
+          handler: handleVoucherTypeDurationUpdated
+      file: ./src/voucherHub.ts
+
+templates:
+  - kind: ethereum
+    name: Voucher
+    network: bellecour
+    source:
+      abi: Voucher
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Account
+        - Voucher
+        - VoucherType
+        - Deal
+        - App
+        - Dataset
+        - Workerpool
+      abis:
+        - name: Voucher
+          file: ./abis/Voucher.json
+        - name: VoucherHub
+          file: ./abis/VoucherHub.json
+        - name: PoCo
+          file: node_modules/@iexec/poco/build/contracts/IexecInterfaceNative.json
+        - name: AppRegistry
+          file: node_modules/@iexec/poco/build/contracts/AppRegistry.json
+        - name: DatasetRegistry
+          file: node_modules/@iexec/poco/build/contracts/DatasetRegistry.json
+        - name: WorkerpoolRegistry
+          file: node_modules/@iexec/poco/build/contracts/WorkerpoolRegistry.json
+        - name: App
+          file: node_modules/@iexec/poco/build/contracts/AppInterface.json
+        - name: Dataset
+          file: node_modules/@iexec/poco/build/contracts/DatasetInterface.json
+        - name: Workerpool
+          file: node_modules/@iexec/poco/build/contracts/WorkerpoolInterface.json
+      eventHandlers:
+        - event: AccountAuthorized(indexed address)
+          handler: handleAccountAuthorized
+        - event: AccountUnauthorized(indexed address)
+          handler: handleAccountUnauthorized
+        - event: OrdersMatchedWithVoucher(bytes32)
+          handler: handleOrdersMatchedWithVoucher
+      file: ./src/voucher.ts
