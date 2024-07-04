@@ -7,11 +7,11 @@ schema:
 dataSources:
   - name: VoucherHub
     kind: ethereum/contract
-    network: bellecour
+    network: c13
     source:
-      #VOUCHER_HUB_ADDRESS#
+      address: 0x691EFDA7Cd69d60Ea7f647233e4Fb783C5885F5E # to be chaned once deployed
       abi: VoucherHub
-      #VOUCHER_HUB_START_BLOCK#
+      startBlock: 0 # to be chaned once deployed 
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -68,9 +68,11 @@ dataSources:
 templates:
   - kind: ethereum
     name: Voucher
-    network: bellecour
+    network: c13 
     source:
+      address: 0x3D7e23fB654b79ebBfEdA8693DB9CDa58a4FBbE7 # to be chaned once deployed
       abi: Voucher
+      startBlock: 0 # to be chaned once deployed
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
