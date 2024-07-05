@@ -7,7 +7,7 @@ schema:
 dataSources:
   - name: VoucherHub
     kind: ethereum/contract
-    network: c13
+    network: local
     source:
       address: "0x691EFDA7Cd69d60Ea7f647233e4Fb783C5885F5E" # to be chaned once deployed
       abi: VoucherHub
@@ -68,7 +68,7 @@ dataSources:
 templates:
   - kind: ethereum
     name: Voucher
-    network: c13
+    network: local
     source:
       abi: Voucher
     mapping:
