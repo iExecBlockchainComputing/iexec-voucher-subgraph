@@ -14,16 +14,16 @@
   "main": "index.js",
   "scripts": {
     "schema": "./scripts/generate-schema-and-subgraph.sh",
-    "codegen": "cp subgraph.template.yaml subgraph.yaml && graph codegen",
-    "build": "graph build",
-    "create": "graph create --node ${GRAPHNODE_URL:-http://localhost:8020} bellecour/iexec-voucher",
-    "remove": "graph remove --node ${GRAPHNODE_URL:-http://localhost:8020} bellecour/iexec-voucher",
-    "deploy:prepare-manifest": "sed -i \"s|#VOUCHER_HUB_ADDRESS#|address: \\\"$VOUCHER_HUB_ADDRESS\\\"|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_START_BLOCK#|startBlock: $VOUCHER_HUB_START_BLOCK|g\" subgraph.yaml",
-    "deploy": "graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} bellecour/iexec-voucher --version-label ${VERSION_LABEL:-develop}",
+    "codegen": "./generate_subgraph.sh ${NETWORK_NAME:-c13} subgraph.yaml && graph codegen subgraph.${NETWORK_NAME:-c13}.yaml",
+    "build": "graph build subgraph.${NETWORK_NAME:-c13}.yaml",
+    "create": "graph create ${NETWORK_NAME:-c13}/iexec-voucher --node ${GRAPHNODE_URL:-http://localhost:8020} ",
+    "remove": "graph remove  ${NETWORK_NAME:-c13}/iexec-voucher --node ${GRAPHNODE_URL:-http://localhost:8020}",
+    "deploy": "graph deploy ${NETWORK_NAME:-c13}/iexec-voucher subgraph.${NETWORK_NAME:-c13}.yaml --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} --version-label ${VERSION_LABEL:-develop}",
     "clean": "rm -rf generated && rm -rf build",
     "all": "npm run clean && npm run codegen && npm run build && npm run create && npm run deploy",
     "test": "graph test",
     "all-local": "./scripts/all-local.sh"
+    
   },
   "author": "",
   "dependencies": {
