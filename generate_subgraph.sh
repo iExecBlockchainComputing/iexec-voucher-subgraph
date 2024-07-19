@@ -14,12 +14,12 @@ generate_yaml() {
     local output_file="subgraph.${network}.yaml"
 
     # Read values from config.json
-    local start_block=$(jq -r ".${network}.STARTBLOCK" ${config_file})
+    local start_block=$(jq -r ".${network}.START_BLOCK" ${config_file})
     local voucherHub_address=$(jq -r ".${network}.VOUCHER_HUB_ADDRESS" ${config_file})
 
     # Replace placeholders in the template and create the output file
     sed -e "s/#NETWORK_NAME#/network: ${network}/g" \
-        -e "s/#STARTBLOCK#/startBlock: ${start_block}/g" \
+        -e "s/#START_BLOCK#/startBlock: ${start_block}/g" \
         -e "s|#VOUCHER_HUB_ADDRESS#|address: \"${voucherHub_address}\"|g" \
         ${template_file} > ${output_file}
 

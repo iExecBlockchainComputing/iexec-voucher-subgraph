@@ -11,7 +11,7 @@ dataSources:
     source:
       #VOUCHER_HUB_ADDRESS#
       abi: VoucherHub
-      #STARTBLOCK#
+      #START_BLOCK#
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
