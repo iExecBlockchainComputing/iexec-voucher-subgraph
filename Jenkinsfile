@@ -22,7 +22,7 @@ node {
             }
             echo "Selected network: '${userInput.network}'"
             echo "Selected hostname: '${userInput.targetRemoteHost}'"
-            fileName = ${fileName}
+            fileName = "subgraph.${userInput.network}.yaml"
         }
 
         stage('Setup Docker Image') {
