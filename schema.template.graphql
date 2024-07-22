@@ -1,4 +1,0 @@
-type Default @entity(immutable: true) {
-  id: Bytes!
-}
-

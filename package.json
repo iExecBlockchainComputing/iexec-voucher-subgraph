@@ -1,6 +1,6 @@
 {
   "name": "iexec-voucher-subgraph",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Subgraph for iExec Voucher contracts",
   "repository": {
     "type": "git",
@@ -11,20 +11,25 @@
     "url": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph/issues"
   },
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph#readme",
+  "main": "index.js",
   "scripts": {
-    "schema": "./scripts/generate-schema-and-subgraph.sh",
-    "codegen": "graph codegen",
-    "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ iexec-voucher",
-    "create-local": "graph create --node http://localhost:8020/ iexec-voucher",
-    "remove-local": "graph remove --node http://localhost:8020/ iexec-voucher",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 iexec-voucher --version-label 0.1.0",
+    "codegen": "./generate_subgraph.sh ${NETWORK_NAME:-localhost} subgraph.yaml && graph codegen subgraph.${NETWORK_NAME:-localhost}.yaml",
+    "build": "graph build subgraph.${NETWORK_NAME:-localhost}.yaml",
+    "create": "graph create ${NETWORK_NAME:-localhost}/iexec-voucher --node ${GRAPHNODE_URL:-http://localhost:8020} ",
+    "remove": "graph remove  ${NETWORK_NAME:-localhost}/iexec-voucher --node ${GRAPHNODE_URL:-http://localhost:8020}",
+    "deploy": "graph deploy ${NETWORK_NAME:-localhost}/iexec-voucher subgraph.${NETWORK_NAME:-localhost}.yaml --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} --version-label ${VERSION_LABEL:-develop}",
+    "clean": "rm -rf generated && rm -rf build",
+    "all": "npm run clean && npm run codegen && npm run build && npm run create && npm run deploy",
     "test": "graph test",
     "all-local": "./scripts/all-local.sh"
   },
+  "author": "",
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.69.2",
-    "@graphprotocol/graph-ts": "0.32.0"
+    "@graphprotocol/graph-cli": "^0.71.1",
+    "@graphprotocol/graph-ts": "^0.35.1",
+    "@iexec/poco": "^5.3.0"
   },
-  "devDependencies": { "matchstick-as": "0.5.0" }
+  "devDependencies": {
+    "matchstick-as": "0.5.0"
+  }
 }
