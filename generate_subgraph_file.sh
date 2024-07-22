@@ -6,17 +6,11 @@ if ! command -v jq &> /dev/null; then
     exit 1
 fi
 
-# Check if the user provided a network name
-if [ -z "$1" ]; then
-    echo "Usage: $0 <network-name>"
-    exit 1
-fi
-
 # Function to replace placeholders in the template
 generate_yaml() {
     local network=$1
     local config_file="config.json"
-    local template_file="subgraph.yaml"
+    local template_file="subgraph.template.yaml"
     local output_file="subgraph.${network}.yaml"
 
     # Read values from config.json
@@ -34,7 +28,7 @@ generate_yaml() {
 
 
 
-network_name=$1
+network_name=${1:-localhost}
 
 # Generate the YAML file for the specified network
 generate_yaml ${network_name}
