@@ -56,8 +56,5 @@ node {
             """
         }
 
-        stage('The End') {
-            echo 'The end.'
-        }
     }
 }
