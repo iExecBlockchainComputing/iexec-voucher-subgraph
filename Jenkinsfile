@@ -1,6 +1,7 @@
 @Library('global-jenkins-library@2.7.7') _
 
 def userInput
+def fileName 
 
 node {
     docker.image('node:20-alpine').inside('--user root') {
@@ -21,6 +22,7 @@ node {
             }
             echo "Selected network: '${userInput.network}'"
             echo "Selected hostname: '${userInput.targetRemoteHost}'"
+            fileName = ${fileName}
         }
 
         stage('Setup Docker Image') {
@@ -34,7 +36,7 @@ node {
             
             // Validate subgraph file generation
             sh """
-            FILE=./subgraph.${userInput.network}.yaml
+            FILE=./${fileName}
             if test -f "\$FILE"; then
                 echo "Subgraph file generated successfully"
             else
@@ -49,10 +51,10 @@ node {
             yarn global add @graphprotocol/graph-cli &&
             cd ./ &&
             yarn install &&
-            graph codegen subgraph.${userInput.network}.yaml &&
-            graph build subgraph.${userInput.network}.yaml &&
+            graph codegen ${fileName} &&
+            graph build ${fileName} &&
             graph create ${userInput.network}/iexec-voucher --node http://${userInput.targetRemoteHost}:8020 &&
-            graph deploy ${userInput.network}/iexec-voucher subgraph.${userInput.network}.yaml --node http://${userInput.targetRemoteHost}:8020 --ipfs http://${userInput.targetRemoteHost}:5001 --version-label v1.0.0-rc.1
+            graph deploy ${userInput.network}/iexec-voucher ${fileName} --node http://${userInput.targetRemoteHost}:8020 --ipfs http://${userInput.targetRemoteHost}:5001 --version-label v1.0.0-rc.1
             """
         }
 
