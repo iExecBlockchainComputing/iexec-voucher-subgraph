@@ -11,7 +11,7 @@ dataSources:
     source:
       #VOUCHER_HUB_ADDRESS#
       abi: VoucherHub
-      #START_BLOCK#
+      #VOUCHER_HUB_START_BLOCK#
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -27,7 +27,7 @@ dataSources:
         - Workerpool
       abis:
         - name: VoucherHub
-          file: ./abis/VoucherHub.json
+          file: node_modules/@iexec/voucher-contracts/artifacts/contracts/VoucherHub.sol/VoucherHub.json
         - name: PoCo
           file: node_modules/@iexec/poco/build/contracts/IexecInterfaceNative.json
         - name: AppRegistry
@@ -85,9 +85,9 @@ templates:
         - Workerpool
       abis:
         - name: Voucher
-          file: ./abis/Voucher.json
+          file: node_modules/@iexec/voucher-contracts/artifacts/contracts/beacon/Voucher.sol/Voucher.json
         - name: VoucherHub
-          file: ./abis/VoucherHub.json
+          file: node_modules/@iexec/voucher-contracts/artifacts/contracts/VoucherHub.sol/VoucherHub.json
         - name: PoCo
           file: node_modules/@iexec/poco/build/contracts/IexecInterfaceNative.json
         - name: AppRegistry

@@ -2,35 +2,6 @@
 
 A subgraph indexing `iexec-voucher-contracts`
 
-NB:
-
-- :warning: [`iexec-voucher-contracts`](https://github.com/iExecBlockchainComputing/iexec-voucher-contracts) is still under development, run `refresh-abis.sh` to get the latest ABI changes from `develop` branch.
-
-## Local
-
-- Start node
-
-Inside `iexec-voucher-contracts`,
-```
-npx hardhat node --hostname 0.0.0.0
-```
-- Deploy contracts
-
-Inside `iexec-voucher-contracts`,
-```
-npx hardhat run scripts/deploy.ts --network external-hardhat
-```
-- Boot local stack, generate config and deploy subgraph
-
-Inside `iexec-voucher-subgraph`,
-```
-npm i
-npm run all-local
-```
-- Run queries
-
-Go to http://localhost:8000/subgraphs/name/iexec-voucher
-
 ## build
 
 ```sh
@@ -53,10 +24,20 @@ Prerequisites:
 - IPFS node with access to admin API
 - graphnode connected to network `bellecour` with access to admin API
 
+NB: you can run a dockerized stack with `npm run start-test-stack` (`npm run stop-test-stack` when done)
+
+env:
+
+- `NETWORK_NAME` (optional): custom graphnode network name (default bellecour)
+- `VOUCHER_HUB_ADDRESS`: `VoucherHub` contract address
+- `VOUCHER_HUB_START_BLOCK`: start `VoucherHub` indexation block number
+- `IPFS_URL`: IPFS admin api url
+- `GRAPHNODE_URL`: graphnode admin api url
+
 ```sh
 # set VoucherHub deployment details
-export VOUCHER_HUB_ADDRESS="0x..."
-export VOUCHER_HUB_START_BLOCK=1234
+export VOUCHER_HUB_ADDRESS="0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda"
+export VOUCHER_HUB_START_BLOCK=30306387
 
 # set deployment urls
 export IPFS_URL="http://localhost:5001"
@@ -74,3 +55,33 @@ npm run deploy
 ```
 
 once deployed the subgraph can be queried via the graphiql interface.
+
+## docker subgraph deployer
+
+docker image for deploying the subgraph
+
+### build
+
+```sh
+docker build -f docker/Dockerfile . -t voucher-subgraph-deployer
+```
+
+### usage
+
+env:
+
+- `NETWORK_NAME` (optional): custom graphnode network name (default bellecour)
+- `VOUCHER_HUB_ADDRESS`: `VoucherHub` contract address
+- `VOUCHER_HUB_START_BLOCK`: start `VoucherHub` indexation block number
+- `IPFS_URL`: IPFS admin api url
+- `GRAPHNODE_URL`: graphnode admin api url
+
+```sh
+docker run --rm \
+  -e NETWORK_NAME=bellecour \
+  -e VOUCHER_HUB_ADDRESS="0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda" \
+  -e VOUCHER_HUB_START_BLOCK=30306387 \
+  -e IPFS_URL="http://ipfs:5001" \
+  -e GRAPHNODE_URL="http://graphnode:8020" \
+  voucher-subgraph-deployer
+```
