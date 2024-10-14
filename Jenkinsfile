@@ -16,7 +16,7 @@ def DOCKER_IMAGE
 
         // Get the last commit hash 
         SHORT_COMMIT_HASH = sh(
-            script: 'git -C iexec-voucher-subgraph/ rev-parse --short HEAD',
+            script: 'git rev-parse --short HEAD',
             returnStdout: true
         ).trim()
         TIMESTAMP = sh(
@@ -26,8 +26,7 @@ def DOCKER_IMAGE
         DOCKER_IMAGE_NAME = "iexechub/iexec-voucher-subgraph:${SHORT_COMMIT_HASH}"
 
         DOCKER_IMAGE = docker.build(DOCKER_IMAGE_NAME, " \
-            -f iexec-voucher-subgraph/docker/Dockerfile \
-            iexec-voucher-subgraph/ \
+            -f docker/Dockerfile
         ")
     }
 
