@@ -22,7 +22,7 @@
     "clean": "rm -rf generated && rm -rf build",
     "all": "npm run clean && npm run codegen && npm run build && npm run create && npm run deploy",
     "stop-test-stack": "cd test-stack && docker compose down --remove-orphans --volumes",
-    "start-test-stack": "npm run stop-test-stack && cd test-stack && node prepare-test-env.js && docker compose up -d"
+    "start-test-stack": "npm run stop-test-stack && cd test-stack && docker compose build && node prepare-test-env.js && docker compose up -d"
   },
   "author": "iExec",
   "dependencies": {
