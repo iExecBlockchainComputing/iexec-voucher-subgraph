@@ -16,7 +16,7 @@ services:
       start_period: 30s
 
   graphnode-postgres:
-    image: postgres:12
+    image: postgres:16.4
     restart: unless-stopped
     command:
       - "postgres"
