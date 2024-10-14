@@ -24,7 +24,7 @@ Prerequisites:
 - IPFS node with access to admin API
 - graphnode connected to network `bellecour` with access to admin API
 
-NB: you can run a dockerized stack with `npm run start-local-stack` (`npm run stop-local-stack` when done)
+NB: you can run a dockerized stack with `npm run start-test-stack` (`npm run stop-test-stack` when done)
 
 env:
 
