@@ -26,7 +26,8 @@ def DOCKER_IMAGE
         DOCKER_IMAGE_NAME = "iexechub/iexec-voucher-subgraph:${SHORT_COMMIT_HASH}"
 
         DOCKER_IMAGE = docker.build(DOCKER_IMAGE_NAME, " \
-            -f docker/Dockerfile
+            -f docker/Dockerfile \
+            . \
         ")
     }
 
