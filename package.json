@@ -18,7 +18,7 @@
     "create": "graph create --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}/iexec-voucher",
     "remove": "graph remove --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}/iexec-voucher",
     "deploy:prepare-manifest": "sed -i \"s|#NETWORK_NAME#|network: ${NETWORK_NAME:-bellecour}|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_ADDRESS#|address: \\\"$VOUCHER_HUB_ADDRESS\\\"|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_START_BLOCK#|startBlock: $VOUCHER_HUB_START_BLOCK|g\" subgraph.yaml",
-    "deploy": "npm run deploy:prepare-manifest && graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} bellecour/iexec-voucher --version-label ${VERSION_LABEL:-develop}",
+    "deploy": "npm run deploy:prepare-manifest && graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} ${NETWORK_NAME:-bellecour}/iexec-voucher --version-label ${VERSION_LABEL:-develop}",
     "clean": "rm -rf generated && rm -rf build",
     "all": "npm run clean && npm run codegen && npm run build && npm run create && npm run deploy",
     "stop-test-stack": "cd test-stack && docker compose down --remove-orphans --volumes",
