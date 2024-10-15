@@ -3,6 +3,8 @@ node('docker') {
     // Global variables
     String DOCKER_IMAGE_VERSION = '8491d157'
     def userInput
+    def forkUrl = "https://bellecour.iex.ec"
+    def voucherHubStartBlock = ''
 
     stage('Set properties') {
         timeout(time: 5, unit: 'MINUTES') {
@@ -29,6 +31,25 @@ node('docker') {
         """
     }
 
+    stage('Compute voucherHubStartBlock') {
+        if (!userInput.voucherHubStartBlock) {
+            // Compute the start block by fetching it from the Bellecour fork URL
+            voucherHubStartBlock = sh (
+                script: """
+                    # Fetch the current block number from the Bellecour fork
+                    curl -s -X POST --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -H "Content-Type: application/json" ${forkUrl} \
+                    | jq -r '.result' \
+                    | xargs printf "%d"
+                """,
+                returnStdout: true
+            ).trim()
+
+            println "Computed Voucher Hub Start Block: ${voucherHubStartBlock}"
+        } else {
+            voucherHubStartBlock = userInput.voucherHubStartBlock
+        }
+    }
+
     stage('Clean Workspace') {
         cleanWs()
     }
@@ -51,7 +72,7 @@ node('docker') {
                     -e GRAPHNODE_URL='http://$userInput.targetRemoteHost:8020' \
                     -e IPFS_URL='http://$userInput.targetRemoteHost:5001' \
                     -e VOUCHER_HUB_ADDRESS='$userInput.voucherHubAddress' \
-                    -e VOUCHER_HUB_START_BLOCK='$userInput.voucherHubStartBlock' \
+                    -e VOUCHER_HUB_START_BLOCK='$voucherHubStartBlock' \
                     -e NETWORK_NAME='$userInput.networkName' \
                     -e VERSION_LABEL='$userInput.versionLabel' \
                     docker-regis.iex.ec/voucher-subgraph:$DOCKER_IMAGE_VERSION
