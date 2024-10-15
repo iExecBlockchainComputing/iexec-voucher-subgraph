@@ -1,15 +1,15 @@
 node('docker') {
 
     // Global variables
-    String DOCKER_IMAGE_VERSION ='8491d157'
+    String DOCKER_IMAGE_VERSION = '8491d157'
 
     stage('Set properties') {
         properties([
             parameters([
-                string(name: 'targetRemoteHost', description: 'Hostname where to deploy the subgraph', defaultValue: '', trim: true)
-                string(name: 'networkName', description: 'Network Name', defaultValue: 'bellecour', trim: true)
-                string(name: 'voucherHubAddress', description: 'Voucher Hub Address', defaultValue: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda', trim: true)
-                string(name: 'voucherHubStartBlock', description: 'Start Block for Voucher Hub', defaultValue: '', trim: true)
+                string(name: 'targetRemoteHost', description: 'Hostname where to deploy the subgraph', defaultValue: '', trim: true),
+                string(name: 'networkName', description: 'Network Name', defaultValue: 'bellecour', trim: true),
+                string(name: 'voucherHubAddress', description: 'Voucher Hub Address', defaultValue: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda', trim: true),
+                string(name: 'voucherHubStartBlock', description: 'Start Block for Voucher Hub', defaultValue: '', trim: true),
                 string(name: 'versionLabel', description: 'Version Label for Subgraph Deployment', defaultValue: 'develop', trim: true)
             ])
         ])
@@ -24,7 +24,7 @@ node('docker') {
         """
     }
 
-    stage('Clean Workspace'){
+    stage('Clean Workspace') {
         cleanWs()
     }
 
@@ -34,23 +34,25 @@ node('docker') {
 
     stage('Run operation') {
         withCredentials([
-            usernamePassword(credentialsId: 'docker-regis', usernameVariable: 'username', passwordVariable: 'password'),
+            usernamePassword(credentialsId: 'docker-regis', usernameVariable: 'username', passwordVariable: 'password')
         ]) {
-            // Login to download Docker image.
+            // Login to download Docker image
             sh "echo -n '${password}' | docker login --username '${username}' --password-stdin docker-regis.iex.ec"
-            // Run whitelisting container to execute command (add/rm).
+
+            // Run the container for subgraph deployment
             sh """
                 docker run \
                     --rm \
                     -e GRAPHNODE_URL='http://$params.targetRemoteHost:8020' \
                     -e IPFS_URL='http://$params.targetRemoteHost:5001' \
                     -e VOUCHER_HUB_ADDRESS='$params.voucherHubAddress' \
-                    -e VOUCHER_HUB_START_BLOCK='$params.voucherHubAddress' \
+                    -e VOUCHER_HUB_START_BLOCK='$params.voucherHubStartBlock' \
                     -e NETWORK_NAME='$params.networkName' \
                     -e VERSION_LABEL='$params.versionLabel' \
-                    docker-regis.iex.ec/voucher-subgraph:$DOCKER_IMAGE_VERSION \
-                """
-            // Logout to remove docker credentials.
+                    docker-regis.iex.ec/voucher-subgraph:$DOCKER_IMAGE_VERSION
+            """
+            
+            // Logout to remove docker credentials
             sh "docker logout docker-regis.iex.ec"
         }
         println "The end."
