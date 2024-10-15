@@ -2,25 +2,30 @@ node('docker') {
 
     // Global variables
     String DOCKER_IMAGE_VERSION = '8491d157'
+    def userInput
 
     stage('Set properties') {
-        properties([
-            parameters([
-                string(name: 'targetRemoteHost', description: 'Hostname where to deploy the subgraph', defaultValue: '', trim: true),
-                string(name: 'networkName', description: 'Network Name', defaultValue: 'bellecour', trim: true),
-                string(name: 'voucherHubAddress', description: 'Voucher Hub Address', defaultValue: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda', trim: true),
-                string(name: 'voucherHubStartBlock', description: 'Start Block for Voucher Hub', defaultValue: '', trim: true),
-                string(name: 'versionLabel', description: 'Version Label for Subgraph Deployment', defaultValue: 'develop', trim: true)
-            ])
-        ])
+        timeout(time: 5, unit: 'MINUTES') {
+            userInput = input(
+                id: 'select-deployment',
+                message: 'Select environment & service',
+                parameters([
+                    string(name: 'targetRemoteHost', description: 'Hostname where to deploy the subgraph', defaultValue: '', trim: true),
+                    string(name: 'networkName', description: 'Network Name', defaultValue: 'bellecour', trim: true),
+                    string(name: 'voucherHubAddress', description: 'Voucher Hub Address', defaultValue: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda', trim: true),
+                    string(name: 'voucherHubStartBlock', description: 'Start Block for Voucher Hub', defaultValue: '', trim: true),
+                    string(name: 'versionLabel', description: 'Version Label for Subgraph Deployment', defaultValue: 'develop', trim: true)
+                ])
+            )
+        }
         println """
-            Target remote host env: $params.targetRemoteHost
-            Graph Node URL: http://$params.targetRemoteHost:8020
-            IPFS URL: http://$params.targetRemoteHost:5001
-            Network Name: $params.networkName
-            Voucher Hub Address: $params.voucherHubAddress
-            Start Block: $params.voucherHubStartBlock
-            Version Label: $params.versionLabel
+            Target remote host env: $userInput.targetRemoteHost
+            Graph Node URL: http://$userInput.targetRemoteHost:8020
+            IPFS URL: http://$userInput.targetRemoteHost:5001
+            Network Name: $userInput.networkName
+            Voucher Hub Address: $userInput.voucherHubAddress
+            Start Block: $userInput.voucherHubStartBlock
+            Version Label: $userInput.versionLabel
         """
     }
 
@@ -43,12 +48,12 @@ node('docker') {
             sh """
                 docker run \
                     --rm \
-                    -e GRAPHNODE_URL='http://$params.targetRemoteHost:8020' \
-                    -e IPFS_URL='http://$params.targetRemoteHost:5001' \
-                    -e VOUCHER_HUB_ADDRESS='$params.voucherHubAddress' \
-                    -e VOUCHER_HUB_START_BLOCK='$params.voucherHubStartBlock' \
-                    -e NETWORK_NAME='$params.networkName' \
-                    -e VERSION_LABEL='$params.versionLabel' \
+                    -e GRAPHNODE_URL='http://$userInput.targetRemoteHost:8020' \
+                    -e IPFS_URL='http://$userInput.targetRemoteHost:5001' \
+                    -e VOUCHER_HUB_ADDRESS='$userInput.voucherHubAddress' \
+                    -e VOUCHER_HUB_START_BLOCK='$userInput.voucherHubStartBlock' \
+                    -e NETWORK_NAME='$userInput.networkName' \
+                    -e VERSION_LABEL='$userInput.versionLabel' \
                     docker-regis.iex.ec/voucher-subgraph:$DOCKER_IMAGE_VERSION
             """
             
