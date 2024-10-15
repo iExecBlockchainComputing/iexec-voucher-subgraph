@@ -31,6 +31,10 @@ node('docker') {
         """
     }
 
+    stage('Setup') {
+        sh 'apk add jq'
+    }
+
     stage('Compute voucherHubStartBlock') {
         if (!userInput.voucherHubStartBlock) {
             // Compute the start block by fetching it from the Bellecour fork URL
