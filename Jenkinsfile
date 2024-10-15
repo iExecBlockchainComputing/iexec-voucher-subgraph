@@ -1,7 +1,12 @@
-@Library('global-jenkins-library@feature/fix-docker-builder-iexecdev') _
+@Library('global-jenkins-library@2.8.0') _
 
 node('docker') {
-    buildSimpleDocker(
-        imageprivacy: 'private'
+    buildInfo = getBuildInfo()
+    buildSimpleDocker_v2(
+        buildInfo: buildInfo,
+        dockerfileDir: './docker',
+        buildContext: '.',
+        imageprivacy: 'private',
+        dockerImageRepositoryName : 'voucher-subgraph'
     )
 }
