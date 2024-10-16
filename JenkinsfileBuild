@@ -7,6 +7,6 @@ node('docker') {
         dockerfileDir: './docker',
         buildContext: '.',
         imageprivacy: 'private',
-        dockerImageRepositoryName : 'voucher-subgraph'
+        dockerImageRepositoryName : 'voucher-subgraph-deployer'
     )
 }
