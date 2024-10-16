@@ -13,7 +13,7 @@ node('docker') {
                     string(name: 'networkName', description: 'Network Name', defaultValue: 'bellecour', trim: true),
                     string(name: 'voucherHubAddress', description: 'Voucher Hub Address', defaultValue: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda', trim: true),
                     string(name: 'voucherHubStartBlock', description: 'Start Block for Voucher Hub', defaultValue: '30306387', trim: true),
-                    string(name: 'versionLabel', description: 'Version Label for Subgraph Deployment', defaultValue: 'develop', trim: true)
+                    string(name: 'versionLabel', description: 'Version Label for Subgraph Deployment', defaultValue: 'develop', trim: true),
                     string(name: 'dockerImageVersion', description: 'Version of the deployer docker image to use', defaultValue: '', trim: true)
                 ]
             )
