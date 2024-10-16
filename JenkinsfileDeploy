@@ -29,8 +29,7 @@ node('docker') {
             Deployer image version: $userInput.dockerImageVersion
         """
 
-        if (!(userInput.dockerImageVersion?.trim()) 
-                ) {
+        if (!(userInput.dockerImageVersion?.trim())) {
             error "docker image version parameter cannot be null or empty."
         }
     }
@@ -66,6 +65,5 @@ node('docker') {
             // Logout to remove docker credentials
             sh "docker logout docker-regis.iex.ec"
         }
-        println "The end."
     }
 }
