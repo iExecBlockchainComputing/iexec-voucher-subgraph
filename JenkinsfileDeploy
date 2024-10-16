@@ -41,7 +41,7 @@ node('docker') {
             fi
         '''
     }
-    
+
     stage('Compute voucherHubStartBlock') {
         if (!userInput.voucherHubStartBlock) {
             // Compute the start block by fetching it from the Bellecour fork URL
@@ -80,11 +80,11 @@ node('docker') {
             sh """
                 docker run \
                     --rm \
-                    -e GRAPHNODE_URL='http://$userInput.targetRemoteHost:8020' \
-                    -e IPFS_URL='http://$userInput.targetRemoteHost:5001' \
+                    -e NETWORK_NAME='$userInput.networkName' \
                     -e VOUCHER_HUB_ADDRESS='$userInput.voucherHubAddress' \
                     -e VOUCHER_HUB_START_BLOCK='$voucherHubStartBlock' \
-                    -e NETWORK_NAME='$userInput.networkName' \
+                    -e IPFS_URL='http://$userInput.targetRemoteHost:5001' \
+                    -e GRAPHNODE_URL='http://$userInput.targetRemoteHost:8020' \
                     -e VERSION_LABEL='$userInput.versionLabel' \
                     docker-regis.iex.ec/voucher-subgraph:$DOCKER_IMAGE_VERSION
             """
