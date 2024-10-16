@@ -100,5 +100,4 @@ This pipeline is responsible for deploying the voucher-subgraph to the desired e
 Steps:
 
 1.	User Input: The pipeline prompts the user for input, such as the target host, network name, voucher hub address, and start block.
-3.	Compute Start Block: If a start block isn’t provided, the current block number is fetched from the Bellecour fork (https://bellecour.iex.ec).
-5.	Run Docker Image: The Docker container is executed, deploying the subgraph to the specified Graph Node and IPFS node.
+2.	Run Docker Image: The Docker container is executed, deploying the subgraph to the specified Graph Node and IPFS node.
