@@ -6,7 +6,7 @@ node('docker') {
         buildInfo: buildInfo,
         dockerfileDir: './docker',
         buildContext: '.',
-        imageprivacy: 'private',
+        imageprivacy: 'public',
         dockerImageRepositoryName : 'voucher-subgraph-deployer'
     )
 }
