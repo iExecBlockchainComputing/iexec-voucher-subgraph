@@ -5,13 +5,6 @@ node('docker') {
     def DOCKER_IMG_NAME
     def DOCKER_IMG
     
-    
-    stage('Clean Workspace'){
-        cleanWs()
-    }
-    stage('Checkout scm') {
-        checkout scm
-    }
     stage('Build image') {
         // Get the last commit hash 
         buildInfo = getBuildInfo()
