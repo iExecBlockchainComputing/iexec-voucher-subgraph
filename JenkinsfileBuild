@@ -9,8 +9,7 @@ node('docker') {
         // Get the last commit hash 
         buildInfo = getBuildInfo()
 
-        // DOCKER_IMG_NAME = "iexechub/voucher-subgraph-deployer:$buildInfo.shortCommit"
-        DOCKER_IMG_NAME = "docker-regis.iex.ec/voucher-subgraph-deployer:$buildInfo.shortCommit"
+        DOCKER_IMG_NAME = "iexechub/voucher-subgraph-deployer:$buildInfo.shortCommit"
 
         DOCKER_IMG = docker.build(DOCKER_IMG_NAME, " \
             -f docker/Dockerfile \
@@ -18,17 +17,10 @@ node('docker') {
         ")
     }
     stage("Push image to Dockerhub") {
-        docker.withRegistry('https://docker-regis.iex.ec', 'docker-regis') {
+        docker.withRegistry('', 'dockerio') {
             DOCKER_IMG.push()
             DOCKER_IMG.push(buildInfo.imageTag)
         }
         sh "docker image rm ${DOCKER_IMG_NAME}"
     }
-    // stage("Push image to Dockerhub") {
-    //     docker.withRegistry('', 'dockerio') {
-    //         DOCKER_IMG.push()
-    //         DOCKER_IMG.push(buildInfo.imageTag)
-    //     }
-    //     sh "docker image rm ${DOCKER_IMG_NAME}"
-    // }
 }
