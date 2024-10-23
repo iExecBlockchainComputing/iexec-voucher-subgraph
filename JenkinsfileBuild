@@ -1,26 +1,12 @@
 @Library('global-jenkins-library@2.8.0') _
 
 node('docker') {
-
-    def DOCKER_IMG_NAME
-    def DOCKER_IMG
-    
-    stage('Build image') {
-        // Get the last commit hash 
-        buildInfo = getBuildInfo()
-
-        DOCKER_IMG_NAME = "iexechub/voucher-subgraph-deployer:$buildInfo.shortCommit"
-
-        DOCKER_IMG = docker.build(DOCKER_IMG_NAME, " \
-            -f docker/Dockerfile \
-            . \
-        ")
-    }
-    stage("Push image to Dockerhub") {
-        docker.withRegistry('', 'dockerio') {
-            DOCKER_IMG.push()
-            DOCKER_IMG.push(buildInfo.imageTag)
-        }
-        sh "docker image rm ${DOCKER_IMG_NAME}"
-    }
+    buildInfo = getBuildInfo()
+    buildSimpleDocker_v2(
+        buildInfo: buildInfo,
+        dockerfileDir: './docker',
+        buildContext: '.',
+        imageprivacy: 'public',
+        dockerImageRepositoryName : 'voucher-subgraph-deployer'
+    )
 }
