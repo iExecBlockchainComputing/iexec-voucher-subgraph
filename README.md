@@ -1,6 +1,6 @@
 # voucher-subgraph
 
-A subgraph indexing `iexec-voucher-contracts`
+A subgraph indexing [`iexec-voucher-contracts`](https://github.com/iExecBlockchainComputing/iexec-voucher-contracts)
 
 ## build
 
