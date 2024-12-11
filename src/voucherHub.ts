@@ -115,8 +115,8 @@ export function handleVoucherCreated(event: VoucherCreated): void {
     loadOrCreateAccount(owner);
     voucher.voucherType = voucherTypeId;
     voucher.owner = owner;
-    voucher.value = nRLCToRLC(value);
-    voucher.balance = nRLCToRLC(value);
+    voucher.value =value;
+    voucher.balance = value;
     voucher.expiration = expiration;
     voucher.save();
 
@@ -126,7 +126,7 @@ export function handleVoucherCreated(event: VoucherCreated): void {
     if (!voucherCreation) {
       voucherCreation = new VoucherCreation(fundingId);
     }
-    voucherCreation.value = nRLCToRLC(value);
+    voucherCreation.value = value;
     voucherCreation.timestamp = event.block.timestamp;
     voucherCreation.voucher = voucherId;
     voucherCreation.save();

@@ -3,3 +3,5 @@ generated
 build
 iexec-voucher-contracts
 subgraph.yaml
+test-stack/.bin/*
+test-stack/.latest.json
