@@ -28,6 +28,7 @@ import {
   loadOrCreateApp,
   loadOrCreateDataset,
   loadOrCreateWorkerpool,
+  nRLCToRLC,
 } from "./utils";
 
 export function handleEligibleAssetAdded(event: EligibleAssetAdded): void {
@@ -40,31 +41,31 @@ export function handleEligibleAssetAdded(event: EligibleAssetAdded): void {
     // check asset type
     let voucherHubContract = VoucherHub.bind(event.address);
     let pocoContract = PoCo.bind(voucherHubContract.getIexecPoco());
-    let isRegistredAsset = false;
+    let isRegisteredAsset = false;
     if (
       AppRegistry.bind(pocoContract.appregistry()).isRegistered(
         addedAssetAddress
       )
     ) {
       loadOrCreateApp(addedAssetAddress);
-      isRegistredAsset = true;
+      isRegisteredAsset = true;
     } else if (
       DatasetRegistry.bind(pocoContract.datasetregistry()).isRegistered(
         addedAssetAddress
       )
     ) {
       loadOrCreateDataset(addedAssetAddress);
-      isRegistredAsset = true;
+      isRegisteredAsset = true;
     } else if (
       WorkerpoolRegistry.bind(pocoContract.workerpoolregistry()).isRegistered(
         addedAssetAddress
       )
     ) {
       loadOrCreateWorkerpool(addedAssetAddress);
-      isRegistredAsset = true;
+      isRegisteredAsset = true;
     }
     // index only apps, datasets and workerpools
-    if (isRegistredAsset) {
+    if (isRegisteredAsset) {
       let addedAssetId = addedAssetAddress.toHex();
       let eligibleAssets = voucherType.eligibleAssets;
       let existingEntry = eligibleAssets.indexOf(addedAssetId);
@@ -109,13 +110,13 @@ export function handleVoucherCreated(event: VoucherCreated): void {
       voucher.authorizedAccounts = [];
     }
     let owner = event.params.owner.toHex();
-    let value = event.params.value;
+    let value = nRLCToRLC(event.params.value);
     let expiration = event.params.expiration;
     loadOrCreateAccount(owner);
     voucher.voucherType = voucherTypeId;
     voucher.owner = owner;
-    voucher.value = value;
-    voucher.balance = value;
+    voucher.value = nRLCToRLC(value);
+    voucher.balance = nRLCToRLC(value);
     voucher.expiration = expiration;
     voucher.save();
 
@@ -125,7 +126,7 @@ export function handleVoucherCreated(event: VoucherCreated): void {
     if (!voucherCreation) {
       voucherCreation = new VoucherCreation(fundingId);
     }
-    voucherCreation.value = value;
+    voucherCreation.value = nRLCToRLC(value);
     voucherCreation.timestamp = event.block.timestamp;
     voucherCreation.voucher = voucherId;
     voucherCreation.save();
@@ -138,7 +139,7 @@ export function handleVoucherDebited(event: VoucherDebited): void {
   // do not index balance changes on voucher not indexed
   if (voucher) {
     let sponsoredAmount = event.params.sponsoredAmount;
-    voucher.balance = voucher.balance.minus(sponsoredAmount);
+    voucher.balance = nRLCToRLC(voucher.balance.minus(sponsoredAmount));
     voucher.save();
   }
 }
@@ -149,7 +150,7 @@ export function handleVoucherDrained(event: VoucherDrained): void {
   // do not index balance changes on voucher not indexed
   if (voucher) {
     let drainedAmount = event.params.amount;
-    voucher.balance = voucher.balance.minus(drainedAmount);
+    voucher.balance = nRLCToRLC(voucher.balance.minus(drainedAmount));
     voucher.save();
   }
 }
@@ -160,7 +161,7 @@ export function handleVoucherRefunded(event: VoucherRefunded): void {
   // do not index balance changes on voucher not indexed
   if (voucher) {
     let refundedAmount = event.params.amount;
-    voucher.balance = voucher.balance.plus(refundedAmount);
+    voucher.balance = nRLCToRLC(voucher.balance.plus(refundedAmount));
     voucher.save();
   }
 }
@@ -170,10 +171,10 @@ export function handleVoucherToppedUp(event: VoucherToppedUp): void {
   let voucher = Voucher.load(voucherId);
   // do not index balance changes on voucher not indexed
   if (voucher) {
-    let topUpValue = event.params.value;
+    let topUpValue = nRLCToRLC(event.params.value);
     let topUpExpiration = event.params.expiration;
     voucher.value = topUpValue;
-    voucher.balance = voucher.balance.plus(topUpValue);
+    voucher.balance = nRLCToRLC(voucher.balance.plus(topUpValue));
     voucher.expiration = topUpExpiration;
     voucher.save();
 
