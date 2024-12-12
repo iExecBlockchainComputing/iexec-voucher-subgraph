@@ -12,7 +12,7 @@ import { createVoucherCreatedEvent } from "./utils/utils";
 import { VoucherType, Voucher, App } from "../../generated/schema";
 import { handleVoucherCreated } from "../../src/voucherHub";
 
-describe("handleVoucherCreated", () => {
+describe("VoucherCreatedEvent", () => {
   beforeEach(() => {
     clearStore();
   });
