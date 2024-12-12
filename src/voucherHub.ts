@@ -115,7 +115,7 @@ export function handleVoucherCreated(event: VoucherCreated): void {
     loadOrCreateAccount(owner);
     voucher.voucherType = voucherTypeId;
     voucher.owner = owner;
-    voucher.value =value;
+    voucher.value = value;
     voucher.balance = value;
     voucher.expiration = expiration;
     voucher.save();
