@@ -1,6 +1,9 @@
 import { newMockEvent } from "matchstick-as/assembly/index";
 import { ethereum, Address, BigInt } from "@graphprotocol/graph-ts";
-import { VoucherCreated } from "../../../generated/VoucherHub/VoucherHub";
+import {
+  EligibleAssetRemoved,
+  VoucherCreated,
+} from "../../../generated/VoucherHub/VoucherHub";
 
 export function createVoucherCreatedEvent(
   voucher: Address,
@@ -43,6 +46,34 @@ export function createVoucherCreatedEvent(
   );
   event.parameters.push(
     new ethereum.EventParam("value", ethereum.Value.fromUnsignedBigInt(value))
+  );
+
+  return event;
+}
+
+export function createEligibleAssetRemovedEvent(
+  id: BigInt,
+  asset: Address
+): EligibleAssetRemoved {
+  let mockEvent = newMockEvent();
+  let event = new EligibleAssetRemoved(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters,
+    mockEvent.receipt
+  );
+
+  event.parameters = new Array();
+
+  event.parameters.push(
+    new ethereum.EventParam("id", ethereum.Value.fromUnsignedBigInt(id))
+  );
+  event.parameters.push(
+    new ethereum.EventParam("asset", ethereum.Value.fromAddress(asset))
   );
 
   return event;
