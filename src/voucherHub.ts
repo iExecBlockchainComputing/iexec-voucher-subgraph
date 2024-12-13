@@ -138,8 +138,8 @@ export function handleVoucherDebited(event: VoucherDebited): void {
   let voucher = Voucher.load(voucherId);
   // do not index balance changes on voucher not indexed
   if (voucher) {
-    let sponsoredAmount = event.params.sponsoredAmount;
-    voucher.balance = nRLCToRLC(voucher.balance.minus(sponsoredAmount));
+    let sponsoredAmount = nRLCToRLC(event.params.sponsoredAmount);
+    voucher.balance = voucher.balance.minus(sponsoredAmount);
     voucher.save();
   }
 }
