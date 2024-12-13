@@ -53,6 +53,6 @@ export function getEventId(event: ethereum.Event): string {
 }
 
 export function nRLCToRLC(value: BigInt): BigInt {
-  let divisor = BigInt.fromI32(1000000000);
+  let divisor = BigInt.fromI32(1_000_000_000);
   return value.div(divisor);
 }
