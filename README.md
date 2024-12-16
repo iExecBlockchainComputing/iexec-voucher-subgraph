@@ -92,12 +92,11 @@ docker run --rm \
 
 This pipeline handles building the voucher-subgraph Docker image, which is used for deploying the subgraph.
 
-
 ## JenkinsfileDeploy
 
 This pipeline is responsible for deploying the voucher-subgraph to the desired environment.
 
 Steps:
 
-1.	User Input: The pipeline prompts the user for input, such as the target host, network name, voucher hub address, and start block.
-2.	Run Docker Image: The Docker container is executed, deploying the subgraph to the specified Graph Node and IPFS node.
+1. User Input: The pipeline prompts the user for input, such as the target host, network name, voucher hub address, and start block.
+2. Run Docker Image: The Docker container is executed, deploying the subgraph to the specified Graph Node and IPFS node.

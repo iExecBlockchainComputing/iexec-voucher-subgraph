@@ -1,88 +1,88 @@
 type Account @entity {
-  id: ID!
-  voucher: Voucher @derivedFrom(field: "owner")
+    id: ID!
+    voucher: Voucher @derivedFrom(field: "owner")
 }
 
 type VoucherType @entity {
-  id: ID!
-  description: String!
-  duration: BigInt!
-  eligibleAssets: [Asset!]!
-  vouchers: [Voucher!]! @derivedFrom(field: "voucherType")
+    id: ID!
+    description: String!
+    duration: BigInt!
+    eligibleAssets: [Asset!]!
+    vouchers: [Voucher!]! @derivedFrom(field: "voucherType")
 }
 
 type Voucher @entity {
-  id: ID!
-  owner: Account!
-  expiration: BigInt!
-  voucherType: VoucherType!
-  value: BigInt! # last funding value
-  balance: BigInt!
-  authorizedAccounts: [Account!]!
-  fundings: [VoucherFunding!]! @derivedFrom(field: "voucher")
-  deals: [Deal!]! @derivedFrom(field: "sponsor")
+    id: ID!
+    owner: Account!
+    expiration: BigInt!
+    voucherType: VoucherType!
+    value: BigInt! # last funding value
+    balance: BigInt!
+    authorizedAccounts: [Account!]!
+    fundings: [VoucherFunding!]! @derivedFrom(field: "voucher")
+    deals: [Deal!]! @derivedFrom(field: "sponsor")
 }
 
 interface VoucherFunding {
-  id: ID!
-  timestamp: BigInt!
-  value: BigInt!
-  voucher: Voucher!
+    id: ID!
+    timestamp: BigInt!
+    value: BigInt!
+    voucher: Voucher!
 }
 
 type VoucherCreation implements VoucherFunding @entity {
-  id: ID!
-  timestamp: BigInt!
-  value: BigInt!
-  voucher: Voucher!
+    id: ID!
+    timestamp: BigInt!
+    value: BigInt!
+    voucher: Voucher!
 }
 
 type VoucherTopUp implements VoucherFunding @entity {
-  id: ID!
-  timestamp: BigInt!
-  value: BigInt!
-  voucher: Voucher!
+    id: ID!
+    timestamp: BigInt!
+    value: BigInt!
+    voucher: Voucher!
 }
 
 # common interface for all sponsored assets
 interface Asset {
-  id: ID!
-  voucherTypes: [VoucherType!]!
+    id: ID!
+    voucherTypes: [VoucherType!]!
 }
 
 type App implements Asset @entity {
-  id: ID!
-  name: String!
-  usages: [Deal!]! @derivedFrom(field: "app")
-  voucherTypes: [VoucherType!]! @derivedFrom(field: "eligibleAssets")
+    id: ID!
+    name: String!
+    usages: [Deal!]! @derivedFrom(field: "app")
+    voucherTypes: [VoucherType!]! @derivedFrom(field: "eligibleAssets")
 }
 
 type Dataset implements Asset @entity {
-  id: ID!
-  name: String!
-  usages: [Deal!]! @derivedFrom(field: "dataset")
-  voucherTypes: [VoucherType!]! @derivedFrom(field: "eligibleAssets")
+    id: ID!
+    name: String!
+    usages: [Deal!]! @derivedFrom(field: "dataset")
+    voucherTypes: [VoucherType!]! @derivedFrom(field: "eligibleAssets")
 }
 
 type Workerpool implements Asset @entity {
-  id: ID!
-  description: String!
-  usages: [Deal!]! @derivedFrom(field: "workerpool")
-  voucherTypes: [VoucherType!]! @derivedFrom(field: "eligibleAssets")
+    id: ID!
+    description: String!
+    usages: [Deal!]! @derivedFrom(field: "workerpool")
+    voucherTypes: [VoucherType!]! @derivedFrom(field: "eligibleAssets")
 }
 
 # the Deal entity schema is based on the Deal entity of PoCo-subgraph
 type Deal @entity {
-  id: ID!
-  sponsor: Voucher # voucher specific
-  sponsoredAmount: BigInt # voucher specific
-  timestamp: BigInt!
-  requester: Account!
-  app: App!
-  dataset: Dataset
-  workerpool: Workerpool!
-  botSize: BigInt!
-  appPrice: BigInt!
-  datasetPrice: BigInt!
-  workerpoolPrice: BigInt!
+    id: ID!
+    sponsor: Voucher # voucher specific
+    sponsoredAmount: BigInt # voucher specific
+    timestamp: BigInt!
+    requester: Account!
+    app: App!
+    dataset: Dataset
+    workerpool: Workerpool!
+    botSize: BigInt!
+    appPrice: BigInt!
+    datasetPrice: BigInt!
+    workerpoolPrice: BigInt!
 }
