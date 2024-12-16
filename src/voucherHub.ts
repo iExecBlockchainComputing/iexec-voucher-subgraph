@@ -138,8 +138,8 @@ export function handleVoucherDebited(event: VoucherDebited): void {
   let voucher = Voucher.load(voucherId);
   // do not index balance changes on voucher not indexed
   if (voucher) {
-    let sponsoredAmount = event.params.sponsoredAmount;
-    voucher.balance = nRLCToRLC(voucher.balance.minus(sponsoredAmount));
+    let sponsoredAmount = nRLCToRLC(event.params.sponsoredAmount);
+    voucher.balance = voucher.balance.minus(sponsoredAmount);
     voucher.save();
   }
 }
@@ -149,8 +149,8 @@ export function handleVoucherDrained(event: VoucherDrained): void {
   let voucher = Voucher.load(voucherId);
   // do not index balance changes on voucher not indexed
   if (voucher) {
-    let drainedAmount = event.params.amount;
-    voucher.balance = nRLCToRLC(voucher.balance.minus(drainedAmount));
+    let drainedAmount = nRLCToRLC(event.params.amount);
+    voucher.balance = voucher.balance.minus(drainedAmount);
     voucher.save();
   }
 }
@@ -160,8 +160,8 @@ export function handleVoucherRefunded(event: VoucherRefunded): void {
   let voucher = Voucher.load(voucherId);
   // do not index balance changes on voucher not indexed
   if (voucher) {
-    let refundedAmount = event.params.amount;
-    voucher.balance = nRLCToRLC(voucher.balance.plus(refundedAmount));
+    let refundedAmount = nRLCToRLC(event.params.amount);
+    voucher.balance = voucher.balance.plus(refundedAmount);
     voucher.save();
   }
 }
@@ -174,7 +174,7 @@ export function handleVoucherToppedUp(event: VoucherToppedUp): void {
     let topUpValue = nRLCToRLC(event.params.value);
     let topUpExpiration = event.params.expiration;
     voucher.value = topUpValue;
-    voucher.balance = nRLCToRLC(voucher.balance.plus(topUpValue));
+    voucher.balance = voucher.balance.plus(topUpValue);
     voucher.expiration = topUpExpiration;
     voucher.save();
 
