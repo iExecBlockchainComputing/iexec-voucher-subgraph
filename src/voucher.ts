@@ -12,6 +12,7 @@ import {
   loadOrCreateApp,
   loadOrCreateDataset,
   loadOrCreateWorkerpool,
+  nRLCToRLC,
 } from "./utils";
 import { BigInt } from "@graphprotocol/graph-ts";
 
@@ -70,7 +71,7 @@ export function handleOrdersMatchedWithVoucher(
       let deal = new Deal(dealId);
       deal.timestamp = event.block.timestamp;
       deal.sponsor = voucherId;
-      deal.sponsoredAmount = sponsoredAmount;
+      deal.sponsoredAmount = nRLCToRLC(sponsoredAmount);
 
       let pocoDeal = pocoContract.viewDeal(event.params.dealId);
 
@@ -92,9 +93,9 @@ export function handleOrdersMatchedWithVoucher(
       let requester = loadOrCreateAccount(pocoDeal.requester.toHex());
       deal.requester = requester.id;
 
-      deal.appPrice = pocoDeal.app.price;
-      deal.datasetPrice = pocoDeal.dataset.price;
-      deal.workerpoolPrice = pocoDeal.workerpool.price;
+      deal.appPrice = nRLCToRLC(pocoDeal.app.price);
+      deal.datasetPrice = nRLCToRLC(pocoDeal.dataset.price);
+      deal.workerpoolPrice = nRLCToRLC(pocoDeal.workerpool.price);
 
       deal.botSize = pocoDeal.botSize;
 
