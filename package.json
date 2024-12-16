@@ -1,49 +1,49 @@
 {
-    "name": "iexec-voucher-subgraph",
-    "author": "iExec",
-    "type": "module",
-    "version": "1.0.0",
-    "description": "Subgraph for iExec Voucher contracts",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph.git"
-    },
-    "license": "Apache-2.0",
-    "bugs": {
-        "url": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph/issues"
-    },
-    "homepage": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph#readme",
-    "scripts": {
-        "prepare": "husky",
-        "codegen": "cp subgraph.template.yaml subgraph.yaml && graph codegen",
-        "build": "graph build",
-        "create": "graph create --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}/iexec-voucher",
-        "remove": "graph remove --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}/iexec-voucher",
-        "deploy:prepare-manifest": "sed -i \"s|#NETWORK_NAME#|network: ${NETWORK_NAME:-bellecour}|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_ADDRESS#|address: \\\"$VOUCHER_HUB_ADDRESS\\\"|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_START_BLOCK#|startBlock: $VOUCHER_HUB_START_BLOCK|g\" subgraph.yaml",
-        "deploy": "npm run deploy:prepare-manifest && graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} ${NETWORK_NAME:-bellecour}/iexec-voucher --version-label ${VERSION_LABEL:-develop}",
-        "clean": "rm -rf generated && rm -rf build",
-        "test": "npm run codegen && graph test",
-        "all": "npm run clean && npm run codegen && npm run build && npm run create && npm run deploy",
-        "stop-test-stack": "cd test-stack && docker compose down --remove-orphans --volumes",
-        "start-test-stack": "npm run stop-test-stack && cd test-stack && docker compose build && node prepare-test-env.js && docker compose up -d",
-        "format": "prettier --write \"(src|tests|test-stack)/**/*.{js,ts}\""
-    },
-    "lint-staged": {
-        "*.{js,ts}": [
-            "prettier --write "
-        ]
-    },
-    "dependencies": {
-        "@graphprotocol/graph-cli": "^0.91.1",
-        "@graphprotocol/graph-ts": "^0.36.0",
-        "@iexec/poco": "^5.5.0",
-        "@iexec/voucher-contracts": "^1.0.0",
-        "ethers": "^6.13.4",
-        "iexec": "^8.12.0",
-        "matchstick-as": "^0.6.0",
-        "husky": "^9.1.6",
-        "lint-staged": "^15.2.10",
-        "prettier": "^3.3.3",
-        "prettier-plugin-organize-imports": "^4.1.0"
-    }
+  "name": "iexec-voucher-subgraph",
+  "author": "iExec",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Subgraph for iExec Voucher contracts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph.git"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph/issues"
+  },
+  "homepage": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph#readme",
+  "scripts": {
+    "prepare": "husky",
+    "codegen": "cp subgraph.template.yaml subgraph.yaml && graph codegen",
+    "build": "graph build",
+    "create": "graph create --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}/iexec-voucher",
+    "remove": "graph remove --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}/iexec-voucher",
+    "deploy:prepare-manifest": "sed -i \"s|#NETWORK_NAME#|network: ${NETWORK_NAME:-bellecour}|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_ADDRESS#|address: \\\"$VOUCHER_HUB_ADDRESS\\\"|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_START_BLOCK#|startBlock: $VOUCHER_HUB_START_BLOCK|g\" subgraph.yaml",
+    "deploy": "npm run deploy:prepare-manifest && graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} ${NETWORK_NAME:-bellecour}/iexec-voucher --version-label ${VERSION_LABEL:-develop}",
+    "clean": "rm -rf generated && rm -rf build",
+    "test": "npm run codegen && graph test",
+    "all": "npm run clean && npm run codegen && npm run build && npm run create && npm run deploy",
+    "stop-test-stack": "cd test-stack && docker compose down --remove-orphans --volumes",
+    "start-test-stack": "npm run stop-test-stack && cd test-stack && docker compose build && node prepare-test-env.js && docker compose up -d",
+    "format": "prettier --write \"(src|tests|test-stack)/**/*.{js,ts}\""
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "prettier --write "
+    ]
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.91.1",
+    "@graphprotocol/graph-ts": "^0.36.0",
+    "@iexec/poco": "^5.5.0",
+    "@iexec/voucher-contracts": "^1.0.0",
+    "ethers": "^6.13.4",
+    "iexec": "^8.12.0",
+    "matchstick-as": "^0.6.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3",
+    "prettier-plugin-organize-imports": "^4.1.0"
+  }
 }
