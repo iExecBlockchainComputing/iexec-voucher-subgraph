@@ -1,80 +1,60 @@
-import { newMockEvent } from "matchstick-as/assembly/index";
-import { ethereum, Address, BigInt } from "@graphprotocol/graph-ts";
-import {
-  EligibleAssetRemoved,
-  VoucherCreated,
-} from "../../../generated/VoucherHub/VoucherHub";
+import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts';
+import { newMockEvent } from 'matchstick-as/assembly/index';
+import { EligibleAssetRemoved, VoucherCreated } from '../../../generated/VoucherHub/VoucherHub';
 
 export function createVoucherCreatedEvent(
-  voucher: Address,
-  owner: Address,
-  voucherType: BigInt,
-  value: BigInt,
-  expiration: BigInt
+    voucher: Address,
+    owner: Address,
+    voucherType: BigInt,
+    value: BigInt,
+    expiration: BigInt,
 ): VoucherCreated {
-  let mockEvent = newMockEvent();
-  let event = new VoucherCreated(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters,
-    mockEvent.receipt
-  );
+    let mockEvent = newMockEvent();
+    let event = new VoucherCreated(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        mockEvent.parameters,
+        mockEvent.receipt,
+    );
 
-  event.parameters = new Array();
+    event.parameters = new Array();
 
-  event.parameters.push(
-    new ethereum.EventParam("voucher", ethereum.Value.fromAddress(voucher))
-  );
-  event.parameters.push(
-    new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner))
-  );
-  event.parameters.push(
-    new ethereum.EventParam(
-      "voucherType",
-      ethereum.Value.fromUnsignedBigInt(voucherType)
-    )
-  );
-  event.parameters.push(
-    new ethereum.EventParam(
-      "expiration",
-      ethereum.Value.fromUnsignedBigInt(expiration)
-    )
-  );
-  event.parameters.push(
-    new ethereum.EventParam("value", ethereum.Value.fromUnsignedBigInt(value))
-  );
+    event.parameters.push(new ethereum.EventParam('voucher', ethereum.Value.fromAddress(voucher)));
+    event.parameters.push(new ethereum.EventParam('owner', ethereum.Value.fromAddress(owner)));
+    event.parameters.push(
+        new ethereum.EventParam('voucherType', ethereum.Value.fromUnsignedBigInt(voucherType)),
+    );
+    event.parameters.push(
+        new ethereum.EventParam('expiration', ethereum.Value.fromUnsignedBigInt(expiration)),
+    );
+    event.parameters.push(
+        new ethereum.EventParam('value', ethereum.Value.fromUnsignedBigInt(value)),
+    );
 
-  return event;
+    return event;
 }
 
-export function createEligibleAssetRemovedEvent(
-  id: BigInt,
-  asset: Address
-): EligibleAssetRemoved {
-  let mockEvent = newMockEvent();
-  let event = new EligibleAssetRemoved(
-    mockEvent.address,
-    mockEvent.logIndex,
-    mockEvent.transactionLogIndex,
-    mockEvent.logType,
-    mockEvent.block,
-    mockEvent.transaction,
-    mockEvent.parameters,
-    mockEvent.receipt
-  );
+export function createEligibleAssetRemovedEvent(id: BigInt, asset: Address): EligibleAssetRemoved {
+    let mockEvent = newMockEvent();
+    let event = new EligibleAssetRemoved(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        mockEvent.parameters,
+        mockEvent.receipt,
+    );
 
-  event.parameters = new Array();
+    event.parameters = new Array();
 
-  event.parameters.push(
-    new ethereum.EventParam("id", ethereum.Value.fromUnsignedBigInt(id))
-  );
-  event.parameters.push(
-    new ethereum.EventParam("asset", ethereum.Value.fromAddress(asset))
-  );
+    event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
+    event.parameters.push(new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)));
 
-  return event;
+    return event;
 }
