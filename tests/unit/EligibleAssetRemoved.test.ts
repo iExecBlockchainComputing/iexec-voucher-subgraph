@@ -20,7 +20,7 @@ describe('EligibleAssetRemovedEvent', () => {
         clearStore();
     });
 
-    test('Should update voucherType when the entity exists', () => {
+    test('Should removed asset(s) from voucherType when the entity exists', () => {
         // --- GIVEN
         let voucherTypeId = '1';
         let voucherType = new VoucherType(voucherTypeId);
@@ -46,29 +46,6 @@ describe('EligibleAssetRemovedEvent', () => {
         assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[]`);
     });
 
-    test('Should not fail if the asset does not exist in eligibleAssets', () => {
-        // --- GIVEN
-        let voucherTypeId = '2';
-        let voucherType = new VoucherType(voucherTypeId);
-        voucherType.description = 'Another Test Voucher Type';
-        voucherType.duration = BigInt.fromI32(86400);
-        let unrelatedAppId = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef';
-        voucherType.eligibleAssets = [unrelatedAppId];
-        voucherType.save();
-        assert.entityCount('VoucherType', 1);
-        assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[${unrelatedAppId}]`);
-
-        // --- WHEN
-        let event = createEligibleAssetRemovedEvent(
-            BigInt.fromString(voucherTypeId),
-            Address.fromString('0x1234567890123456789012345678901234567890'),
-        );
-        handleEligibleAssetRemoved(event);
-
-        // --- THEN
-        assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[${unrelatedAppId}]`);
-    });
-
     test('Should do nothing if the VoucherType does not exist', () => {
         // --- GIVEN
         let event = createEligibleAssetRemovedEvent(
@@ -82,5 +59,29 @@ describe('EligibleAssetRemovedEvent', () => {
         // --- THEN
         assert.entityCount('VoucherType', 0);
         assert.entityCount('App', 0);
+    });
+
+    test('Should not fail if the asset does not exist in eligibleAssets', () => {
+        // --- GIVEN
+        let voucherTypeId = '1';
+        let voucherType = new VoucherType(voucherTypeId);
+        voucherType.description = 'Another Test Voucher Type';
+        voucherType.duration = BigInt.fromI32(86400);
+        let existingAppId = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef';
+        let unrelatedAppId = '0x1234567890123456789012345678901234567890';
+        voucherType.eligibleAssets = [existingAppId];
+        voucherType.save();
+        assert.entityCount('VoucherType', 1);
+        assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[${existingAppId}]`);
+
+        // --- WHEN
+        let event = createEligibleAssetRemovedEvent(
+            BigInt.fromString(voucherTypeId),
+            Address.fromString(unrelatedAppId),
+        );
+        handleEligibleAssetRemoved(event);
+
+        // --- THEN
+        assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[${existingAppId}]`);
     });
 });
