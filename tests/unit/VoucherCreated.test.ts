@@ -38,14 +38,15 @@ describe("VoucherCreatedEvent", () => {
 
     let voucherAddress = "0x1234567890123456789012345678901234567890";
     let owner = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
-    let value = BigInt.fromI32(2_000_000_000); // in nRLC
+    let rlcValue = BigInt.fromI32(2); // in RLC
+    let nRlcValue = rlcValue.times(BigInt.fromI32(1_000_000_000)); // in nRLC
     let expiration = BigInt.fromI32(1234567890);
 
     let event = createVoucherCreatedEvent(
       Address.fromString(voucherAddress),
       Address.fromString(owner),
       BigInt.fromString(voucherTypeId),
-      value,
+      nRlcValue,
       expiration
     );
 
@@ -56,8 +57,13 @@ describe("VoucherCreatedEvent", () => {
 
     assert.fieldEquals("Voucher", voucherAddress, "voucherType", voucherTypeId);
     assert.fieldEquals("Voucher", voucherAddress, "owner", owner);
-    assert.fieldEquals("Voucher", voucherAddress, "value", "2");
-    assert.fieldEquals("Voucher", voucherAddress, "balance", "2");
+    assert.fieldEquals("Voucher", voucherAddress, "value", rlcValue.toString());
+    assert.fieldEquals(
+      "Voucher",
+      voucherAddress,
+      "balance",
+      rlcValue.toString()
+    );
     assert.fieldEquals(
       "Voucher",
       voucherAddress,
