@@ -1,6 +1,7 @@
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
 import { EligibleAssetRemoved, VoucherCreated } from '../../../generated/VoucherHub/VoucherHub';
+import { App } from '../../../generated/schema';
 
 export function createVoucherCreatedEvent(
     voucher: Address,
@@ -57,4 +58,13 @@ export function createEligibleAssetRemovedEvent(id: BigInt, asset: Address): Eli
     event.parameters.push(new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)));
 
     return event;
+}
+
+/**
+ * Utility function to create and save an App entity.
+ */
+export function createAndSaveApp(appId: string, name: string): void {
+    let app = new App(appId);
+    app.name = name;
+    app.save();
 }
