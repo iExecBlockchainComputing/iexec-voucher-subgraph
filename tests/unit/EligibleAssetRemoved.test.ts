@@ -9,7 +9,7 @@ describe('EligibleAssetRemovedEvent', () => {
         clearStore();
     });
 
-    test('Should removed asset(s) from voucherType when the entity exists', () => {
+    test('Should removed asset from voucherType when the entity exists', () => {
         // --- GIVEN
         let voucherTypeId = '1';
         let voucherType = new VoucherType(voucherTypeId);
