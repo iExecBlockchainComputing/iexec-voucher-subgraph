@@ -18,11 +18,9 @@ export function createVoucherCreatedEvent(
         mockEvent.logType,
         mockEvent.block,
         mockEvent.transaction,
-        mockEvent.parameters,
+        new Array(),
         mockEvent.receipt,
     );
-
-    event.parameters = new Array();
 
     event.parameters.push(new ethereum.EventParam('voucher', ethereum.Value.fromAddress(voucher)));
     event.parameters.push(new ethereum.EventParam('owner', ethereum.Value.fromAddress(owner)));
@@ -48,11 +46,9 @@ export function createEligibleAssetRemovedEvent(id: BigInt, asset: Address): Eli
         mockEvent.logType,
         mockEvent.block,
         mockEvent.transaction,
-        mockEvent.parameters,
+        new Array(),
         mockEvent.receipt,
     );
-
-    event.parameters = new Array();
 
     event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
     event.parameters.push(new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)));

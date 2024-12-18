@@ -4,12 +4,12 @@ import { VoucherType } from '../../generated/schema';
 import { handleEligibleAssetRemoved } from '../../src/voucherHub';
 import { createAndSaveApp, createEligibleAssetRemovedEvent } from './utils/utils';
 
-describe('EligibleAssetRemovedEvent', () => {
-    // Shared constants
-    const voucherTypeId = '1';
-    const voucherDescription = 'Test Voucher Type';
-    const voucherDuration = BigInt.fromI32(86400);
+// Shared constants
+const voucherTypeId = '1';
+const voucherDescription = 'Test Voucher Type';
+const voucherDuration = BigInt.fromI32(86400);
 
+describe('EligibleAssetRemovedEvent', () => {
     beforeEach(() => {
         clearStore();
     });
