@@ -1,8 +1,8 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
-import { VoucherType } from '../../generated/schema';
-import { handleEligibleAssetRemoved } from '../../src/voucherHub';
-import { createAndSaveApp, createEligibleAssetRemovedEvent } from './utils/utils';
+import { VoucherType } from '../../../generated/schema';
+import { handleEligibleAssetRemoved } from '../../../src/voucherHub';
+import { createAndSaveApp, createEligibleAssetRemovedEvent } from '../utils/utils';
 
 // Shared constants
 const voucherTypeId = '1';
