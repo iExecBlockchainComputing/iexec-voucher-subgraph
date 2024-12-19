@@ -7,9 +7,9 @@ import {
     describe,
     test,
 } from 'matchstick-as/assembly/index';
-import { App, VoucherType } from '../../generated/schema';
-import { handleVoucherCreated } from '../../src/voucherHub';
-import { createVoucherCreatedEvent } from './utils/utils';
+import { App, VoucherType } from '../../../generated/schema';
+import { handleVoucherCreated } from '../../../src/voucherHub';
+import { createVoucherCreatedEvent } from '../utils/utils';
 
 describe('VoucherCreatedEvent', () => {
     beforeEach(() => {
