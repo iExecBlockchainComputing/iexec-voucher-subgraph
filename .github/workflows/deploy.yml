@@ -1,0 +1,64 @@
+name: Deploy Subgraph
+
+on:
+  workflow_dispatch:
+    inputs:
+      START_BLOCK:
+        description: 'Start Block for Subgraph Deployment'
+        required: true
+        default: ''
+      VOUCHER_HUB_ADDRESS:
+        description: 'Voucher Hub Address'
+        required: false
+        default: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
+      NETWORK_NAME:
+        description: 'Network Name'
+        required: false
+        default: 'bellecour'
+
+jobs:
+  deploy-subgraph:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        environment: [dev, staging, prod]
+        include:
+          - environment: dev
+            subgraph_name: bellecour/dev-iexec-voucher
+            branch: develop
+            target: dev
+          - environment: staging
+            subgraph_name: bellecour/staging-iexec-voucher
+            branch: develop
+            target: staging
+          - environment: prod
+            subgraph_name: bellecour/prod-iexec-voucher
+            branch: main
+            target: prod
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Deploy Subgraph
+        env:
+          GRAPHNODE_URL: ${{ secrets.GRAPHNODE_URL }}
+          IPFS_URL: ${{ secrets.IPFS_URL }}
+          START_BLOCK: ${{ inputs.START_BLOCK }}
+          VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
+          NETWORK_NAME: ${{ inputs.NETWORK_NAME }}
+          SUBGRAPH_NAME: ${{ matrix.subgraph_name }}
+        run: |
+          echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
+          npm ci
+          npm run codegen
+          npm run build
+          npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME || echo "Subgraph already exists"
+          npx graph deploy --node $GRAPHNODE_URL $SUBGRAPH_NAME --ipfs $IPFS_URL --version-label $(npm pkg get version)
+        if: github.ref_name == matrix.branch && github.event.inputs.target == matrix.target
