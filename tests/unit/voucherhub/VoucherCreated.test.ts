@@ -1,22 +1,11 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
-import {
-    afterEach,
-    assert,
-    beforeEach,
-    clearStore,
-    describe,
-    test,
-} from 'matchstick-as/assembly/index';
+import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { App, VoucherType } from '../../../generated/schema';
 import { handleVoucherCreated } from '../../../src/voucherHub';
 import { createVoucherCreatedEvent } from '../utils/utils';
 
 describe('VoucherCreatedEvent', () => {
     beforeEach(() => {
-        clearStore();
-    });
-
-    afterEach(() => {
         clearStore();
     });
 
