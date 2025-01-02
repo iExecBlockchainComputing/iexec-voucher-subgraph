@@ -80,7 +80,7 @@ export function createEligibleAssetAddedEvent(id: BigInt, asset: Address): Eligi
 }
 
 /**
- * Utility function to create and save an entity.
+ * Utility functions to create and save entities.
  */
 export function createAndSaveApp(appId: string, name: string): void {
     let app = new App(appId);
