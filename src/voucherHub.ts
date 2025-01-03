@@ -4,6 +4,8 @@ import { PoCo } from '../generated/VoucherHub/PoCo';
 import {
     EligibleAssetAdded,
     EligibleAssetRemoved,
+    RoleGranted,
+    RoleRevoked,
     VoucherCreated,
     VoucherDebited,
     VoucherDrained,
@@ -22,6 +24,7 @@ import {
     loadOrCreateAccount,
     loadOrCreateApp,
     loadOrCreateDataset,
+    loadOrCreateRole,
     loadOrCreateWorkerpool,
     nRLCToRLC,
 } from './utils';
@@ -214,4 +217,18 @@ export function handleVoucherTypeDurationUpdated(event: VoucherTypeDurationUpdat
         voucherType.duration = duration;
         voucherType.save();
     }
+}
+
+export function handleRoleGranted(event: RoleGranted): void {
+    let account = loadOrCreateAccount(event.params.account.toHex());
+    let role = loadOrCreateRole(event.params.role.toHex());
+    account.role = role.id;
+    account.save();
+}
+
+export function handleRoleRevoked(event: RoleRevoked): void {
+    loadOrCreateRole(event.params.role.toHex());
+    let account = loadOrCreateAccount(event.params.account.toHex());
+    account.role = null; // Clear the role when revoked
+    account.save();
 }

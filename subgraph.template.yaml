@@ -25,6 +25,7 @@ dataSources:
         - App
         - Dataset
         - Workerpool
+        - Role
       abis:
         - name: VoucherHub
           file: node_modules/@iexec/voucher-contracts/artifacts/contracts/VoucherHub.sol/VoucherHub.json
@@ -63,6 +64,10 @@ dataSources:
           handler: handleVoucherTypeDescriptionUpdated
         - event: VoucherTypeDurationUpdated(indexed uint256,uint256)
           handler: handleVoucherTypeDurationUpdated
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
       file: ./src/voucherHub.ts
 
 templates:

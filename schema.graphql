@@ -1,6 +1,13 @@
 type Account @entity {
   id: ID!
   voucher: Voucher @derivedFrom(field: "owner")
+  role: Role 
+}
+
+type Role @entity {
+  id: ID!
+  name: String
+  accounts: [Account!]! @derivedFrom(field: "role")
 }
 
 type VoucherType @entity {

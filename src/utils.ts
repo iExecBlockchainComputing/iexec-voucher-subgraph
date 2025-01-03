@@ -1,5 +1,5 @@
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts';
-import { Account, App, Dataset, Workerpool } from '../generated/schema';
+import { Account, App, Dataset, Role, Workerpool } from '../generated/schema';
 import { App as AppContract } from '../generated/templates/Voucher/App';
 import { Dataset as DatasetContract } from '../generated/templates/Voucher/Dataset';
 import { Workerpool as WorkerpoolContract } from '../generated/templates/Voucher/Workerpool';
@@ -11,6 +11,16 @@ export function loadOrCreateAccount(id: string): Account {
         account.save();
     }
     return account;
+}
+
+export function loadOrCreateRole(id: string): Role {
+    let role = Role.load(id);
+    if (!role) {
+        role = new Role(id);
+        role.name = getRoleName(id);
+        role.save();
+    }
+    return role;
 }
 
 export function loadOrCreateApp(address: Address): App {
@@ -53,4 +63,23 @@ export function getEventId(event: ethereum.Event): string {
 export function nRLCToRLC(value: BigInt): BigInt {
     let divisor = BigInt.fromI32(1_000_000_000);
     return value.div(divisor);
+}
+
+export function getRoleName(roleId: string): string {
+    // Role ID mappings (precomputed hashes)
+    const ROLE_NAMES: Map<string, string> = new Map<string, string>();
+    ROLE_NAMES.set(
+        '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3',
+        'UPGRADER_ROLE',
+    );
+    ROLE_NAMES.set(
+        '0x241ecf16d79d0f8dbfb92cbc07fe17840425976cf0667f022fe9877caa831b08',
+        'MANAGER_ROLE',
+    );
+    ROLE_NAMES.set(
+        '0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6',
+        'MINTER_ROLE',
+    );
+
+    return ROLE_NAMES.has(roleId) ? ROLE_NAMES.get(roleId)! : 'UNKNOWN_ROLE';
 }
