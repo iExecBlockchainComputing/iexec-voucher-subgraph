@@ -66,20 +66,13 @@ export function nRLCToRLC(value: BigInt): BigInt {
 }
 
 export function getRoleName(roleId: string): string {
-    // Role ID mappings (precomputed hashes)
-    const ROLE_NAMES: Map<string, string> = new Map<string, string>();
-    ROLE_NAMES.set(
-        '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3',
-        'UPGRADER_ROLE',
-    );
-    ROLE_NAMES.set(
-        '0x241ecf16d79d0f8dbfb92cbc07fe17840425976cf0667f022fe9877caa831b08',
-        'MANAGER_ROLE',
-    );
-    ROLE_NAMES.set(
-        '0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6',
-        'MINTER_ROLE',
-    );
-
-    return ROLE_NAMES.has(roleId) ? ROLE_NAMES.get(roleId)! : 'UNKNOWN_ROLE';
+    if (roleId == '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3') {
+        return 'UPGRADER_ROLE';
+    } else if (roleId == '0x241ecf16d79d0f8dbfb92cbc07fe17840425976cf0667f022fe9877caa831b08') {
+        return 'MANAGER_ROLE';
+    } else if (roleId == '0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6') {
+        return 'MINTER_ROLE';
+    } else {
+        return 'UNKNOWN_ROLE';
+    }
 }
