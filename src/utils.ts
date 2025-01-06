@@ -66,7 +66,11 @@ export function nRLCToRLC(value: BigInt): BigInt {
 }
 
 export function getRoleName(roleId: string): string {
-    if (roleId == '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3') {
+    // DEFAULT_ADMIN_ROLE make reference to OpenZeppelin's
+    // AccessControl.sol (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/bf69b601468a6a4f78b8c85f9a31c3690d613a71/contracts/access/AccessControl.sol#L57)
+    if (roleId == '0x00') {
+        return 'DEFAULT_ADMIN_ROLE';
+    } else if (roleId == '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3') {
         return 'UPGRADER_ROLE';
     } else if (roleId == '0x241ecf16d79d0f8dbfb92cbc07fe17840425976cf0667f022fe9877caa831b08') {
         return 'MANAGER_ROLE';
