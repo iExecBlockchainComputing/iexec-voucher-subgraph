@@ -4,7 +4,7 @@
 
 ### Added
 
-- Support for `RoleGranted` and `RoleRevoked` event handling in the voucherHub module:
+- Support for `RoleGranted` and `RoleRevoked` event handling in the voucherHub module (#19):
   - Recognized roles are now mapped to specific names:
     - UPGRADER_ROLE (`0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3`)
     - MANAGER_ROLE (`0x241ecf16d79d0f8dbfb92cbc07fe17840425976cf0667f022fe9877caa831b08`)
