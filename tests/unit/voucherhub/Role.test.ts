@@ -7,7 +7,7 @@ import { createRoleGrantedEvent, createRoleRevokedEvent } from '../utils/utils';
 
 // Constants for testing
 const ACCOUNT_ID = '0x1234567890abcdef1234567890abcdef12345678';
-const UPGRADER_ROLE = '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3';
+const UPGRADER_ROLE_ID = '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3';
 const MANAGER_ROLE_ID = '0x241ecf16d79d0f8dbfb92cbc07fe17840425976cf0667f022fe9877caa831b08';
 const MINTER_ROLE_ID = '0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6';
 const UNKNOWN_ROLE_ID = '0x544b2cd71ba72d14e3ad1fab938f5145ba5fc248560466e1d7cc20c78080e0fb';
@@ -29,11 +29,11 @@ describe('Role Handlers', () => {
         clearStore();
     });
 
-    test('Should assign UPGRADER_ROLE to an account on RoleGranted event', () => {
+    test('Should assign UPGRADER_ROLE_ID to an account on RoleGranted event', () => {
         // --- GIVEN
         const event = createRoleGrantedEvent(
             Address.fromString(ACCOUNT_ID),
-            Bytes.fromHexString(UPGRADER_ROLE),
+            Bytes.fromHexString(UPGRADER_ROLE_ID),
         );
 
         // WHEN
@@ -41,8 +41,8 @@ describe('Role Handlers', () => {
 
         // THEN
         assert.fieldEquals('Account', ACCOUNT_ID, 'id', ACCOUNT_ID);
-        assert.fieldEquals('Account', ACCOUNT_ID, 'role', UPGRADER_ROLE);
-        assert.fieldEquals('Role', UPGRADER_ROLE, 'name', 'UPGRADER_ROLE');
+        assert.fieldEquals('Account', ACCOUNT_ID, 'role', UPGRADER_ROLE_ID);
+        assert.fieldEquals('Role', UPGRADER_ROLE_ID, 'name', 'UPGRADER_ROLE');
     });
 
     test('Should assign MANAGER_ROLE to an account on RoleGranted event', () => {
@@ -75,6 +75,24 @@ describe('Role Handlers', () => {
         assert.fieldEquals('Account', ACCOUNT_ID, 'id', ACCOUNT_ID);
         assert.fieldEquals('Account', ACCOUNT_ID, 'role', MINTER_ROLE_ID);
         assert.fieldEquals('Role', MINTER_ROLE_ID, 'name', 'MINTER_ROLE');
+    });
+
+    test('Should revoke UPGRADER_ROLE from an account on RoleRevoked event', () => {
+        // --- GIVEN
+        setupInitialAccount(ACCOUNT_ID, UPGRADER_ROLE_ID);
+
+        const event = createRoleRevokedEvent(
+            Address.fromString(ACCOUNT_ID),
+            Bytes.fromHexString(UPGRADER_ROLE_ID),
+        );
+
+        // WHEN
+        handleRoleRevoked(event);
+
+        // THEN
+        assert.fieldEquals('Account', ACCOUNT_ID, 'id', ACCOUNT_ID);
+        assert.fieldEquals('Account', ACCOUNT_ID, 'role', 'null');
+        assert.fieldEquals('Role', UPGRADER_ROLE_ID, 'name', 'UPGRADER_ROLE');
     });
 
     test('Should revoke MANAGER_ROLE from an account on RoleRevoked event', () => {
