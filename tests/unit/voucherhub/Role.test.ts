@@ -46,7 +46,7 @@ describe('Role Handlers', () => {
         assert.fieldEquals('Role', DEFAULT_ADMIN_ROLE_ID, 'name', 'DEFAULT_ADMIN_ROLE');
     });
 
-    test('Should assign UPGRADER_ROLE_ID to an account on RoleGranted event', () => {
+    test('Should assign UPGRADER_ROLE to an account on RoleGranted event', () => {
         // --- GIVEN
         const event = createRoleGrantedEvent(
             Address.fromString(ACCOUNT_ID),
