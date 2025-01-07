@@ -1,5 +1,5 @@
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts';
-import { Account, App, Dataset, Workerpool } from '../generated/schema';
+import { Account, App, Dataset, Role, Workerpool } from '../generated/schema';
 import { App as AppContract } from '../generated/templates/Voucher/App';
 import { Dataset as DatasetContract } from '../generated/templates/Voucher/Dataset';
 import { Workerpool as WorkerpoolContract } from '../generated/templates/Voucher/Workerpool';
@@ -11,6 +11,16 @@ export function loadOrCreateAccount(id: string): Account {
         account.save();
     }
     return account;
+}
+
+export function loadOrCreateRole(id: string): Role {
+    let role = Role.load(id);
+    if (!role) {
+        role = new Role(id);
+        role.name = getRoleName(id);
+        role.save();
+    }
+    return role;
 }
 
 export function loadOrCreateApp(address: Address): App {
@@ -53,4 +63,20 @@ export function getEventId(event: ethereum.Event): string {
 export function nRLCToRLC(value: BigInt): BigInt {
     let divisor = BigInt.fromI32(1_000_000_000);
     return value.div(divisor);
+}
+
+export function getRoleName(roleId: string): string {
+    // DEFAULT_ADMIN_ROLE make reference to OpenZeppelin's
+    // AccessControl.sol (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/bf69b601468a6a4f78b8c85f9a31c3690d613a71/contracts/access/AccessControl.sol#L57)
+    if (roleId == '0x00') {
+        return 'DEFAULT_ADMIN_ROLE';
+    } else if (roleId == '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3') {
+        return 'UPGRADER_ROLE';
+    } else if (roleId == '0x241ecf16d79d0f8dbfb92cbc07fe17840425976cf0667f022fe9877caa831b08') {
+        return 'MANAGER_ROLE';
+    } else if (roleId == '0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6') {
+        return 'MINTER_ROLE';
+    } else {
+        return 'UNKNOWN_ROLE';
+    }
 }

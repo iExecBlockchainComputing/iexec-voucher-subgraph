@@ -1,8 +1,10 @@
-import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts';
+import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
 import {
     EligibleAssetAdded,
     EligibleAssetRemoved,
+    RoleGranted,
+    RoleRevoked,
     VoucherCreated,
 } from '../../../generated/VoucherHub/VoucherHub';
 import { App, Dataset, Workerpool } from '../../../generated/schema';
@@ -75,6 +77,44 @@ export function createEligibleAssetAddedEvent(id: BigInt, asset: Address): Eligi
 
     event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
     event.parameters.push(new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)));
+
+    return event;
+}
+
+export function createRoleGrantedEvent(account: Address, role: Bytes): RoleGranted {
+    let mockEvent = newMockEvent();
+    let event = new RoleGranted(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters.push(new ethereum.EventParam('role', ethereum.Value.fromBytes(role)));
+    event.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)));
+
+    return event;
+}
+
+export function createRoleRevokedEvent(account: Address, role: Bytes): RoleRevoked {
+    let mockEvent = newMockEvent();
+    let event = new RoleRevoked(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters.push(new ethereum.EventParam('role', ethereum.Value.fromBytes(role)));
+    event.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)));
 
     return event;
 }
