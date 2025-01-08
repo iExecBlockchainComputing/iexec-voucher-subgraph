@@ -75,7 +75,7 @@ describe('VoucherTypeEvents', () => {
             let event = createVoucherTypeDescriptionUpdatedEvent(
                 BigInt.fromString(VOUCHER_TYPE_ID),
                 'New Test Voucher Type',
-            ); // 7 days in seconds
+            );
             handleVoucherTypeDescriptionUpdated(event);
 
             // Then
@@ -107,7 +107,7 @@ describe('VoucherTypeEvents', () => {
             let event = createVoucherTypeDescriptionUpdatedEvent(
                 BigInt.fromString('2'),
                 'New Test Voucher Type',
-            ); // 7 days in seconds
+            );
             handleVoucherTypeDescriptionUpdated(event);
 
             // Then
