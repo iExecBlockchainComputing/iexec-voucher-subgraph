@@ -43,7 +43,7 @@ export function handleAccountUnauthorized(event: AccountUnauthorized): void {
         let existingEntry = authorizedAccounts.indexOf(unauthorizedAccountId);
         // remove if exists
         if (existingEntry !== -1) {
-            authorizedAccounts.splice(existingEntry);
+            authorizedAccounts.splice(existingEntry, 1);
             voucher.authorizedAccounts = authorizedAccounts;
             voucher.save();
         }
