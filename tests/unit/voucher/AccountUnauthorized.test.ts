@@ -114,7 +114,7 @@ describe('AccountUnauthorizedEvent', () => {
         assert.fieldEquals('Voucher', voucherAddress, 'authorizedAccounts', '[]');
     });
 
-    test('Should NOT modify authorizedAccounts when the account does not exist', () => {
+    test('Should not modify authorizedAccounts when the account does not exist', () => {
         // --- GIVEN
         let voucherAddress = '0x1234567890123456789012345678901234567890';
         let authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
