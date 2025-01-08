@@ -6,6 +6,7 @@ import {
     RoleGranted,
     RoleRevoked,
     VoucherCreated,
+    VoucherTypeDescriptionUpdated,
     VoucherTypeDurationUpdated,
 } from '../../../generated/VoucherHub/VoucherHub';
 import { App, Dataset, Workerpool } from '../../../generated/schema';
@@ -109,9 +110,9 @@ export function createVoucherTypeDurationUpdatedEvent(
 export function createVoucherTypeDescriptionUpdatedEvent(
     id: BigInt,
     description: string,
-): VoucherTypeDurationUpdated {
+): VoucherTypeDescriptionUpdated {
     let mockEvent = newMockEvent();
-    let event = new VoucherTypeDurationUpdated(
+    let event = new VoucherTypeDescriptionUpdated(
         mockEvent.address,
         mockEvent.logIndex,
         mockEvent.transactionLogIndex,
@@ -123,7 +124,9 @@ export function createVoucherTypeDescriptionUpdatedEvent(
     );
 
     event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
-    event.parameters.push(new ethereum.EventParam('description', ethereum.Value.from(description)));
+    event.parameters.push(
+        new ethereum.EventParam('description', ethereum.Value.fromString(description)),
+    );
 
     return event;
 }
