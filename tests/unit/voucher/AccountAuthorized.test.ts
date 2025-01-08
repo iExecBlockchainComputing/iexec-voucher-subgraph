@@ -68,6 +68,8 @@ describe('AccountAuthorizedEvent', () => {
         // --- GIVEN
         const voucherAddress = '0x1234567890123456789012345678901234567890';
         const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+        // Ensure no Voucher entity exists
+        assert.entityCount('Voucher', 0);
 
         // --- WHEN
         const event = createAccountAuthorizedEvent(
@@ -78,6 +80,7 @@ describe('AccountAuthorizedEvent', () => {
 
         // --- THEN
         assert.notInStore('Voucher', voucherAddress);
+        assert.entityCount('Voucher', 0); // Ensure no entity is created or modified
     });
 
     test('Should NOT add duplicate accounts to authorizedAccounts', () => {
@@ -138,6 +141,8 @@ describe('AccountAuthorizedEvent', () => {
 
         // --- THEN
         // Ensure unrelated fields remain unchanged
+        assert.fieldEquals('Voucher', voucherAddress, 'voucherType', VOUCHER_TYPE_ID);
+        assert.fieldEquals('Voucher', voucherAddress, 'owner', VOUCHER_OWNER);
         assert.fieldEquals('Voucher', voucherAddress, 'value', VOUCHER_VALUE.toString());
         assert.fieldEquals('Voucher', voucherAddress, 'balance', VOUCHER_BALANCE.toString());
         assert.fieldEquals('Voucher', voucherAddress, 'expiration', VOUCHER_EXPIRATION.toString());
