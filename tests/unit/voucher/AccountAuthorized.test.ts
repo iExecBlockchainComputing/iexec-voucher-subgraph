@@ -62,6 +62,12 @@ describe('AccountAuthorizedEvent', () => {
             'authorizedAccounts',
             `[${authorizedAccount}]`,
         );
+        // Ensure unrelated fields remain unchanged
+        assert.fieldEquals('Voucher', voucherAddress, 'voucherType', VOUCHER_TYPE_ID);
+        assert.fieldEquals('Voucher', voucherAddress, 'owner', VOUCHER_OWNER);
+        assert.fieldEquals('Voucher', voucherAddress, 'value', VOUCHER_VALUE.toString());
+        assert.fieldEquals('Voucher', voucherAddress, 'balance', VOUCHER_BALANCE.toString());
+        assert.fieldEquals('Voucher', voucherAddress, 'expiration', VOUCHER_EXPIRATION.toString());
     });
 
     test('Should NOT modify authorizedAccounts if Voucher does not exist', () => {
@@ -114,37 +120,5 @@ describe('AccountAuthorizedEvent', () => {
             'authorizedAccounts',
             `[${authorizedAccount}]`,
         );
-    });
-
-    test('Should NOT modify unrelated fields on Voucher', () => {
-        // --- GIVEN
-        const voucherAddress = '0x1234567890123456789012345678901234567890';
-        const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-
-        // Create and initialize a mock Voucher entity
-        createAndSaveVoucher(
-            voucherAddress,
-            VOUCHER_TYPE_ID,
-            VOUCHER_OWNER,
-            VOUCHER_VALUE,
-            VOUCHER_BALANCE,
-            VOUCHER_EXPIRATION,
-            [], // Initialize the array
-        );
-
-        // --- WHEN
-        const event = createAccountAuthorizedEvent(
-            Address.fromString(voucherAddress),
-            Address.fromString(authorizedAccount),
-        );
-        handleAccountAuthorized(event);
-
-        // --- THEN
-        // Ensure unrelated fields remain unchanged
-        assert.fieldEquals('Voucher', voucherAddress, 'voucherType', VOUCHER_TYPE_ID);
-        assert.fieldEquals('Voucher', voucherAddress, 'owner', VOUCHER_OWNER);
-        assert.fieldEquals('Voucher', voucherAddress, 'value', VOUCHER_VALUE.toString());
-        assert.fieldEquals('Voucher', voucherAddress, 'balance', VOUCHER_BALANCE.toString());
-        assert.fieldEquals('Voucher', voucherAddress, 'expiration', VOUCHER_EXPIRATION.toString());
     });
 });
