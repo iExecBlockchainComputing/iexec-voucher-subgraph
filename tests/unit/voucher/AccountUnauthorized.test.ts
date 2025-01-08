@@ -45,7 +45,6 @@ describe('AccountUnauthorizedEvent', () => {
             VOUCHER_EXPIRATION,
             [authorizedAccount1, authorizedAccount2],
         );
-        // assert.fieldEquals('Voucher', voucherAddress, 'authorizedAccounts', `[${authorizedAccount1}, ${authorizedAccount2}]`);
 
         // --- WHEN
         let event = createAccountUnauthorizedEvent(
