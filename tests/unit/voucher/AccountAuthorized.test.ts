@@ -1,25 +1,34 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
-import { Voucher, VoucherType } from '../../../generated/schema';
 import { handleAccountAuthorized } from '../../../src/voucher';
-import { createAccountAuthorizedEvent } from '../utils/utils';
+import {
+    createAccountAuthorizedEvent,
+    createAndSaveType,
+    createAndSaveVoucher,
+} from '../utils/utils';
 
 // Shared constants
 const VOUCHER_TYPE_ID = '1';
 const VOUCHER_DESCRIPTION = 'Test Voucher Type';
 const VOUCHER_DURATION = BigInt.fromI32(86400);
+const VOUCHER_TYPE_ELIGIBLE_ASSETS: string[] = [];
+
 const VOUCHER_OWNER = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+const VOUCHER_VALUE = BigInt.fromI32(100);
+const VOUCHER_BALANCE = BigInt.fromI32(50);
+const VOUCHER_EXPIRATION = BigInt.fromI32(999999);
 
 describe('AccountAuthorizedEvent', () => {
     beforeEach(() => {
         clearStore();
 
         // Initialize a VoucherType entity
-        let voucherType = new VoucherType(VOUCHER_TYPE_ID);
-        voucherType.description = VOUCHER_DESCRIPTION;
-        voucherType.duration = VOUCHER_DURATION;
-        voucherType.eligibleAssets = [];
-        voucherType.save();
+        createAndSaveType(
+            VOUCHER_TYPE_ID,
+            VOUCHER_DESCRIPTION,
+            VOUCHER_DURATION,
+            VOUCHER_TYPE_ELIGIBLE_ASSETS,
+        );
     });
 
     test('Should add an account to authorizedAccounts when the Voucher exists', () => {
@@ -28,14 +37,15 @@ describe('AccountAuthorizedEvent', () => {
         const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
 
         // Create and initialize a mock Voucher entity
-        let voucher = new Voucher(voucherAddress);
-        voucher.authorizedAccounts = []; // Initialize the array
-        voucher.voucherType = VOUCHER_TYPE_ID;
-        voucher.owner = VOUCHER_OWNER;
-        voucher.value = BigInt.fromI32(100);
-        voucher.balance = BigInt.fromI32(100);
-        voucher.expiration = BigInt.fromI32(999999);
-        voucher.save();
+        createAndSaveVoucher(
+            voucherAddress,
+            VOUCHER_TYPE_ID,
+            VOUCHER_OWNER,
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
+            VOUCHER_EXPIRATION,
+            [], // Initialize the array
+        );
 
         // --- WHEN
         const event = createAccountAuthorizedEvent(
@@ -76,14 +86,15 @@ describe('AccountAuthorizedEvent', () => {
         const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
 
         // Create and initialize a mock Voucher entity
-        let voucher = new Voucher(voucherAddress);
-        voucher.authorizedAccounts = [authorizedAccount]; // Already authorized
-        voucher.voucherType = VOUCHER_TYPE_ID;
-        voucher.owner = VOUCHER_OWNER;
-        voucher.value = BigInt.fromI32(100);
-        voucher.balance = BigInt.fromI32(100);
-        voucher.expiration = BigInt.fromI32(999999);
-        voucher.save();
+        createAndSaveVoucher(
+            voucherAddress,
+            VOUCHER_TYPE_ID,
+            VOUCHER_OWNER,
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
+            VOUCHER_EXPIRATION,
+            [authorizedAccount], // Already authorized
+        );
 
         // --- WHEN
         const event = createAccountAuthorizedEvent(
@@ -108,14 +119,15 @@ describe('AccountAuthorizedEvent', () => {
         const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
 
         // Create and initialize a mock Voucher entity
-        let voucher = new Voucher(voucherAddress);
-        voucher.authorizedAccounts = []; // Initialize the array
-        voucher.voucherType = VOUCHER_TYPE_ID;
-        voucher.owner = VOUCHER_OWNER;
-        voucher.value = BigInt.fromI32(100);
-        voucher.balance = BigInt.fromI32(100);
-        voucher.expiration = BigInt.fromI32(999999);
-        voucher.save();
+        createAndSaveVoucher(
+            voucherAddress,
+            VOUCHER_TYPE_ID,
+            VOUCHER_OWNER,
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
+            VOUCHER_EXPIRATION,
+            [], // Initialize the array
+        );
 
         // --- WHEN
         const event = createAccountAuthorizedEvent(
@@ -126,8 +138,8 @@ describe('AccountAuthorizedEvent', () => {
 
         // --- THEN
         // Ensure unrelated fields remain unchanged
-        assert.fieldEquals('Voucher', voucherAddress, 'value', '100');
-        assert.fieldEquals('Voucher', voucherAddress, 'balance', '100');
-        assert.fieldEquals('Voucher', voucherAddress, 'expiration', '999999');
+        assert.fieldEquals('Voucher', voucherAddress, 'value', VOUCHER_VALUE.toString());
+        assert.fieldEquals('Voucher', voucherAddress, 'balance', VOUCHER_BALANCE.toString());
+        assert.fieldEquals('Voucher', voucherAddress, 'expiration', VOUCHER_EXPIRATION.toString());
     });
 });
