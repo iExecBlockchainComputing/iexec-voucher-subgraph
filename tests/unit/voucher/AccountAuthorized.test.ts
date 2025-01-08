@@ -64,7 +64,7 @@ describe('AccountAuthorizedEvent', () => {
         );
     });
 
-    test('Should not modify authorizedAccounts if Voucher does not exist', () => {
+    test('Should NOT modify authorizedAccounts if Voucher does not exist', () => {
         // --- GIVEN
         const voucherAddress = '0x1234567890123456789012345678901234567890';
         const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
@@ -80,7 +80,7 @@ describe('AccountAuthorizedEvent', () => {
         assert.notInStore('Voucher', voucherAddress);
     });
 
-    test('Should not add duplicate accounts to authorizedAccounts', () => {
+    test('Should NOT add duplicate accounts to authorizedAccounts', () => {
         // --- GIVEN
         const voucherAddress = '0x1234567890123456789012345678901234567890';
         const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
@@ -113,7 +113,7 @@ describe('AccountAuthorizedEvent', () => {
         );
     });
 
-    test('Should not modify unrelated fields on Voucher', () => {
+    test('Should NOT modify unrelated fields on Voucher', () => {
         // --- GIVEN
         const voucherAddress = '0x1234567890123456789012345678901234567890';
         const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';

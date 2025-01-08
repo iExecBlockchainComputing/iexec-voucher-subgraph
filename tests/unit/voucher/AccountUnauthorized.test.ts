@@ -63,6 +63,52 @@ describe('AccountUnauthorizedEvent', () => {
         );
     });
 
+    test('Should handle cases where the Voucher does not exist', () => {
+        // --- GIVEN
+        let voucherAddress = '0x1234567890123456789012345678901234567890';
+        let unauthorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+        // Ensure no Voucher entity exists
+        assert.entityCount('Voucher', 0);
+
+        // --- WHEN
+        let event = createAccountUnauthorizedEvent(
+            Address.fromString(voucherAddress),
+            Address.fromString(unauthorizedAccount),
+        );
+        handleAccountUnauthorized(event);
+
+        // --- THEN
+        assert.notInStore('Voucher', voucherAddress);
+        assert.entityCount('Voucher', 0); // Ensure no entity is created or modified
+    });
+
+    test('Should handle empty authorizedAccounts gracefully', () => {
+        // --- GIVEN
+        let voucherAddress = '0x1234567890123456789012345678901234567890';
+        let unauthorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+
+        // Create a mock Voucher entity with no authorized accounts
+        createAndSaveVoucher(
+            voucherAddress,
+            VOUCHER_TYPE_ID,
+            VOUCHER_OWNER,
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
+            VOUCHER_EXPIRATION,
+            [],
+        );
+
+        // --- WHEN
+        let event = createAccountUnauthorizedEvent(
+            Address.fromString(voucherAddress),
+            Address.fromString(unauthorizedAccount),
+        );
+        handleAccountUnauthorized(event);
+
+        // --- THEN
+        assert.fieldEquals('Voucher', voucherAddress, 'authorizedAccounts', '[]');
+    });
+
     test('Should NOT modify authorizedAccounts when the account does not exist', () => {
         // --- GIVEN
         let voucherAddress = '0x1234567890123456789012345678901234567890';
@@ -96,26 +142,7 @@ describe('AccountUnauthorizedEvent', () => {
         );
     });
 
-    test('Should handle cases where the Voucher does not exist', () => {
-        // --- GIVEN
-        let voucherAddress = '0x1234567890123456789012345678901234567890';
-        let unauthorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-
-        // Ensure no Voucher entity exists
-        assert.entityCount('Voucher', 0);
-
-        // --- WHEN
-        let event = createAccountUnauthorizedEvent(
-            Address.fromString(voucherAddress),
-            Address.fromString(unauthorizedAccount),
-        );
-        handleAccountUnauthorized(event);
-
-        // --- THEN
-        assert.entityCount('Voucher', 0); // Ensure no entity is created or modified
-    });
-
-    test('Should not modify unrelated fields of the Voucher', () => {
+    test('Should NOT modify unrelated fields of the Voucher', () => {
         // --- GIVEN
         let voucherAddress = '0x1234567890123456789012345678901234567890';
         let authorizedAccount1 = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
@@ -146,37 +173,11 @@ describe('AccountUnauthorizedEvent', () => {
             'authorizedAccounts',
             `[${authorizedAccount2}]`,
         );
+        // Ensure unrelated fields remain unchanged
         assert.fieldEquals('Voucher', voucherAddress, 'voucherType', VOUCHER_TYPE_ID);
         assert.fieldEquals('Voucher', voucherAddress, 'owner', VOUCHER_OWNER);
         assert.fieldEquals('Voucher', voucherAddress, 'value', VOUCHER_VALUE.toString());
         assert.fieldEquals('Voucher', voucherAddress, 'balance', VOUCHER_BALANCE.toString());
         assert.fieldEquals('Voucher', voucherAddress, 'expiration', VOUCHER_EXPIRATION.toString());
-    });
-
-    test('Should handle empty authorizedAccounts gracefully', () => {
-        // --- GIVEN
-        let voucherAddress = '0x1234567890123456789012345678901234567890';
-        let unauthorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-
-        // Create a mock Voucher entity with no authorized accounts
-        createAndSaveVoucher(
-            voucherAddress,
-            VOUCHER_TYPE_ID,
-            VOUCHER_OWNER,
-            VOUCHER_VALUE,
-            VOUCHER_BALANCE,
-            VOUCHER_EXPIRATION,
-            [],
-        );
-
-        // --- WHEN
-        let event = createAccountUnauthorizedEvent(
-            Address.fromString(voucherAddress),
-            Address.fromString(unauthorizedAccount),
-        );
-        handleAccountUnauthorized(event);
-
-        // --- THEN
-        assert.fieldEquals('Voucher', voucherAddress, 'authorizedAccounts', '[]');
     });
 });
