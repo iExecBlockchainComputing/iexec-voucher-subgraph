@@ -3,8 +3,8 @@ import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/as
 import { handleAccountUnauthorized } from '../../../src/voucher';
 import {
     createAccountUnauthorizedEvent,
-    createAndSaveType,
     createAndSaveVoucher,
+    createAndSaveVoucherType,
 } from '../utils/utils';
 
 // Shared constants
@@ -21,7 +21,7 @@ const VOUCHER_EXPIRATION = BigInt.fromI32(999999);
 describe('AccountUnauthorizedEvent', () => {
     beforeEach(() => {
         clearStore();
-        createAndSaveType(
+        createAndSaveVoucherType(
             VOUCHER_TYPE_ID,
             VOUCHER_DESCRIPTION,
             VOUCHER_DURATION,

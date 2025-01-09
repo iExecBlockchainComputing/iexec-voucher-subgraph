@@ -186,7 +186,7 @@ export function createAndSaveWorkerpool(workerpoolId: string, description: strin
     workerpool.save();
 }
 
-export function createAndSaveType(
+export function createAndSaveVoucherType(
     typeId: string,
     description: string,
     duration: BigInt,

@@ -3,8 +3,8 @@ import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/as
 import { handleAccountAuthorized } from '../../../src/voucher';
 import {
     createAccountAuthorizedEvent,
-    createAndSaveType,
     createAndSaveVoucher,
+    createAndSaveVoucherType,
 } from '../utils/utils';
 
 // Shared constants
@@ -23,7 +23,7 @@ describe('AccountAuthorizedEvent', () => {
         clearStore();
 
         // Initialize a VoucherType entity
-        createAndSaveType(
+        createAndSaveVoucherType(
             VOUCHER_TYPE_ID,
             VOUCHER_DESCRIPTION,
             VOUCHER_DURATION,
