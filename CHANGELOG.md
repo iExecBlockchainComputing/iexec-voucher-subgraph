@@ -26,5 +26,6 @@
 
 - Add unit tests for Event:
   - voucherCreated
+  - AccountAuthorized, AccountUnauthorized (#20)
 
 ## v1.0.0
