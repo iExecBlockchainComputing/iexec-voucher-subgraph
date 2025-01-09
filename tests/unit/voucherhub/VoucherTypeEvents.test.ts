@@ -19,6 +19,8 @@ const VOUCHER_TYPE_ELIGIBLE_ASSETS: string[] = [];
 describe('VoucherTypeEvents', () => {
     beforeEach(() => {
         clearStore();
+        // Given
+        // Initialize a VoucherType entity
         createAndSaveVoucherType(
             VOUCHER_TYPE_ID,
             VOUCHER_DESCRIPTION,
@@ -59,6 +61,9 @@ describe('VoucherTypeEvents', () => {
         });
 
         test('Should not update voucherType duration when event is received for non existing voucherType', () => {
+            // Given
+            assert.entityCount('VoucherType', 1);
+
             // When
             let event = createVoucherTypeDurationUpdatedEvent(
                 BigInt.fromString('2'),
@@ -68,6 +73,7 @@ describe('VoucherTypeEvents', () => {
 
             // Then
             assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'duration', '86400');
+            assert.entityCount('VoucherType', 1);
         });
     });
 
@@ -108,6 +114,9 @@ describe('VoucherTypeEvents', () => {
         });
 
         test('Should not update voucherType description when event is received for non existing voucherType', () => {
+            // Given
+            assert.entityCount('VoucherType', 1);
+
             // When
             let event = createVoucherTypeDescriptionUpdatedEvent(
                 BigInt.fromString('2'),
@@ -117,6 +126,7 @@ describe('VoucherTypeEvents', () => {
 
             // Then
             assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'description', VOUCHER_DESCRIPTION);
+            assert.entityCount('VoucherType', 1);
         });
     });
 });
