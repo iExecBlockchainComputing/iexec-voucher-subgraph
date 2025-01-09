@@ -17,6 +17,7 @@ const VOUCHER_OWNER = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
 const VOUCHER_VALUE = BigInt.fromI32(100);
 const VOUCHER_BALANCE = BigInt.fromI32(50);
 const VOUCHER_EXPIRATION = BigInt.fromI32(999999);
+const VOUCHER_ADDRESS = '0x1234567890123456789012345678901234567890';
 
 describe('AccountAuthorizedEvent', () => {
     beforeEach(() => {
@@ -33,12 +34,11 @@ describe('AccountAuthorizedEvent', () => {
 
     test('Should add an account to authorizedAccounts when the Voucher exists', () => {
         // --- GIVEN
-        const voucherAddress = '0x1234567890123456789012345678901234567890';
-        const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+        const authorizedAccount = '0x1111111111111111111111111111111111111111';
 
         // Create and initialize a mock Voucher entity
         createAndSaveVoucher(
-            voucherAddress,
+            VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
             VOUCHER_VALUE,
@@ -49,7 +49,7 @@ describe('AccountAuthorizedEvent', () => {
 
         // --- WHEN
         const event = createAccountAuthorizedEvent(
-            Address.fromString(voucherAddress),
+            Address.fromString(VOUCHER_ADDRESS),
             Address.fromString(authorizedAccount),
         );
         handleAccountAuthorized(event);
@@ -58,45 +58,43 @@ describe('AccountAuthorizedEvent', () => {
         // Reload the Voucher entity to check updates
         assert.fieldEquals(
             'Voucher',
-            voucherAddress,
+            VOUCHER_ADDRESS,
             'authorizedAccounts',
             `[${authorizedAccount}]`,
         );
         // Ensure unrelated fields remain unchanged
-        assert.fieldEquals('Voucher', voucherAddress, 'voucherType', VOUCHER_TYPE_ID);
-        assert.fieldEquals('Voucher', voucherAddress, 'owner', VOUCHER_OWNER);
-        assert.fieldEquals('Voucher', voucherAddress, 'value', VOUCHER_VALUE.toString());
-        assert.fieldEquals('Voucher', voucherAddress, 'balance', VOUCHER_BALANCE.toString());
-        assert.fieldEquals('Voucher', voucherAddress, 'expiration', VOUCHER_EXPIRATION.toString());
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'owner', VOUCHER_OWNER);
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', VOUCHER_BALANCE.toString());
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
     });
 
     test('Should not modify authorizedAccounts if Voucher does not exist', () => {
         // --- GIVEN
-        const voucherAddress = '0x1234567890123456789012345678901234567890';
-        const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+        const authorizedAccount = '0x1111111111111111111111111111111111111111';
         // Ensure no Voucher entity exists
         assert.entityCount('Voucher', 0);
 
         // --- WHEN
         const event = createAccountAuthorizedEvent(
-            Address.fromString(voucherAddress),
+            Address.fromString(VOUCHER_ADDRESS),
             Address.fromString(authorizedAccount),
         );
         handleAccountAuthorized(event);
 
         // --- THEN
-        assert.notInStore('Voucher', voucherAddress);
+        assert.notInStore('Voucher', VOUCHER_ADDRESS);
         assert.entityCount('Voucher', 0); // Ensure no entity is created or modified
     });
 
     test('Should not add duplicate accounts to authorizedAccounts', () => {
         // --- GIVEN
-        const voucherAddress = '0x1234567890123456789012345678901234567890';
-        const authorizedAccount = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+        const authorizedAccount = '0x1111111111111111111111111111111111111111';
 
         // Create and initialize a mock Voucher entity
         createAndSaveVoucher(
-            voucherAddress,
+            VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
             VOUCHER_VALUE,
@@ -107,7 +105,7 @@ describe('AccountAuthorizedEvent', () => {
 
         // --- WHEN
         const event = createAccountAuthorizedEvent(
-            Address.fromString(voucherAddress),
+            Address.fromString(VOUCHER_ADDRESS),
             Address.fromString(authorizedAccount),
         );
         handleAccountAuthorized(event);
@@ -116,7 +114,7 @@ describe('AccountAuthorizedEvent', () => {
         // Reload the Voucher entity to check updates
         assert.fieldEquals(
             'Voucher',
-            voucherAddress,
+            VOUCHER_ADDRESS,
             'authorizedAccounts',
             `[${authorizedAccount}]`,
         );
