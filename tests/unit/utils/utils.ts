@@ -7,7 +7,11 @@ import {
     RoleRevoked,
     VoucherCreated,
 } from '../../../generated/VoucherHub/VoucherHub';
-import { App, Dataset, Workerpool } from '../../../generated/schema';
+import { App, Dataset, Voucher, VoucherType, Workerpool } from '../../../generated/schema';
+import {
+    AccountAuthorized,
+    AccountUnauthorized,
+} from '../../../generated/templates/Voucher/Voucher';
 
 export function createVoucherCreatedEvent(
     voucher: Address,
@@ -119,6 +123,48 @@ export function createRoleRevokedEvent(account: Address, role: Bytes): RoleRevok
     return event;
 }
 
+export function createAccountAuthorizedEvent(
+    voucher: Address,
+    account: Address,
+): AccountAuthorized {
+    let mockEvent = newMockEvent();
+    let event = new AccountAuthorized(
+        voucher,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)));
+
+    return event;
+}
+
+export function createAccountUnauthorizedEvent(
+    voucher: Address,
+    account: Address,
+): AccountUnauthorized {
+    let mockEvent = newMockEvent();
+    let event = new AccountUnauthorized(
+        voucher,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)));
+
+    return event;
+}
+
 /**
  * Utility functions to create and save entities.
  */
@@ -138,4 +184,36 @@ export function createAndSaveWorkerpool(workerpoolId: string, description: strin
     let workerpool = new Workerpool(workerpoolId);
     workerpool.description = description;
     workerpool.save();
+}
+
+export function createAndSaveVoucherType(
+    typeId: string,
+    description: string,
+    duration: BigInt,
+    eligibleAssets: string[] = [],
+): void {
+    let voucherType = new VoucherType(typeId);
+    voucherType.description = description;
+    voucherType.duration = duration;
+    voucherType.eligibleAssets = eligibleAssets;
+    voucherType.save();
+}
+
+export function createAndSaveVoucher(
+    address: string,
+    typeId: string,
+    owner: string,
+    value: BigInt,
+    balance: BigInt,
+    expiration: BigInt,
+    authorizedAccounts: string[] = [],
+): void {
+    let voucher = new Voucher(address);
+    voucher.voucherType = typeId;
+    voucher.owner = owner;
+    voucher.value = value;
+    voucher.balance = balance;
+    voucher.expiration = expiration;
+    voucher.authorizedAccounts = authorizedAccounts;
+    voucher.save();
 }
