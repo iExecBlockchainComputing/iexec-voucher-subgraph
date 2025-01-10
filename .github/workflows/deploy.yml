@@ -38,14 +38,25 @@ jobs:
             target: prod
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-
+          cache: 'npm'
+      - name: Init
+        run: npm ci
+      - name: Run unit tests
+        run: npm run test
+      - name: Test build
+        run: npm run build
+      - name: OpenVPN
+        uses: dbritto-dev/openvpn3-action@main
+        with:
+          vpn-client-config: ${{ secrets.VPN_CLIENT_CONFIG }}
+          vpn-autoload-config: ${{ secrets.VPN_AUTOLOAD_CONFIG }}
+          script: sudo openvpn3 sessions-list
       - name: Deploy Subgraph
         env:
           GRAPHNODE_URL: ${{ secrets.GRAPHNODE_URL }}
@@ -56,9 +67,38 @@ jobs:
           SUBGRAPH_NAME: ${{ matrix.subgraph_name }}
         run: |
           echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
-          npm ci
-          npm run codegen
-          npm run build
           npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME || echo "Subgraph already exists"
           npx graph deploy --node $GRAPHNODE_URL $SUBGRAPH_NAME --ipfs $IPFS_URL --version-label $(npm pkg get version)
         if: github.ref_name == matrix.branch && github.event.inputs.target == matrix.target
+      - name: Login to DockerRegis
+        uses: docker/login-action@v3
+        with:
+          registry: docker-regis.iex.ec
+          username:  ${{ secrets.NEXUS-USER }}
+          password: ${{ secrets.NEXUS-PASSWORD }}
+      - name: Build & Push Docker Image
+        env:
+          IMAGE_NAME: 'voucher-subgraph-deployer'
+          GITHUB_SHA_SHORT: ${{ github.sha }}
+          NPM_VERSION: ${{ steps.get_version.outputs.npm_version }}
+        run: |
+          echo "Extracting npm version..."
+          npm_version=$(npm pkg get version | tr -d '"')
+          echo "NPM_VERSION=$npm_version" >> $GITHUB_ENV
+          
+          echo "Building Docker image for environment: ${{ matrix.environment }}"
+
+          # Define rolling and commit-specific tags
+          if [ "${{ matrix.environment }}" == "dev" ]; then
+            TAGS="dev dev-${GITHUB_SHA_SHORT}"
+          elif [ "${{ matrix.environment }}" == "staging" ]; then
+            TAGS="staging staging-${GITHUB_SHA_SHORT}"
+          elif [ "${{ matrix.environment }}" == "prod" ]; then
+            TAGS="latest prod-${npm_version}"
+          fi
+
+          # Build & Push the image with all tags
+          for tag in $TAGS; do
+            docker build -t docker-regis.iex.ec/$IMAGE_NAME:$tag ./docker
+            docker push docker-regis.iex.ec/$IMAGE_NAME:$tag
+          done
