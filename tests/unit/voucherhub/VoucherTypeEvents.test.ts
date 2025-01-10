@@ -72,7 +72,12 @@ describe('VoucherTypeEvents', () => {
             handleVoucherTypeDurationUpdated(event);
 
             // Then
-            assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'duration', '86400');
+            assert.fieldEquals(
+                'VoucherType',
+                VOUCHER_TYPE_ID,
+                'duration',
+                VOUCHER_DURATION.toString(),
+            );
             assert.entityCount('VoucherType', 1);
         });
     });
