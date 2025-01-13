@@ -6,6 +6,7 @@ import {
     RoleGranted,
     RoleRevoked,
     VoucherCreated,
+    VoucherTypeCreated,
 } from '../../../generated/VoucherHub/VoucherHub';
 import { App, Dataset, Voucher, VoucherType, Workerpool } from '../../../generated/schema';
 import {
@@ -62,6 +63,34 @@ export function createEligibleAssetRemovedEvent(id: BigInt, asset: Address): Eli
 
     event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
     event.parameters.push(new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)));
+
+    return event;
+}
+
+export function createVoucherTypeCreatedEvent(
+    id: BigInt,
+    description: string,
+    duration: BigInt,
+): VoucherTypeCreated {
+    let mockEvent = newMockEvent();
+    let event = new VoucherTypeCreated(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
+    event.parameters.push(
+        new ethereum.EventParam('description', ethereum.Value.fromString(description)),
+    );
+    event.parameters.push(
+        new ethereum.EventParam('duration', ethereum.Value.fromUnsignedBigInt(duration)),
+    );
 
     return event;
 }
