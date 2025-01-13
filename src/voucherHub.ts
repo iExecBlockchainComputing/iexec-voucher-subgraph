@@ -191,9 +191,9 @@ export function handleVoucherTypeCreated(event: VoucherTypeCreated): void {
     if (!voucherType) {
         voucherType = new VoucherType(id);
         voucherType.eligibleAssets = [];
+        voucherType.description = description;
+        voucherType.duration = duration;
     }
-    voucherType.description = description;
-    voucherType.duration = duration;
     voucherType.save();
 }
 
