@@ -15,6 +15,7 @@ const VOUCHER_TYPE_ID = '1';
 const VOUCHER_DESCRIPTION = 'Test Voucher Type';
 const VOUCHER_DURATION = BigInt.fromI32(86400);
 const VOUCHER_TYPE_ELIGIBLE_ASSETS: string[] = [];
+const SEVEN_DAYS_IN_SECONDS = BigInt.fromI32(604800);
 
 describe('VoucherTypeEvents', () => {
     beforeEach(() => {
@@ -33,7 +34,7 @@ describe('VoucherTypeEvents', () => {
             // When
             let event = createVoucherTypeDurationUpdatedEvent(
                 BigInt.fromString(VOUCHER_TYPE_ID),
-                BigInt.fromI32(604800),
+                SEVEN_DAYS_IN_SECONDS,
             ); // 7 days in seconds
             handleVoucherTypeDurationUpdated(event);
 
@@ -45,7 +46,8 @@ describe('VoucherTypeEvents', () => {
         });
 
         test('Should handle large duration update', () => {
-            const largeDuration = BigInt.fromString('9999999999');
+            // Using BigInt for the maximum safe integer directly
+            const largeDuration = BigInt.fromString('9007199254740991');
             const event = createVoucherTypeDurationUpdatedEvent(
                 BigInt.fromString(VOUCHER_TYPE_ID),
                 largeDuration,
@@ -67,7 +69,7 @@ describe('VoucherTypeEvents', () => {
             // When
             let event = createVoucherTypeDurationUpdatedEvent(
                 BigInt.fromString('2'),
-                BigInt.fromI32(604800),
+                SEVEN_DAYS_IN_SECONDS,
             ); // 7 days in seconds
             handleVoucherTypeDurationUpdated(event);
 
