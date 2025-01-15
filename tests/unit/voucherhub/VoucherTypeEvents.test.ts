@@ -14,7 +14,7 @@ import {
 const VOUCHER_TYPE_ID = '1';
 const VOUCHER_DESCRIPTION = 'Test Voucher Type';
 const VOUCHER_DURATION = BigInt.fromI32(86400);
-const VOUCHER_TYPE_ELIGIBLE_ASSETS: string[] = [];
+const VOUCHER_TYPE_EMPTY_ELIGIBLE_ASSETS: string[] = [];
 const SEVEN_DAYS_IN_SECONDS = BigInt.fromI32(604800);
 
 describe('VoucherTypeEvents', () => {
@@ -26,20 +26,23 @@ describe('VoucherTypeEvents', () => {
             VOUCHER_TYPE_ID,
             VOUCHER_DESCRIPTION,
             VOUCHER_DURATION,
-            VOUCHER_TYPE_ELIGIBLE_ASSETS,
+            VOUCHER_TYPE_EMPTY_ELIGIBLE_ASSETS,
         );
     });
     describe('VoucherTypeDurationUpdated', () => {
         test('Should update voucherType duration when event is received', () => {
-            // When
             let event = createVoucherTypeDurationUpdatedEvent(
                 BigInt.fromString(VOUCHER_TYPE_ID),
                 SEVEN_DAYS_IN_SECONDS,
-            ); // 7 days in seconds
+            );
             handleVoucherTypeDurationUpdated(event);
 
-            // Then
-            assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'duration', '604800');
+            assert.fieldEquals(
+                'VoucherType',
+                VOUCHER_TYPE_ID,
+                'duration',
+                SEVEN_DAYS_IN_SECONDS.toString(),
+            );
             // Ensure unrelated fields remain unchanged
             assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'description', VOUCHER_DESCRIPTION);
             assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', '[]');
@@ -63,17 +66,14 @@ describe('VoucherTypeEvents', () => {
         });
 
         test('Should not update voucherType duration when event is received for non existing voucherType', () => {
-            // Given
             assert.entityCount('VoucherType', 1);
 
-            // When
             let event = createVoucherTypeDurationUpdatedEvent(
                 BigInt.fromString('2'),
                 SEVEN_DAYS_IN_SECONDS,
-            ); // 7 days in seconds
+            );
             handleVoucherTypeDurationUpdated(event);
 
-            // Then
             assert.fieldEquals(
                 'VoucherType',
                 VOUCHER_TYPE_ID,
@@ -86,20 +86,14 @@ describe('VoucherTypeEvents', () => {
 
     describe('VoucherTypeDescriptionUpdated', () => {
         test('Should update voucherType description when event is received', () => {
-            // When
+            const newDescription = 'New Test Voucher Type';
             let event = createVoucherTypeDescriptionUpdatedEvent(
                 BigInt.fromString(VOUCHER_TYPE_ID),
-                'New Test Voucher Type',
+                newDescription,
             );
             handleVoucherTypeDescriptionUpdated(event);
 
-            // Then
-            assert.fieldEquals(
-                'VoucherType',
-                VOUCHER_TYPE_ID,
-                'description',
-                'New Test Voucher Type',
-            );
+            assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'description', newDescription);
             // Ensure unrelated fields remain unchanged
             assert.fieldEquals(
                 'VoucherType',
@@ -121,17 +115,14 @@ describe('VoucherTypeEvents', () => {
         });
 
         test('Should not update voucherType description when event is received for non existing voucherType', () => {
-            // Given
             assert.entityCount('VoucherType', 1);
 
-            // When
             let event = createVoucherTypeDescriptionUpdatedEvent(
                 BigInt.fromString('2'),
                 'New Test Voucher Type',
             );
             handleVoucherTypeDescriptionUpdated(event);
 
-            // Then
             assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'description', VOUCHER_DESCRIPTION);
             assert.entityCount('VoucherType', 1);
         });
