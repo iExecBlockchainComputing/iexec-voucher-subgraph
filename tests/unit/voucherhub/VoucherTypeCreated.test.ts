@@ -29,22 +29,22 @@ describe('VoucherTypeCreatedEvent', () => {
 
     test('Should not create 2 VoucherType entities with the same voucher type id', () => {
         let id = BigInt.fromI32(1);
-        let description = 'Test Voucher';
-        let duration = BigInt.fromI32(30);
-        let eventType1 = createVoucherTypeCreatedEvent(id, description, duration);
-        handleVoucherTypeCreated(eventType1);
+        let description1 = 'Test Voucher';
+        let duration1 = BigInt.fromI32(30);
+        let event1 = createVoucherTypeCreatedEvent(id, description1, duration1);
+        handleVoucherTypeCreated(event1);
 
-        let descriptionType2 = 'Test Voucher number 2';
-        let durationType2 = BigInt.fromI32(150);
-        let event = createVoucherTypeCreatedEvent(id, descriptionType2, durationType2);
-        handleVoucherTypeCreated(event);
+        let description2 = 'Test Voucher number 2';
+        let duration2 = BigInt.fromI32(150);
+        let event2 = createVoucherTypeCreatedEvent(id, description2, duration2);
+        handleVoucherTypeCreated(event2);
 
         // Assert that no entity was created
         assert.entityCount('VoucherType', 1);
         let entityId = id.toString();
         assert.fieldEquals('VoucherType', entityId, 'id', entityId);
-        assert.fieldEquals('VoucherType', entityId, 'description', description);
-        assert.fieldEquals('VoucherType', entityId, 'duration', duration.toString());
+        assert.fieldEquals('VoucherType', entityId, 'description', description1);
+        assert.fieldEquals('VoucherType', entityId, 'duration', duration1.toString());
         assert.fieldEquals('VoucherType', entityId, 'eligibleAssets', '[]');
     });
 });
