@@ -20,7 +20,6 @@ const SEVEN_DAYS_IN_SECONDS = BigInt.fromI32(604800);
 describe('VoucherTypeEvents', () => {
     beforeEach(() => {
         clearStore();
-        // Given
         // Initialize a VoucherType entity
         createAndSaveVoucherType(
             VOUCHER_TYPE_ID,
