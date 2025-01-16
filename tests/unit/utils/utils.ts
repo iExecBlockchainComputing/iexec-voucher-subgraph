@@ -7,6 +7,8 @@ import {
     RoleRevoked,
     VoucherCreated,
     VoucherTypeCreated,
+    VoucherTypeDescriptionUpdated,
+    VoucherTypeDurationUpdated,
 } from '../../../generated/VoucherHub/VoucherHub';
 import { App, Dataset, Voucher, VoucherType, Workerpool } from '../../../generated/schema';
 import {
@@ -110,6 +112,54 @@ export function createEligibleAssetAddedEvent(id: BigInt, asset: Address): Eligi
 
     event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
     event.parameters.push(new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)));
+
+    return event;
+}
+
+export function createVoucherTypeDurationUpdatedEvent(
+    id: BigInt,
+    duration: BigInt,
+): VoucherTypeDurationUpdated {
+    let mockEvent = newMockEvent();
+    let event = new VoucherTypeDurationUpdated(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
+    event.parameters.push(
+        new ethereum.EventParam('duration', ethereum.Value.fromUnsignedBigInt(duration)),
+    );
+
+    return event;
+}
+
+export function createVoucherTypeDescriptionUpdatedEvent(
+    id: BigInt,
+    description: string,
+): VoucherTypeDescriptionUpdated {
+    let mockEvent = newMockEvent();
+    let event = new VoucherTypeDescriptionUpdated(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
+    event.parameters.push(
+        new ethereum.EventParam('description', ethereum.Value.fromString(description)),
+    );
 
     return event;
 }
