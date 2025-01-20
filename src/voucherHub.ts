@@ -1,3 +1,4 @@
+import { BigInt, log } from '@graphprotocol/graph-ts';
 import { AppRegistry } from '../generated/VoucherHub/AppRegistry';
 import { DatasetRegistry } from '../generated/VoucherHub/DatasetRegistry';
 import { PoCo } from '../generated/VoucherHub/PoCo';
@@ -17,7 +18,7 @@ import {
     VoucherTypeDurationUpdated,
 } from '../generated/VoucherHub/VoucherHub';
 import { WorkerpoolRegistry } from '../generated/VoucherHub/WorkerpoolRegistry';
-import { Voucher, VoucherCreation, VoucherTopUp, VoucherType } from '../generated/schema';
+import { Counter, Voucher, VoucherCreation, VoucherTopUp, VoucherType } from '../generated/schema';
 import { Voucher as VoucherTemplate } from '../generated/templates';
 import {
     getEventId,
@@ -184,17 +185,40 @@ export function handleVoucherToppedUp(event: VoucherToppedUp): void {
 }
 
 export function handleVoucherTypeCreated(event: VoucherTypeCreated): void {
-    let id = event.params.id.toString();
+    let id = event.params.id;
+    let idString = id.toString();
+
+    // Load or create counter
+    let counter = Counter.load('VoucherType');
+    if (!counter) {
+        counter = new Counter('VoucherType');
+        counter.count = BigInt.fromI32(0);
+    }
+
+    let current = counter.count.plus(BigInt.fromI32(1));
+    // Check if id matches the current count
+    if (!id.equals(current)) {
+        log.error('VoucherType ID {} does not match the current count {}', [
+            idString,
+            current.toString(),
+        ]);
+        return;
+    }
+
     let description = event.params.description;
     let duration = event.params.duration;
-    let voucherType = VoucherType.load(id);
+    let voucherType = VoucherType.load(idString);
     if (!voucherType) {
-        voucherType = new VoucherType(id);
+        voucherType = new VoucherType(idString);
         voucherType.eligibleAssets = [];
         voucherType.description = description;
         voucherType.duration = duration;
     }
     voucherType.save();
+
+    // Increment counter
+    counter.count = counter.count.plus(BigInt.fromI32(1));
+    counter.save();
 }
 
 export function handleVoucherTypeDescriptionUpdated(event: VoucherTypeDescriptionUpdated): void {
