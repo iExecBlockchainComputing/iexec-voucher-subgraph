@@ -27,10 +27,7 @@ export class EventParamBuilder {
         return this;
     }
 
-    build(event: ethereum.Event): void {
-        event.parameters = new Array<ethereum.EventParam>();
-        for (let i = 0; i < this.params.length; i++) {
-            event.parameters.push(this.params[i]);
-        }
+    build(): ethereum.EventParam[] {
+        return this.params;
     }
 }

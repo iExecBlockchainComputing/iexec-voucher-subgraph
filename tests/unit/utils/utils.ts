@@ -1,10 +1,5 @@
 import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
-import { App, Dataset, Voucher, VoucherType, Workerpool } from '../../../generated/schema';
-import {
-    AccountAuthorized,
-    AccountUnauthorized,
-} from '../../../generated/templates/Voucher/Voucher';
 import {
     EligibleAssetAdded,
     EligibleAssetRemoved,
@@ -15,6 +10,11 @@ import {
     VoucherTypeDescriptionUpdated,
     VoucherTypeDurationUpdated,
 } from '../../../generated/VoucherHub/VoucherHub';
+import { App, Dataset, Voucher, VoucherType, Workerpool } from '../../../generated/schema';
+import {
+    AccountAuthorized,
+    AccountUnauthorized,
+} from '../../../generated/templates/Voucher/Voucher';
 import { EventParamBuilder } from './EventParamBuilder';
 
 export function createVoucherCreatedEvent(
@@ -36,13 +36,13 @@ export function createVoucherCreatedEvent(
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init()
+    event.parameters = EventParamBuilder.init()
         .address('voucher', voucher)
         .address('owner', owner)
         .bigInt('voucherType', voucherType)
         .bigInt('expiration', expiration)
         .bigInt('value', value)
-        .build(event);
+        .build();
 
     return event;
 }
@@ -60,7 +60,7 @@ export function createEligibleAssetRemovedEvent(id: BigInt, asset: Address): Eli
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init().bigInt('id', id).address('asset', asset).build(event);
+    event.parameters = EventParamBuilder.init().bigInt('id', id).address('asset', asset).build();
 
     return event;
 }
@@ -82,11 +82,11 @@ export function createVoucherTypeCreatedEvent(
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init()
+    event.parameters = EventParamBuilder.init()
         .bigInt('id', id)
         .string('description', description)
         .bigInt('duration', duration)
-        .build(event);
+        .build();
 
     return event;
 }
@@ -104,7 +104,7 @@ export function createEligibleAssetAddedEvent(id: BigInt, asset: Address): Eligi
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init().bigInt('id', id).address('asset', asset).build(event);
+    event.parameters = EventParamBuilder.init().bigInt('id', id).address('asset', asset).build();
 
     return event;
 }
@@ -125,7 +125,10 @@ export function createVoucherTypeDurationUpdatedEvent(
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init().bigInt('id', id).bigInt('duration', duration).build(event);
+    event.parameters = EventParamBuilder.init()
+        .bigInt('id', id)
+        .bigInt('duration', duration)
+        .build();
 
     return event;
 }
@@ -146,7 +149,10 @@ export function createVoucherTypeDescriptionUpdatedEvent(
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init().bigInt('id', id).string('description', description).build(event);
+    event.parameters = EventParamBuilder.init()
+        .bigInt('id', id)
+        .string('description', description)
+        .build();
 
     return event;
 }
@@ -164,7 +170,10 @@ export function createRoleGrantedEvent(account: Address, role: Bytes): RoleGrant
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init().bytes('role', role).address('account', account).build(event);
+    event.parameters = EventParamBuilder.init()
+        .bytes('role', role)
+        .address('account', account)
+        .build();
 
     return event;
 }
@@ -182,7 +191,10 @@ export function createRoleRevokedEvent(account: Address, role: Bytes): RoleRevok
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init().bytes('role', role).address('account', account).build(event);
+    event.parameters = EventParamBuilder.init()
+        .bytes('role', role)
+        .address('account', account)
+        .build();
 
     return event;
 }
@@ -203,7 +215,7 @@ export function createAccountAuthorizedEvent(
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init().address('account', account).build(event);
+    event.parameters = EventParamBuilder.init().address('account', account).build();
 
     return event;
 }
@@ -224,7 +236,7 @@ export function createAccountUnauthorizedEvent(
         mockEvent.receipt,
     );
 
-    EventParamBuilder.init().address('account', account).build(event);
+    event.parameters = EventParamBuilder.init().address('account', account).build();
 
     return event;
 }
