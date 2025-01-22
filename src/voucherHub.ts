@@ -195,7 +195,7 @@ export function handleVoucherTypeCreated(event: VoucherTypeCreated): void {
         counter.count = BigInt.fromI32(0);
     }
 
-    let current = counter.count.plus(BigInt.fromI32(1));
+    let current = counter.count;
     // Check if id matches the current count
     if (!id.equals(current)) {
         log.error('VoucherType ID {} does not match the current count {}', [
