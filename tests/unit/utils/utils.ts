@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
+import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
 import {
     EligibleAssetAdded,
@@ -6,6 +6,7 @@ import {
     RoleGranted,
     RoleRevoked,
     VoucherCreated,
+    VoucherTypeCreated,
     VoucherTypeDescriptionUpdated,
     VoucherTypeDurationUpdated,
 } from '../../../generated/VoucherHub/VoucherHub';
@@ -14,6 +15,7 @@ import {
     AccountAuthorized,
     AccountUnauthorized,
 } from '../../../generated/templates/Voucher/Voucher';
+import { EventParamBuilder } from './EventParamBuilder';
 
 export function createVoucherCreatedEvent(
     voucher: Address,
@@ -34,17 +36,13 @@ export function createVoucherCreatedEvent(
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('voucher', ethereum.Value.fromAddress(voucher)));
-    event.parameters.push(new ethereum.EventParam('owner', ethereum.Value.fromAddress(owner)));
-    event.parameters.push(
-        new ethereum.EventParam('voucherType', ethereum.Value.fromUnsignedBigInt(voucherType)),
-    );
-    event.parameters.push(
-        new ethereum.EventParam('expiration', ethereum.Value.fromUnsignedBigInt(expiration)),
-    );
-    event.parameters.push(
-        new ethereum.EventParam('value', ethereum.Value.fromUnsignedBigInt(value)),
-    );
+    event.parameters = EventParamBuilder.init()
+        .address('voucher', voucher)
+        .address('owner', owner)
+        .bigInt('voucherType', voucherType)
+        .bigInt('expiration', expiration)
+        .bigInt('value', value)
+        .build();
 
     return event;
 }
@@ -62,8 +60,33 @@ export function createEligibleAssetRemovedEvent(id: BigInt, asset: Address): Eli
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
-    event.parameters.push(new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)));
+    event.parameters = EventParamBuilder.init().bigInt('id', id).address('asset', asset).build();
+
+    return event;
+}
+
+export function createVoucherTypeCreatedEvent(
+    id: BigInt,
+    description: string,
+    duration: BigInt,
+): VoucherTypeCreated {
+    let mockEvent = newMockEvent();
+    let event = new VoucherTypeCreated(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init()
+        .bigInt('id', id)
+        .string('description', description)
+        .bigInt('duration', duration)
+        .build();
 
     return event;
 }
@@ -81,8 +104,7 @@ export function createEligibleAssetAddedEvent(id: BigInt, asset: Address): Eligi
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
-    event.parameters.push(new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)));
+    event.parameters = EventParamBuilder.init().bigInt('id', id).address('asset', asset).build();
 
     return event;
 }
@@ -103,10 +125,10 @@ export function createVoucherTypeDurationUpdatedEvent(
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
-    event.parameters.push(
-        new ethereum.EventParam('duration', ethereum.Value.fromUnsignedBigInt(duration)),
-    );
+    event.parameters = EventParamBuilder.init()
+        .bigInt('id', id)
+        .bigInt('duration', duration)
+        .build();
 
     return event;
 }
@@ -127,10 +149,10 @@ export function createVoucherTypeDescriptionUpdatedEvent(
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('id', ethereum.Value.fromUnsignedBigInt(id)));
-    event.parameters.push(
-        new ethereum.EventParam('description', ethereum.Value.fromString(description)),
-    );
+    event.parameters = EventParamBuilder.init()
+        .bigInt('id', id)
+        .string('description', description)
+        .build();
 
     return event;
 }
@@ -148,8 +170,10 @@ export function createRoleGrantedEvent(account: Address, role: Bytes): RoleGrant
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('role', ethereum.Value.fromBytes(role)));
-    event.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)));
+    event.parameters = EventParamBuilder.init()
+        .bytes('role', role)
+        .address('account', account)
+        .build();
 
     return event;
 }
@@ -167,8 +191,10 @@ export function createRoleRevokedEvent(account: Address, role: Bytes): RoleRevok
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('role', ethereum.Value.fromBytes(role)));
-    event.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)));
+    event.parameters = EventParamBuilder.init()
+        .bytes('role', role)
+        .address('account', account)
+        .build();
 
     return event;
 }
@@ -189,7 +215,7 @@ export function createAccountAuthorizedEvent(
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)));
+    event.parameters = EventParamBuilder.init().address('account', account).build();
 
     return event;
 }
@@ -210,7 +236,7 @@ export function createAccountUnauthorizedEvent(
         mockEvent.receipt,
     );
 
-    event.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)));
+    event.parameters = EventParamBuilder.init().address('account', account).build();
 
     return event;
 }

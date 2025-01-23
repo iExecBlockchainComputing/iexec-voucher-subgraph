@@ -10,6 +10,11 @@ type Role @entity {
   accounts: [Account!]! @derivedFrom(field: "role")
 }
 
+type Counter @entity {
+  id: ID!
+  count: BigInt!
+}
+
 type VoucherType @entity {
   id: ID!
   description: String!

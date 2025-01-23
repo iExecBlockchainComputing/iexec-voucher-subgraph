@@ -28,5 +28,6 @@
   - voucherCreated
   - AccountAuthorized, AccountUnauthorized (#20)
   - VoucherTypeDurationUpdated, VoucherTypeDescriptionUpdated (#21)
+  - VoucherTypeCreated (#22)
 
 ## v1.0.0
