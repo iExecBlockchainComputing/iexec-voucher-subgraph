@@ -29,5 +29,6 @@
   - AccountAuthorized, AccountUnauthorized (#20)
   - VoucherTypeDurationUpdated, VoucherTypeDescriptionUpdated (#21)
   - VoucherTypeCreated (#22)
+- Set voucher balance, value, app/dataset/wp price as BigDecimal (#23)
 
 ## v1.0.0
