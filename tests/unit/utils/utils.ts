@@ -15,6 +15,7 @@ import {
     AccountAuthorized,
     AccountUnauthorized,
 } from '../../../generated/templates/Voucher/Voucher';
+import { nRLCToRLC } from '../../../src/utils';
 import { EventParamBuilder } from './EventParamBuilder';
 
 export function createVoucherCreatedEvent(
@@ -287,8 +288,8 @@ export function createAndSaveVoucher(
     let voucher = new Voucher(address);
     voucher.voucherType = typeId;
     voucher.owner = owner;
-    voucher.value = value;
-    voucher.balance = balance;
+    voucher.value = nRLCToRLC(value);
+    voucher.balance = nRLCToRLC(balance);
     voucher.expiration = expiration;
     voucher.authorizedAccounts = authorizedAccounts;
     voucher.save();

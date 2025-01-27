@@ -1,5 +1,6 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts';
+import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
+import { RLCtonRLC } from '../../../src/utils';
 import { handleAccountAuthorized } from '../../../src/voucher';
 import {
     createAccountAuthorizedEvent,
@@ -14,8 +15,8 @@ const VOUCHER_DURATION = BigInt.fromI32(86400);
 const VOUCHER_TYPE_ELIGIBLE_ASSETS: string[] = [];
 
 const VOUCHER_OWNER = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-const VOUCHER_VALUE = BigInt.fromI32(100);
-const VOUCHER_BALANCE = BigInt.fromI32(50);
+const VOUCHER_VALUE = BigDecimal.fromString('100');
+const VOUCHER_BALANCE = BigDecimal.fromString('50');
 const VOUCHER_EXPIRATION = BigInt.fromI32(999999);
 const VOUCHER_ADDRESS = '0x1234567890123456789012345678901234567890';
 
@@ -41,8 +42,8 @@ describe('AccountAuthorizedEvent', () => {
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
-            VOUCHER_VALUE,
-            VOUCHER_BALANCE,
+            RLCtonRLC(VOUCHER_VALUE),
+            RLCtonRLC(VOUCHER_BALANCE),
             VOUCHER_EXPIRATION,
             [], // Initialize the array
         );
@@ -97,8 +98,8 @@ describe('AccountAuthorizedEvent', () => {
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
-            VOUCHER_VALUE,
-            VOUCHER_BALANCE,
+            RLCtonRLC(VOUCHER_VALUE),
+            RLCtonRLC(VOUCHER_BALANCE),
             VOUCHER_EXPIRATION,
             [authorizedAccount], // Already authorized
         );
