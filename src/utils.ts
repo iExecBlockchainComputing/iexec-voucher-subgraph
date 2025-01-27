@@ -65,7 +65,7 @@ export function nRLCToRLC(value: BigInt): BigDecimal {
     return value.divDecimal(divisor);
 }
 
-export function RLCtonRLC(value: BigDecimal): BigInt {
+export function toNanoRLC(value: BigDecimal): BigInt {
     let multiplier = BigDecimal.fromString('1000000000');
     return BigInt.fromString(value.times(multiplier).toString());
 }

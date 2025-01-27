@@ -1,7 +1,7 @@
 import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { App, VoucherType } from '../../../generated/schema';
-import { RLCtonRLC } from '../../../src/utils';
+import { toNanoRLC } from '../../../src/utils';
 import { handleVoucherCreated } from '../../../src/voucherHub';
 import { createVoucherCreatedEvent } from '../utils/utils';
 
@@ -34,7 +34,7 @@ describe('VoucherCreatedEvent', () => {
             Address.fromString(voucherAddress),
             Address.fromString(owner),
             BigInt.fromString(voucherTypeId),
-            RLCtonRLC(rlcValue),
+            toNanoRLC(rlcValue),
             expiration,
         );
 
