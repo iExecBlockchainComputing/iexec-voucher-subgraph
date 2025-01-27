@@ -1,4 +1,4 @@
-import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts';
+import { Address, BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts';
 import { Account, App, Dataset, Role, Workerpool } from '../generated/schema';
 import { App as AppContract } from '../generated/templates/Voucher/App';
 import { Dataset as DatasetContract } from '../generated/templates/Voucher/Dataset';
@@ -60,9 +60,14 @@ export function getEventId(event: ethereum.Event): string {
     return event.transaction.hash.toHex() + '_' + event.transactionLogIndex.toString();
 }
 
-export function nRLCToRLC(value: BigInt): BigInt {
-    let divisor = BigInt.fromI32(1_000_000_000);
-    return value.div(divisor);
+export function nRLCToRLC(value: BigInt): BigDecimal {
+    let divisor = BigDecimal.fromString('1000000000');
+    return value.divDecimal(divisor);
+}
+
+export function RLCtonRLC(value: BigDecimal): BigInt {
+    let multiplier = BigDecimal.fromString('1000000000');
+    return BigInt.fromString(value.times(multiplier).toString());
 }
 
 export function getRoleName(roleId: string): string {
