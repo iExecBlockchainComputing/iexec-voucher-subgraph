@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts';
+import { Address, BigDecimal, BigInt, Bytes } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as/assembly/index';
 import {
     EligibleAssetAdded,
@@ -279,8 +279,8 @@ export function createAndSaveVoucher(
     address: string,
     typeId: string,
     owner: string,
-    value: BigInt,
-    balance: BigInt,
+    value: BigDecimal,
+    balance: BigDecimal,
     expiration: BigInt,
     authorizedAccounts: string[] = [],
 ): void {

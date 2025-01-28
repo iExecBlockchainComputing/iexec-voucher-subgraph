@@ -28,8 +28,8 @@ type Voucher @entity {
   owner: Account!
   expiration: BigInt!
   voucherType: VoucherType!
-  value: BigInt! # last funding value
-  balance: BigInt!
+  value: BigDecimal! # last funding value
+  balance: BigDecimal!
   authorizedAccounts: [Account!]!
   fundings: [VoucherFunding!]! @derivedFrom(field: "voucher")
   deals: [Deal!]! @derivedFrom(field: "sponsor")
@@ -38,21 +38,21 @@ type Voucher @entity {
 interface VoucherFunding {
   id: ID!
   timestamp: BigInt!
-  value: BigInt!
+  value: BigDecimal!
   voucher: Voucher!
 }
 
 type VoucherCreation implements VoucherFunding @entity {
   id: ID!
   timestamp: BigInt!
-  value: BigInt!
+  value: BigDecimal!
   voucher: Voucher!
 }
 
 type VoucherTopUp implements VoucherFunding @entity {
   id: ID!
   timestamp: BigInt!
-  value: BigInt!
+  value: BigDecimal!
   voucher: Voucher!
 }
 
@@ -87,14 +87,14 @@ type Workerpool implements Asset @entity {
 type Deal @entity {
   id: ID!
   sponsor: Voucher # voucher specific
-  sponsoredAmount: BigInt # voucher specific
+  sponsoredAmount: BigDecimal # voucher specific
   timestamp: BigInt!
   requester: Account!
   app: App!
   dataset: Dataset
   workerpool: Workerpool!
   botSize: BigInt!
-  appPrice: BigInt!
-  datasetPrice: BigInt!
-  workerpoolPrice: BigInt!
+  appPrice: BigDecimal!
+  datasetPrice: BigDecimal!
+  workerpoolPrice: BigDecimal!
 }
