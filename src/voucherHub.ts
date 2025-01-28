@@ -153,7 +153,6 @@ export function handleVoucherDrained(event: VoucherDrained): void {
             return;
         }
         voucher.balance = voucherNextBalance; // VHCR balance
-        voucher.value = voucher.value.minus(drainedAmount); // sRLC balance
         voucher.save();
     }
 }

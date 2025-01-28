@@ -33,7 +33,7 @@ describe('VoucherDrainedEvent', () => {
         );
     });
 
-    test('Should update both balance and value on valid drain', () => {
+    test('Should update balance from existing voucher', () => {
         createAndSaveVoucher(
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
@@ -54,14 +54,9 @@ describe('VoucherDrainedEvent', () => {
             'balance',
             '25.456', // 50.456 - 25.0
         );
-        assert.fieldEquals(
-            'Voucher',
-            VOUCHER_ADDRESS,
-            'value',
-            '75.123', // 100.123 - 25.0
-        );
 
         // Verify other fields remain unchanged
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'owner', VOUCHER_OWNER);
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
@@ -86,7 +81,6 @@ describe('VoucherDrainedEvent', () => {
         handleVoucherDrained(event);
 
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', VOUCHER_BALANCE.toString());
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
     });
 
     test('Should handle drain for non-existent voucher', () => {
@@ -131,14 +125,9 @@ describe('VoucherDrainedEvent', () => {
             'balance',
             '25.456', // 50.456 - 10.0 - 15.0
         );
-        assert.fieldEquals(
-            'Voucher',
-            VOUCHER_ADDRESS,
-            'value',
-            '75.123', // 100.123 - 10.0 - 15.0
-        );
 
         // Verify entity integrity
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'owner', VOUCHER_OWNER);
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
@@ -163,11 +152,5 @@ describe('VoucherDrainedEvent', () => {
         handleVoucherDrained(event);
 
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', '0');
-        assert.fieldEquals(
-            'Voucher',
-            VOUCHER_ADDRESS,
-            'value',
-            '49.667', // 100.123 - 50.456
-        );
     });
 });
