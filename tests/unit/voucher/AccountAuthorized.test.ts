@@ -1,6 +1,5 @@
 import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
-import { toNanoRLC } from '../../../src/utils';
 import { handleAccountAuthorized } from '../../../src/voucher';
 import {
     createAccountAuthorizedEvent,
@@ -42,8 +41,8 @@ describe('AccountAuthorizedEvent', () => {
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
-            toNanoRLC(VOUCHER_VALUE),
-            toNanoRLC(VOUCHER_BALANCE),
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
             VOUCHER_EXPIRATION,
             [], // Initialize the array
         );
@@ -98,8 +97,8 @@ describe('AccountAuthorizedEvent', () => {
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
-            toNanoRLC(VOUCHER_VALUE),
-            toNanoRLC(VOUCHER_BALANCE),
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
             VOUCHER_EXPIRATION,
             [authorizedAccount], // Already authorized
         );

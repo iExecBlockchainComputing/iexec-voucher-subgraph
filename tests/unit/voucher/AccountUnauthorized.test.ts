@@ -1,6 +1,5 @@
 import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
-import { toNanoRLC } from '../../../src/utils';
 import { handleAccountUnauthorized } from '../../../src/voucher';
 import {
     createAccountUnauthorizedEvent,
@@ -41,8 +40,8 @@ describe('AccountUnauthorizedEvent', () => {
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
-            toNanoRLC(VOUCHER_VALUE),
-            toNanoRLC(VOUCHER_BALANCE),
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
             VOUCHER_EXPIRATION,
             [authorizedAccount1, authorizedAccount2],
         );
@@ -96,8 +95,8 @@ describe('AccountUnauthorizedEvent', () => {
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
-            toNanoRLC(VOUCHER_VALUE),
-            toNanoRLC(VOUCHER_BALANCE),
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
             VOUCHER_EXPIRATION,
             [],
         );
@@ -123,8 +122,8 @@ describe('AccountUnauthorizedEvent', () => {
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
             VOUCHER_OWNER,
-            toNanoRLC(VOUCHER_VALUE),
-            toNanoRLC(VOUCHER_BALANCE),
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
             VOUCHER_EXPIRATION,
             [authorizedAccount],
         );
