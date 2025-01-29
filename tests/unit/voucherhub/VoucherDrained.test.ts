@@ -33,36 +33,7 @@ describe('VoucherDrainedEvent', () => {
         );
     });
 
-    test('Should update balance from existing voucher', () => {
-        createAndSaveVoucher(
-            VOUCHER_ADDRESS,
-            VOUCHER_TYPE_ID,
-            VOUCHER_OWNER,
-            VOUCHER_VALUE,
-            VOUCHER_BALANCE,
-            VOUCHER_EXPIRATION,
-            [], // Empty authorized accounts
-        );
-
-        const drainAmount = toNanoRLC(BigDecimal.fromString('25.0'));
-        const event = createVoucherDrainedEvent(Address.fromString(VOUCHER_ADDRESS), drainAmount);
-        handleVoucherDrained(event);
-
-        assert.fieldEquals(
-            'Voucher',
-            VOUCHER_ADDRESS,
-            'balance',
-            '25.456', // 50.456 - 25.0
-        );
-
-        // Verify other fields remain unchanged
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'owner', VOUCHER_OWNER);
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
-    });
-
-    test('Should not update when drain amount exceeds balance', () => {
+    test('Should handle drain to exactly zero balance', () => {
         createAndSaveVoucher(
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
@@ -73,10 +44,35 @@ describe('VoucherDrainedEvent', () => {
             [],
         );
 
-        const excessiveDrainAmount = toNanoRLC(BigDecimal.fromString('75.0')); // Greater than balance
         const event = createVoucherDrainedEvent(
             Address.fromString(VOUCHER_ADDRESS),
-            excessiveDrainAmount,
+            toNanoRLC(VOUCHER_BALANCE),
+        );
+        handleVoucherDrained(event);
+
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', '0');
+        // Verify other fields remain unchanged
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'owner', VOUCHER_OWNER);
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
+    });
+
+    test('Should not update when drain amount results in non-zero balance', () => {
+        createAndSaveVoucher(
+            VOUCHER_ADDRESS,
+            VOUCHER_TYPE_ID,
+            VOUCHER_OWNER,
+            VOUCHER_VALUE,
+            VOUCHER_BALANCE,
+            VOUCHER_EXPIRATION,
+            [],
+        );
+
+        const partialDrainAmount = VOUCHER_BALANCE.div(BigDecimal.fromString('2'));
+        const event = createVoucherDrainedEvent(
+            Address.fromString(VOUCHER_ADDRESS),
+            toNanoRLC(partialDrainAmount),
         );
         handleVoucherDrained(event);
 
@@ -94,63 +90,5 @@ describe('VoucherDrainedEvent', () => {
         handleVoucherDrained(event);
 
         assert.entityCount('Voucher', 0);
-    });
-
-    test('Should handle multiple sequential drains correctly', () => {
-        createAndSaveVoucher(
-            VOUCHER_ADDRESS,
-            VOUCHER_TYPE_ID,
-            VOUCHER_OWNER,
-            VOUCHER_VALUE,
-            VOUCHER_BALANCE,
-            VOUCHER_EXPIRATION,
-            [],
-        );
-
-        // First drain
-        const firstDrainAmount = toNanoRLC(BigDecimal.fromString('10.0'));
-        handleVoucherDrained(
-            createVoucherDrainedEvent(Address.fromString(VOUCHER_ADDRESS), firstDrainAmount),
-        );
-
-        // Second drain
-        const secondDrainAmount = toNanoRLC(BigDecimal.fromString('15.0'));
-        handleVoucherDrained(
-            createVoucherDrainedEvent(Address.fromString(VOUCHER_ADDRESS), secondDrainAmount),
-        );
-
-        assert.fieldEquals(
-            'Voucher',
-            VOUCHER_ADDRESS,
-            'balance',
-            '25.456', // 50.456 - 10.0 - 15.0
-        );
-
-        // Verify entity integrity
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'owner', VOUCHER_OWNER);
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
-    });
-
-    test('Should handle drain of exact balance amount', () => {
-        createAndSaveVoucher(
-            VOUCHER_ADDRESS,
-            VOUCHER_TYPE_ID,
-            VOUCHER_OWNER,
-            VOUCHER_VALUE,
-            VOUCHER_BALANCE,
-            VOUCHER_EXPIRATION,
-            [],
-        );
-
-        const exactDrainAmount = toNanoRLC(BigDecimal.fromString('50.456')); // Exact balance
-        const event = createVoucherDrainedEvent(
-            Address.fromString(VOUCHER_ADDRESS),
-            exactDrainAmount,
-        );
-        handleVoucherDrained(event);
-
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', '0');
     });
 });

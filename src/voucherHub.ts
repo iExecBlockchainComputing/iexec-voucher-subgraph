@@ -144,7 +144,7 @@ export function handleVoucherDrained(event: VoucherDrained): void {
     if (voucher) {
         let drainedAmount = nRLCToRLC(event.params.amount);
         let voucherNextBalance = voucher.balance.minus(drainedAmount);
-        if (voucherNextBalance.lt(BigDecimal.fromString('0'))) {
+        if (!voucherNextBalance.equals(BigDecimal.fromString('0'))) {
             log.error('Voucher {} drain amount {} exceeds current balance {}', [
                 voucherId,
                 drainedAmount.toString(),
@@ -152,7 +152,7 @@ export function handleVoucherDrained(event: VoucherDrained): void {
             ]);
             return;
         }
-        voucher.balance = voucherNextBalance; // VHCR balance
+        voucher.balance = voucherNextBalance;
         voucher.save();
     }
 }
