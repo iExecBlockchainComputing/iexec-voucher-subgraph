@@ -3,6 +3,7 @@ node('docker') {
     // Global variables
     def userInput
     def graphNodeUrl
+    def envName
     def ipfsUrl
 
     stage('Set properties') {
@@ -30,10 +31,17 @@ node('docker') {
             case 'production':
                 graphNodeUrl = 'azubgrpbp-thegraph.public.az2.internal'
                 ipfsUrl = 'ipfs-upload.v8-bellecour.iex.ec'
+                envName = '/'
+                break
+            case 'tmp':
+                graphNodeUrl = 'azubgrpbp-thegraph.public.az2.internal'
+                ipfsUrl = 'ipfs-upload.v8-bellecour.iex.ec'
+                envName = '/tmp-'
                 break
             case 'staging':
                 graphNodeUrl = 'azubgrpbx-thegraph-staging.public.az2.internal'
                 ipfsUrl = 'ipfs-upload.stagingv8.iex.ec'
+                envName = '/staging-'
                 break
             case 'custom':
                 // Ask for custom URLs if environment is 'custom'
@@ -47,6 +55,7 @@ node('docker') {
                 )
                 graphNodeUrl = customUrls.graphNodeUrl
                 ipfsUrl = customUrls.ipfsUrl
+                envName = ''
                 break
             default:
                 error "Invalid environment selected"
@@ -87,7 +96,7 @@ node('docker') {
             sh """
                 docker run \
                     --rm \
-                    -e NETWORK_NAME='$userInput.networkName' \
+                    -e NETWORK_NAME='${userInput.networkName}${envName}' \
                     -e VOUCHER_HUB_ADDRESS='$userInput.voucherHubAddress' \
                     -e VOUCHER_HUB_START_BLOCK='$userInput.voucherHubStartBlock' \
                     -e IPFS_URL='https://${ipfsUrl}' \
