@@ -58,7 +58,7 @@ describe('VoucherDrainedEvent', () => {
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
     });
 
-    test('Should not update when drain amount results in non-zero balance', () => {
+    test('Should handle partial drain correctly', () => {
         createAndSaveVoucher(
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
@@ -76,7 +76,8 @@ describe('VoucherDrainedEvent', () => {
         );
         handleVoucherDrained(event);
 
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', VOUCHER_BALANCE.toString());
+        const expectedBalance = VOUCHER_BALANCE.minus(partialDrainAmount);
+        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', expectedBalance.toString());
     });
 
     test('Should handle drain for non-existent voucher', () => {
