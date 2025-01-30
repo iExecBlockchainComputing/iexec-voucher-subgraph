@@ -150,7 +150,6 @@ export function handleVoucherDrained(event: VoucherDrained): void {
                 drainedAmount.toString(),
                 voucher.balance.toString(),
             ]);
-            return;
         }
         voucher.balance = voucherNextBalance;
         voucher.save();
