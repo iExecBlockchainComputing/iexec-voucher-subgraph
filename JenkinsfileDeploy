@@ -96,7 +96,8 @@ node('docker') {
             sh """
                 docker run \
                     --rm \
-                    -e NETWORK_NAME='${userInput.networkName}${envName}' \
+                    -e NETWORK_NAME='${userInput.networkName}' \
+                    -e DEPLOY_ENV='${envName}' \
                     -e VOUCHER_HUB_ADDRESS='$userInput.voucherHubAddress' \
                     -e VOUCHER_HUB_START_BLOCK='$userInput.voucherHubStartBlock' \
                     -e IPFS_URL='https://${ipfsUrl}' \
