@@ -29,6 +29,7 @@
   - AccountAuthorized, AccountUnauthorized (#20)
   - VoucherTypeDurationUpdated, VoucherTypeDescriptionUpdated (#21)
   - VoucherTypeCreated (#22)
+  - VoucherDrained (#24)
 - Set voucher balance, value, app/dataset/workerpool price as BigDecimal (#23)
 
 ## v1.0.0

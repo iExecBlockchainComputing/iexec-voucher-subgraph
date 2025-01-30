@@ -1,4 +1,4 @@
-import { BigInt, log } from '@graphprotocol/graph-ts';
+import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts';
 import { AppRegistry } from '../generated/VoucherHub/AppRegistry';
 import { DatasetRegistry } from '../generated/VoucherHub/DatasetRegistry';
 import { PoCo } from '../generated/VoucherHub/PoCo';
@@ -143,7 +143,15 @@ export function handleVoucherDrained(event: VoucherDrained): void {
     // do not index balance changes on voucher not indexed
     if (voucher) {
         let drainedAmount = nRLCToRLC(event.params.amount);
-        voucher.balance = voucher.balance.minus(drainedAmount);
+        let voucherNextBalance = voucher.balance.minus(drainedAmount);
+        if (!voucherNextBalance.equals(BigDecimal.fromString('0'))) {
+            log.error('Voucher {} drain amount {} exceeds current balance {}', [
+                voucherId,
+                drainedAmount.toString(),
+                voucher.balance.toString(),
+            ]);
+        }
+        voucher.balance = voucherNextBalance;
         voucher.save();
     }
 }

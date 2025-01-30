@@ -6,6 +6,7 @@ import {
     RoleGranted,
     RoleRevoked,
     VoucherCreated,
+    VoucherDrained,
     VoucherTypeCreated,
     VoucherTypeDescriptionUpdated,
     VoucherTypeDurationUpdated,
@@ -237,6 +238,27 @@ export function createAccountUnauthorizedEvent(
     );
 
     event.parameters = EventParamBuilder.init().address('account', account).build();
+
+    return event;
+}
+
+export function createVoucherDrainedEvent(voucher: Address, amount: BigInt): VoucherDrained {
+    let mockEvent = newMockEvent();
+    let event = new VoucherDrained(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        mockEvent.parameters,
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init()
+        .address('voucher', voucher)
+        .bigInt('amount', amount)
+        .build();
 
     return event;
 }
