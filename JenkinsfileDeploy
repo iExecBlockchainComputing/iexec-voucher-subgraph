@@ -14,7 +14,7 @@ node('docker') {
                 parameters : [
                     choice(
                         name: 'environment',
-                        choices: ['custom', 'staging', 'production'],
+                        choices: ['custom', 'staging', 'tmp','production'],
                         description: 'Select deployment environment'
                     ),
                     string(name: 'networkName', description: 'Network Name', defaultValue: 'bellecour', trim: true),
@@ -102,7 +102,7 @@ node('docker') {
                     -e IPFS_URL='https://${ipfsUrl}' \
                     -e GRAPHNODE_URL='http://${graphNodeUrl}:8020' \
                     -e VERSION_LABEL='$userInput.versionLabel' \
-                    docker-regis.iex.ec/voucher-subgraph-deployer:$userInput.dockerImageVersion
+                    iexechub/voucher-subgraph-deployer:$userInput.dockerImageVersion
             """
             
             // Logout to remove docker credentials
@@ -110,3 +110,6 @@ node('docker') {
         }
     }
 }
+
+azubgrpbx-thegraph-staging.public.az2.internal
+ipfs-upload.stagingv8.iex.ec
