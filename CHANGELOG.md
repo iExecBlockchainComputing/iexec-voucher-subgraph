@@ -31,5 +31,6 @@
   - VoucherTypeCreated (#22)
   - VoucherDrained (#24)
 - Set voucher balance, value, app/dataset/workerpool price as BigDecimal (#23)
+- Update Jenkins deployer to have new IPFS and GraphNode URLs (#25)
 
 ## v1.0.0
