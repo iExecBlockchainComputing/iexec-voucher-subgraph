@@ -86,31 +86,18 @@ node('docker') {
     }
 
     stage('Run operation') {
-        withCredentials([
-            usernamePassword(credentialsId: 'docker-regis', usernameVariable: 'username', passwordVariable: 'password')
-        ]) {
-            // Login to download Docker image
-            sh "echo -n '${password}' | docker login --username '${username}' --password-stdin docker-regis.iex.ec"
-
-            // Run the container for subgraph deployment
-            sh """
-                docker run \
-                    --rm \
-                    -e NETWORK_NAME='${userInput.networkName}' \
-                    -e DEPLOY_ENV='${envName}' \
-                    -e VOUCHER_HUB_ADDRESS='$userInput.voucherHubAddress' \
-                    -e VOUCHER_HUB_START_BLOCK='$userInput.voucherHubStartBlock' \
-                    -e IPFS_URL='https://${ipfsUrl}' \
-                    -e GRAPHNODE_URL='http://${graphNodeUrl}:8020' \
-                    -e VERSION_LABEL='$userInput.versionLabel' \
-                    iexechub/voucher-subgraph-deployer:$userInput.dockerImageVersion
-            """
-            
-            // Logout to remove docker credentials
-            sh "docker logout docker-regis.iex.ec"
-        }
+        // Run the container for subgraph deployment
+        sh """
+            docker run \
+                --rm \
+                -e NETWORK_NAME='${userInput.networkName}' \
+                -e DEPLOY_ENV='${envName}' \
+                -e VOUCHER_HUB_ADDRESS='$userInput.voucherHubAddress' \
+                -e VOUCHER_HUB_START_BLOCK='$userInput.voucherHubStartBlock' \
+                -e IPFS_URL='https://${ipfsUrl}' \
+                -e GRAPHNODE_URL='http://${graphNodeUrl}:8020' \
+                -e VERSION_LABEL='$userInput.versionLabel' \
+                iexechub/voucher-subgraph-deployer:$userInput.dockerImageVersion
+        """
     }
 }
-
-azubgrpbx-thegraph-staging.public.az2.internal
-ipfs-upload.stagingv8.iex.ec
