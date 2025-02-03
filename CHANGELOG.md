@@ -2,6 +2,8 @@
 
 ## vNEXT
 
+## 1.1.0
+
 ### Added
 
 - Support for `RoleGranted` and `RoleRevoked` event handling in the voucherHub module (#19):
