@@ -12,7 +12,9 @@ on:
 
 jobs:
   build-subgraph:
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
+      - Azure_runners
 
     steps:
       - name: Checkout
