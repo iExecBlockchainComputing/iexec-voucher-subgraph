@@ -85,23 +85,15 @@ jobs:
         env:
           IMAGE_NAME: 'voucher-subgraph-deployer'
           GITHUB_SHA_SHORT: ${{ github.sha }}
-          # Make sure you have a step that sets get_version.outputs.npm_version or adjust accordingly
-          NPM_VERSION: ${{ steps.get_version.outputs.npm_version }}
         run: |
           echo "Extracting npm version..."
+          # Capture the current npm version from package.json (removing surrounding quotes)
           npm_version=$(npm pkg get version | tr -d '"')
-          echo "NPM_VERSION=$npm_version" >> $GITHUB_ENV
-          
-          echo "Building Docker image for environment: ${{ matrix.environment }}"
 
-          # Define rolling and commit-specific tags
-          if [ "${{ matrix.environment }}" == "tmp" ]; then
-            TAGS="tmp tmp-${GITHUB_SHA_SHORT}"
-          elif [ "${{ matrix.environment }}" == "staging" ]; then
-            TAGS="staging staging-${GITHUB_SHA_SHORT}"
-          elif [ "${{ matrix.environment }}" == "prod" ]; then
-            TAGS="latest prod-${npm_version}"
-          fi
+          echo "NPM_VERSION=$npm_version"
+
+          # Define your tags (for example, 'latest' and 'prod-version')
+          TAGS="latest prod-${npm_version}"
 
           # Build & Push the image with all tags
           for tag in $TAGS; do
