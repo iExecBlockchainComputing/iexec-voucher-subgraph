@@ -36,37 +36,39 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-
       - name: Init
         run: npm ci
-
       - name: Check Format
         run: npm run check-format
-
       - name: Run unit tests
         run: npm run test
-
       - name: Build
         run: npm run build
-
       - name: Deploy Subgraph
+        if: github.ref_name == matrix.branch && github.event.inputs.target == matrix.target
         env:
           START_BLOCK: ${{ inputs.START_BLOCK }}
           VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
-          GRAPHNODE_URL: ${{ secrets.GRAPHNODE_URL }}
-          IPFS_URL: ${{ secrets.IPFS_URL }}
           SUBGRAPH_NAME: ${{ matrix.subgraph_name }}
         run: |
+          if [ "${{ matrix.environment }}" == "staging" ]; then
+            export GRAPHNODE_URL="${{ secrets.STAGING_GRAPHNODE_URL }}"
+            export IPFS_URL="${{ secrets.STAGING_IPFS }}"
+          else
+            export GRAPHNODE_URL="${{ secrets.GRAPHNODE_URL }}"
+            export IPFS_URL="${{ secrets.IPFS_URL }}"
+          fi
+
           echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
+          echo "Using GRAPHNODE_URL=$GRAPHNODE_URL"
+          echo "Using IPFS_URL=$IPFS_URL"
           npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME
           npx graph deploy --node $GRAPHNODE_URL $SUBGRAPH_NAME --ipfs $IPFS_URL --version-label $(npm pkg get version)
-        if: github.ref_name == matrix.branch && github.event.inputs.target == matrix.target
 
       # -------------------------------------
       # The two steps below only run on main
@@ -78,7 +80,6 @@ jobs:
           registry: docker-regis.iex.ec
           username: ${{ secrets.NEXUS-USER }}
           password: ${{ secrets.NEXUS-PASSWORD }}
-
       - name: Build & Push Docker Image
         if: ${{ github.ref_name == 'main' }}
         env:
