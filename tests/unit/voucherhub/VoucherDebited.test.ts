@@ -34,6 +34,7 @@ describe('VoucherDebitedEvent', () => {
     });
 
     test('Should handle debit correctly', () => {
+        // --- GIVEN
         // Create a voucher with a balance of 50.456
         createAndSaveVoucher(
             VOUCHER_ADDRESS,
@@ -44,17 +45,18 @@ describe('VoucherDebitedEvent', () => {
             VOUCHER_EXPIRATION,
             [],
         );
-
         // Debit an amount less than the current balance
-        const debitAmount = BigDecimal.fromString('20'); // 20 < 50.456
+        const sponsoredAmount = BigDecimal.fromString('20.45'); // 20.45 < 50.456
+
+        // --- WHEN
         const event = createVoucherDebitedEvent(
             Address.fromString(VOUCHER_ADDRESS),
-            toNanoRLC(debitAmount),
+            toNanoRLC(sponsoredAmount),
         );
         handleVoucherDebited(event);
 
-        // After debiting 20, the expected remaining balance is 30.456
-        const expectedRemainingBalance = VOUCHER_BALANCE.minus(debitAmount);
+        // --- THEN
+        const expectedRemainingBalance = VOUCHER_BALANCE.minus(sponsoredAmount);
         assert.fieldEquals(
             'Voucher',
             VOUCHER_ADDRESS,
@@ -69,15 +71,18 @@ describe('VoucherDebitedEvent', () => {
     });
 
     test('Should handle debit for non-existent voucher', () => {
+        // --- GIVEN
         const nonExistentVoucherAddress = '0x0000000000000000000000000000000000000000';
         assert.entityCount('Voucher', 0);
 
+        // --- WHEN
         const event = createVoucherDebitedEvent(
             Address.fromString(nonExistentVoucherAddress),
             toNanoRLC(VOUCHER_BALANCE),
         );
         handleVoucherDebited(event);
 
+        // --- THEN
         // No voucher entity should be created or modified
         assert.entityCount('Voucher', 0);
     });
