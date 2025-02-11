@@ -20,7 +20,7 @@ const VOUCHER_BALANCE = BigDecimal.fromString('50.456');
 const VOUCHER_EXPIRATION = BigInt.fromI32(999999);
 const VOUCHER_ADDRESS = '0x1234567890123456789012345678901234567890';
 
-describe('VoucherCreatedEvent', () => {
+describe('VoucherDebitedEvent', () => {
     beforeEach(() => {
         clearStore();
 
