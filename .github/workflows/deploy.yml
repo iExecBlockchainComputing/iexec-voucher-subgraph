@@ -14,7 +14,9 @@ on:
 
 jobs:
   deploy-subgraph:
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
+      - Azure_runners
 
     strategy:
       matrix:
@@ -69,10 +71,7 @@ jobs:
           echo "Using IPFS_URL=$IPFS_URL"
           npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME
           npx graph deploy --node $GRAPHNODE_URL $SUBGRAPH_NAME --ipfs $IPFS_URL --version-label $(npm pkg get version)
-
-      # -------------------------------------
-      # The two steps below only run on main
-      # -------------------------------------
+      # --- Main branch only ---
       - name: Login to DockerRegis
         if: ${{ github.ref_name == 'main' }}
         uses: docker/login-action@v3
