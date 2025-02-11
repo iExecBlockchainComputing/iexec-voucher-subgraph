@@ -30,8 +30,8 @@ jobs:
           cache: 'npm'
       - name: Install libpq
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libpq-dev
+          apt-get update
+          apt-get install -y libpq-dev
       - name: Init
         run: npm ci
       - name: Check Format
