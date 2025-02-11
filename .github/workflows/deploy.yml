@@ -5,16 +5,12 @@ on:
     inputs:
       START_BLOCK:
         description: 'Start Block for Subgraph Deployment'
-        required: true
-        default: ''
+        required: false
+        default: '30306387'
       VOUCHER_HUB_ADDRESS:
         description: 'Voucher Hub Address'
         required: false
         default: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
-      NETWORK_NAME:
-        description: 'Network Name'
-        required: false
-        default: 'bellecour'
 
 jobs:
   deploy-subgraph:
@@ -22,64 +18,73 @@ jobs:
 
     strategy:
       matrix:
-        environment: [dev, staging, prod]
+        environment: [tmp, staging, prod]
         include:
-          - environment: dev
-            subgraph_name: bellecour/dev-iexec-voucher
-            branch: develop
-            target: dev
           - environment: staging
             subgraph_name: bellecour/staging-iexec-voucher
             branch: develop
             target: staging
+          - environment: tmp
+            subgraph_name: bellecour/tmp-iexec-voucher
+            branch: main
+            target: tmp
           - environment: prod
-            subgraph_name: bellecour/prod-iexec-voucher
+            subgraph_name: bellecour/iexec-voucher
             branch: main
             target: prod
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
+
       - name: Init
         run: npm ci
+
+      - name: Check Format
+        run: npm run check-format
+
       - name: Run unit tests
         run: npm run test
-      - name: Test build
+
+      - name: Build
         run: npm run build
-      - name: OpenVPN
-        uses: dbritto-dev/openvpn3-action@main
-        with:
-          vpn-client-config: ${{ secrets.VPN_CLIENT_CONFIG }}
-          vpn-autoload-config: ${{ secrets.VPN_AUTOLOAD_CONFIG }}
-          script: sudo openvpn3 sessions-list
+
       - name: Deploy Subgraph
         env:
-          GRAPHNODE_URL: ${{ secrets.GRAPHNODE_URL }}
-          IPFS_URL: ${{ secrets.IPFS_URL }}
           START_BLOCK: ${{ inputs.START_BLOCK }}
           VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
-          NETWORK_NAME: ${{ inputs.NETWORK_NAME }}
+          GRAPHNODE_URL: ${{ secrets.GRAPHNODE_URL }}
+          IPFS_URL: ${{ secrets.IPFS_URL }}
           SUBGRAPH_NAME: ${{ matrix.subgraph_name }}
         run: |
           echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
-          npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME || echo "Subgraph already exists"
+          npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME
           npx graph deploy --node $GRAPHNODE_URL $SUBGRAPH_NAME --ipfs $IPFS_URL --version-label $(npm pkg get version)
         if: github.ref_name == matrix.branch && github.event.inputs.target == matrix.target
+
+      # -------------------------------------
+      # The two steps below only run on main
+      # -------------------------------------
       - name: Login to DockerRegis
+        if: ${{ github.ref_name == 'main' }}
         uses: docker/login-action@v3
         with:
           registry: docker-regis.iex.ec
-          username:  ${{ secrets.NEXUS-USER }}
+          username: ${{ secrets.NEXUS-USER }}
           password: ${{ secrets.NEXUS-PASSWORD }}
+
       - name: Build & Push Docker Image
+        if: ${{ github.ref_name == 'main' }}
         env:
           IMAGE_NAME: 'voucher-subgraph-deployer'
           GITHUB_SHA_SHORT: ${{ github.sha }}
+          # Make sure you have a step that sets get_version.outputs.npm_version or adjust accordingly
           NPM_VERSION: ${{ steps.get_version.outputs.npm_version }}
         run: |
           echo "Extracting npm version..."
@@ -89,8 +94,8 @@ jobs:
           echo "Building Docker image for environment: ${{ matrix.environment }}"
 
           # Define rolling and commit-specific tags
-          if [ "${{ matrix.environment }}" == "dev" ]; then
-            TAGS="dev dev-${GITHUB_SHA_SHORT}"
+          if [ "${{ matrix.environment }}" == "tmp" ]; then
+            TAGS="tmp tmp-${GITHUB_SHA_SHORT}"
           elif [ "${{ matrix.environment }}" == "staging" ]; then
             TAGS="staging staging-${GITHUB_SHA_SHORT}"
           elif [ "${{ matrix.environment }}" == "prod" ]; then
