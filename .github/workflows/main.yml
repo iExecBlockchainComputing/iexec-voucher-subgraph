@@ -28,10 +28,6 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-      - name: Install libpq
-        run: |
-          apt-get update
-          apt-get install -y libpq-dev
       - name: Init
         run: npm ci
       - name: Check Format

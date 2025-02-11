@@ -15,8 +15,8 @@ on:
 jobs:
   deploy-subgraph:
     runs-on:
-      - self-hosted
-      - Azure_runners
+      group: Azure_runners
+      labels: [ self-hosted, Linux, X64 ]
 
     strategy:
       matrix:
