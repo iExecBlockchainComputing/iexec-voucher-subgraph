@@ -33,7 +33,8 @@ describe('VoucherCreatedEvent', () => {
         );
     });
 
-    test('Should handle debited correctly', () => {
+    test('Should handle debit correctly', () => {
+        // Create a voucher with a balance of 50.456
         createAndSaveVoucher(
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
@@ -44,13 +45,22 @@ describe('VoucherCreatedEvent', () => {
             [],
         );
 
+        // Debit an amount less than the current balance
+        const debitAmount = BigDecimal.fromString('20'); // 20 < 50.456
         const event = createVoucherDebitedEvent(
             Address.fromString(VOUCHER_ADDRESS),
-            toNanoRLC(VOUCHER_BALANCE),
+            toNanoRLC(debitAmount),
         );
         handleVoucherDebited(event);
 
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', '0');
+        // After debiting 20, the expected remaining balance is 30.456
+        const expectedRemainingBalance = VOUCHER_BALANCE.minus(debitAmount);
+        assert.fieldEquals(
+            'Voucher',
+            VOUCHER_ADDRESS,
+            'balance',
+            expectedRemainingBalance.toString(),
+        );
         // Verify other fields remain unchanged
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
@@ -58,7 +68,7 @@ describe('VoucherCreatedEvent', () => {
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
     });
 
-    test('Should handle debited for non-existent voucher', () => {
+    test('Should handle debit for non-existent voucher', () => {
         const nonExistentVoucherAddress = '0x0000000000000000000000000000000000000000';
         assert.entityCount('Voucher', 0);
 
@@ -68,6 +78,7 @@ describe('VoucherCreatedEvent', () => {
         );
         handleVoucherDebited(event);
 
+        // No voucher entity should be created or modified
         assert.entityCount('Voucher', 0);
     });
 });
