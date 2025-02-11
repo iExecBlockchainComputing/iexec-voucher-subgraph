@@ -10,6 +10,10 @@ on:
       - develop
       - main
 
+concurrency:
+  group: ci-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   build-subgraph:
     runs-on:
@@ -24,6 +28,10 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
+      - name: Install libpq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev
       - name: Init
         run: npm ci
       - name: Check Format
