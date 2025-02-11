@@ -13,8 +13,8 @@ on:
 jobs:
   build-subgraph:
     runs-on:
-      - self-hosted
-      - Azure_runners
+      group: Azure_runners
+      labels: [ self-hosted, Linux, X64 ]
 
     steps:
       - name: Checkout
