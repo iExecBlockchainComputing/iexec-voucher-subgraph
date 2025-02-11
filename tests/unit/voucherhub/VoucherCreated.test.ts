@@ -1,22 +1,12 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts';
-import {
-    afterEach,
-    assert,
-    beforeEach,
-    clearStore,
-    describe,
-    test,
-} from 'matchstick-as/assembly/index';
+import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts';
+import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { App, VoucherType } from '../../../generated/schema';
+import { toNanoRLC } from '../../../src/utils';
 import { handleVoucherCreated } from '../../../src/voucherHub';
 import { createVoucherCreatedEvent } from '../utils/utils';
 
 describe('VoucherCreatedEvent', () => {
     beforeEach(() => {
-        clearStore();
-    });
-
-    afterEach(() => {
         clearStore();
     });
 
@@ -37,15 +27,14 @@ describe('VoucherCreatedEvent', () => {
 
         let voucherAddress = '0x1234567890123456789012345678901234567890';
         let owner = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-        let rlcValue = BigInt.fromI32(2); // in RLC
-        let nRlcValue = rlcValue.times(BigInt.fromI32(1_000_000_000)); // in nRLC
+        let rlcValue = BigDecimal.fromString('2'); // in RLC
         let expiration = BigInt.fromI32(1234567890);
 
         let event = createVoucherCreatedEvent(
             Address.fromString(voucherAddress),
             Address.fromString(owner),
             BigInt.fromString(voucherTypeId),
-            nRlcValue,
+            toNanoRLC(rlcValue),
             expiration,
         );
 

@@ -1,9 +1,12 @@
+import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts';
 import { AppRegistry } from '../generated/VoucherHub/AppRegistry';
 import { DatasetRegistry } from '../generated/VoucherHub/DatasetRegistry';
 import { PoCo } from '../generated/VoucherHub/PoCo';
 import {
     EligibleAssetAdded,
     EligibleAssetRemoved,
+    RoleGranted,
+    RoleRevoked,
     VoucherCreated,
     VoucherDebited,
     VoucherDrained,
@@ -15,13 +18,14 @@ import {
     VoucherTypeDurationUpdated,
 } from '../generated/VoucherHub/VoucherHub';
 import { WorkerpoolRegistry } from '../generated/VoucherHub/WorkerpoolRegistry';
-import { Voucher, VoucherCreation, VoucherTopUp, VoucherType } from '../generated/schema';
+import { Counter, Voucher, VoucherCreation, VoucherTopUp, VoucherType } from '../generated/schema';
 import { Voucher as VoucherTemplate } from '../generated/templates';
 import {
     getEventId,
     loadOrCreateAccount,
     loadOrCreateApp,
     loadOrCreateDataset,
+    loadOrCreateRole,
     loadOrCreateWorkerpool,
     nRLCToRLC,
 } from './utils';
@@ -139,7 +143,15 @@ export function handleVoucherDrained(event: VoucherDrained): void {
     // do not index balance changes on voucher not indexed
     if (voucher) {
         let drainedAmount = nRLCToRLC(event.params.amount);
-        voucher.balance = voucher.balance.minus(drainedAmount);
+        let voucherNextBalance = voucher.balance.minus(drainedAmount);
+        if (!voucherNextBalance.equals(BigDecimal.fromString('0'))) {
+            log.error('Voucher {} drain amount {} exceeds current balance {}', [
+                voucherId,
+                drainedAmount.toString(),
+                voucher.balance.toString(),
+            ]);
+        }
+        voucher.balance = voucherNextBalance;
         voucher.save();
     }
 }
@@ -181,17 +193,40 @@ export function handleVoucherToppedUp(event: VoucherToppedUp): void {
 }
 
 export function handleVoucherTypeCreated(event: VoucherTypeCreated): void {
-    let id = event.params.id.toString();
+    let id = event.params.id;
+    let idString = id.toString();
+
+    // Load or create counter
+    let counter = Counter.load('VoucherType');
+    if (!counter) {
+        counter = new Counter('VoucherType');
+        counter.count = BigInt.fromI32(0);
+    }
+
+    let current = counter.count;
+    // Check if id matches the current count
+    if (!id.equals(current)) {
+        log.error('VoucherType ID {} does not match the current count {}', [
+            idString,
+            current.toString(),
+        ]);
+        return;
+    }
+
     let description = event.params.description;
     let duration = event.params.duration;
-    let voucherType = VoucherType.load(id);
+    let voucherType = VoucherType.load(idString);
     if (!voucherType) {
-        voucherType = new VoucherType(id);
+        voucherType = new VoucherType(idString);
         voucherType.eligibleAssets = [];
+        voucherType.description = description;
+        voucherType.duration = duration;
     }
-    voucherType.description = description;
-    voucherType.duration = duration;
     voucherType.save();
+
+    // Increment counter
+    counter.count = counter.count.plus(BigInt.fromI32(1));
+    counter.save();
 }
 
 export function handleVoucherTypeDescriptionUpdated(event: VoucherTypeDescriptionUpdated): void {
@@ -214,4 +249,18 @@ export function handleVoucherTypeDurationUpdated(event: VoucherTypeDurationUpdat
         voucherType.duration = duration;
         voucherType.save();
     }
+}
+
+export function handleRoleGranted(event: RoleGranted): void {
+    let account = loadOrCreateAccount(event.params.account.toHex());
+    let role = loadOrCreateRole(event.params.role.toHex());
+    account.role = role.id;
+    account.save();
+}
+
+export function handleRoleRevoked(event: RoleRevoked): void {
+    loadOrCreateRole(event.params.role.toHex());
+    let account = loadOrCreateAccount(event.params.account.toHex());
+    account.role = null; // Clear the role when revoked
+    account.save();
 }
