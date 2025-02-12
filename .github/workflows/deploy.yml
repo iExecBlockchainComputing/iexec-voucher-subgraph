@@ -11,30 +11,20 @@ on:
         description: 'Voucher Hub Address'
         required: false
         default: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
-  pull_request: # Add this line to trigger the workflow on pull requests
+      TARGET:
+        description: 'Deployment Target (tmp, staging, prod)'
+        required: true
+        type: choice
+        options:
+          - tmp
+          - staging
+          - prod
 
 jobs:
   deploy-subgraph:
     runs-on:
       group: Azure_runners
       labels: [ self-hosted, Linux, X64 ]
-
-    strategy:
-      matrix:
-        environment: [tmp, staging, prod]
-        include:
-          - environment: staging
-            subgraph_name: bellecour/staging-iexec-voucher
-            branch: develop
-            target: staging
-          - environment: tmp
-            subgraph_name: bellecour/tmp-iexec-voucher
-            branch: main
-            target: tmp
-          - environment: prod
-            subgraph_name: bellecour/iexec-voucher
-            branch: main
-            target: prod
 
     steps:
       - name: Checkout
@@ -53,7 +43,10 @@ jobs:
       - name: Build
         run: npm run build
       - name: Deploy Subgraph
-        if: github.ref_name == matrix.branch && github.event.inputs.target == matrix.target
+        if: |
+          (github.event.inputs.TARGET == 'staging' && (github.ref_name == 'main' || github.ref_name == 'develop')) ||
+          (github.event.inputs.TARGET == 'tmp' && github.ref_name == 'main') ||
+          (github.event.inputs.TARGET == 'prod' && github.ref_name == 'main')
         env:
           START_BLOCK: ${{ inputs.START_BLOCK }}
           VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
@@ -72,31 +65,27 @@ jobs:
           echo "Using IPFS_URL=$IPFS_URL"
           npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME
           npx graph deploy --node $GRAPHNODE_URL $SUBGRAPH_NAME --ipfs $IPFS_URL --version-label $(npm pkg get version)
+
       # --- Main branch only ---
-      - name: Login to DockerRegis
-        if: ${{ github.ref_name == 'main' }}
+      - name: Login to Docker Hub
+        if: github.event.inputs.TARGET == 'prod' && github.ref_name == 'main'
         uses: docker/login-action@v3
         with:
-          registry: docker-regis.iex.ec
-          username: ${{ secrets.NEXUS-USER }}
-          password: ${{ secrets.NEXUS-PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Build & Push Docker Image
-        if: ${{ github.ref_name == 'main' }}
+        if: github.ref_name == 'main'
         env:
-          IMAGE_NAME: 'voucher-subgraph-deployer'
-          GITHUB_SHA_SHORT: ${{ github.sha }}
+          IMAGE_NAME: 'iexecblockchaincomputing/voucher-subgraph-deployer' # Replace with your public Docker Hub repo
         run: |
           echo "Extracting npm version..."
-          # Capture the current npm version from package.json (removing surrounding quotes)
           npm_version=$(npm pkg get version | tr -d '"')
 
           echo "NPM_VERSION=$npm_version"
 
-          # Define your tags (for example, 'latest' and 'prod-version')
           TAGS="latest prod-${npm_version}"
 
-          # Build & Push the image with all tags
           for tag in $TAGS; do
-            docker build -t docker-regis.iex.ec/$IMAGE_NAME:$tag ./docker
-            docker push docker-regis.iex.ec/$IMAGE_NAME:$tag
+            docker build -t $IMAGE_NAME:$tag ./docker
+            docker push $IMAGE_NAME:$tag
           done
