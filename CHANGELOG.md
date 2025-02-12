@@ -2,6 +2,20 @@
 
 ## vNEXT
 
+- Add unit tests for :
+  - VoucherHub Events :
+    - `EligibleAssetRemoved` (#12)
+    - `VoucherCreated` (#12)
+    - `EligibleAssetAdded` (#16)
+    - `Role` (#19)
+    - `VoucherTypeEvent` (#21)
+    - `VoucherTypeCreated` (#22)
+    - `VoucherDrained` (#24)
+    - `VoucherDebited` (#28)
+  - Voucher Events :
+    - `AccountAuthorized`(#20)
+    - `AccountUnauthorized`(#20)
+
 ## v1.1.0
 
 ### Added
