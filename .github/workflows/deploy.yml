@@ -11,6 +11,7 @@ on:
         description: 'Voucher Hub Address'
         required: false
         default: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
+  pull_request: # Add this line to trigger the workflow on pull requests
 
 jobs:
   deploy-subgraph:
