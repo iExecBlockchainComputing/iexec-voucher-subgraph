@@ -64,12 +64,14 @@ describe('VoucherToppedUpEvent', () => {
             VOUCHER_BALANCE.plus(topUpValue).toString(),
         );
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', newExpiration.toString());
+        // Verify other fields remain unchanged
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'owner', VOUCHER_OWNER);
 
         // Check that a VoucherTopUp entity was created
         const topUpEntityId = getEventId(event);
         assert.fieldEquals('VoucherTopUp', topUpEntityId, 'value', topUpValue.toString());
+        // Verify other fields remain unchanged
         assert.fieldEquals('VoucherTopUp', topUpEntityId, 'voucher', VOUCHER_ADDRESS);
         getEventId;
         assert.fieldEquals(
