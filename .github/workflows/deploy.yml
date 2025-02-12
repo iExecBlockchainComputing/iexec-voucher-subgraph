@@ -57,10 +57,22 @@ jobs:
         run: npm run test
       - name: Build
         run: npm run build
+      - name: Set Subgraph Name
+        run: |
+          TARGET="${{ github.event.inputs.TARGET }}"
+
+          if [[ "$TARGET" == "staging" ]]; then
+            echo "SUBGRAPH_NAME=bellecour/staging-iexec-voucher" >> $GITHUB_ENV
+          elif [[ "$TARGET" == "tmp" ]]; then
+            echo "SUBGRAPH_NAME=bellecour/tmp-iexec-voucher" >> $GITHUB_ENV
+          elif [[ "$TARGET" == "prod" ]]; then
+            echo "SUBGRAPH_NAME=bellecour/iexec-voucher" >> $GITHUB_ENV
+          fi
       - name: Deploy Subgraph
         env:
           START_BLOCK: ${{ inputs.START_BLOCK }}
           VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
+          SUBGRAPH_NAME: ${{ env.SUBGRAPH_NAME }}
         run: |
           if [ "${{ github.event.inputs.TARGET }}" == "staging" ]; then
             export GRAPHNODE_URL="${{ vars.STAGING_GRAPHNODE_URL }}"
