@@ -55,8 +55,8 @@ jobs:
         run: npm run check-format
       - name: Run unit tests
         run: npm run test
-      - name: Build
-        run: npm run build
+      - name: Codegen
+        run: npm run codegen
       - name: Set Subgraph Name
         run: |
           TARGET="${{ github.event.inputs.TARGET }}"
@@ -83,8 +83,7 @@ jobs:
           fi
 
           echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
-          echo "Using GRAPHNODE_URL=$GRAPHNODE_URL"
-          echo "Using IPFS_URL=$IPFS_URL"
+          npm run deploy:prepare-manifest
           npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME
           npx graph deploy --node $GRAPHNODE_URL $SUBGRAPH_NAME --ipfs $IPFS_URL --version-label $(npm pkg get version)
 
