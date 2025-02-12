@@ -5,6 +5,7 @@
 - Add unit tests for :
   - VoucherHub Events :
     - `VoucherDebited` (#28)
+    - `VoucherToppedUp` (#29)
 
 ## v1.1.0
 

@@ -8,6 +8,7 @@ import {
     VoucherCreated,
     VoucherDebited,
     VoucherDrained,
+    VoucherToppedUp,
     VoucherTypeCreated,
     VoucherTypeDescriptionUpdated,
     VoucherTypeDurationUpdated,
@@ -283,6 +284,32 @@ export function createVoucherDebitedEvent(
     event.parameters = EventParamBuilder.init()
         .address('voucher', voucher)
         .bigInt('sponsoredAmount', sponsoredAmount)
+        .build();
+
+    return event;
+}
+
+export function createVoucherToppedUpEvent(
+    voucher: Address,
+    expiration: BigInt,
+    value: BigInt,
+): VoucherToppedUp {
+    let mockEvent = newMockEvent();
+    let event = new VoucherToppedUp(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        mockEvent.parameters,
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init()
+        .address('voucher', voucher)
+        .bigInt('expiration', expiration)
+        .bigInt('value', value)
         .build();
 
     return event;
