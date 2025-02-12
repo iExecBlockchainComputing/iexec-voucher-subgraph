@@ -84,7 +84,7 @@ describe('VoucherToppedUpEvent', () => {
 
     test('Should handle topUp for non-existent voucher', () => {
         // --- GIVEN
-        const nonExistentVoucherAddress = '0x0000000000000000000000000000000000000000';
+        const nonExistentVoucherAddress = '0x0000000000000000000000000000000000000001';
         assert.entityCount('Voucher', 0);
 
         // --- WHEN
