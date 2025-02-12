@@ -63,11 +63,11 @@ jobs:
           VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
         run: |
           if [ "${{ github.event.inputs.TARGET }}" == "staging" ]; then
-            export GRAPHNODE_URL="${{ secrets.STAGING_GRAPHNODE_URL }}"
-            export IPFS_URL="${{ secrets.STAGING_IPFS }}"
+            export GRAPHNODE_URL="${{ vars.STAGING_GRAPHNODE_URL }}"
+            export IPFS_URL="${{ vars.STAGING_IPFS }}"
           else
-            export GRAPHNODE_URL="${{ secrets.GRAPHNODE_URL }}"
-            export IPFS_URL="${{ secrets.IPFS_URL }}"
+            export GRAPHNODE_URL="${{ vars.GRAPHNODE_URL }}"
+            export IPFS_URL="${{ vars.IPFS_URL }}"
           fi
 
           echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
