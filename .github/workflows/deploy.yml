@@ -27,6 +27,21 @@ jobs:
       labels: [ self-hosted, Linux, X64 ]
 
     steps:
+      - name: Validate Target
+        run: |
+          TARGET="${{ github.event.inputs.TARGET }}"
+          BRANCH="${{ github.ref_name }}"
+
+          if [[ "$TARGET" == "staging"]]; then
+            echo "✅ Valid target: $TARGET on branch $BRANCH"
+          elif [[ "$TARGET" == "tmp" && "$BRANCH" == "main" ]]; then
+            echo "✅ Valid target: $TARGET on branch $BRANCH"
+          elif [[ "$TARGET" == "prod" && "$BRANCH" == "main" ]]; then
+            echo "✅ Valid target: $TARGET on branch $BRANCH"
+          else
+            echo "❌ ERROR: Invalid target ($TARGET) for branch ($BRANCH)"
+            exit 1
+          fi
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up Node.js
@@ -43,16 +58,11 @@ jobs:
       - name: Build
         run: npm run build
       - name: Deploy Subgraph
-        if: |
-          (github.event.inputs.TARGET == 'staging' && (github.ref_name == 'main' || github.ref_name == 'develop')) ||
-          (github.event.inputs.TARGET == 'tmp' && github.ref_name == 'main') ||
-          (github.event.inputs.TARGET == 'prod' && github.ref_name == 'main')
         env:
           START_BLOCK: ${{ inputs.START_BLOCK }}
           VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
-          SUBGRAPH_NAME: ${{ matrix.subgraph_name }}
         run: |
-          if [ "${{ matrix.environment }}" == "staging" ]; then
+          if [ "${{ github.event.inputs.TARGET }}" == "staging" ]; then
             export GRAPHNODE_URL="${{ secrets.STAGING_GRAPHNODE_URL }}"
             export IPFS_URL="${{ secrets.STAGING_IPFS }}"
           else
@@ -76,7 +86,7 @@ jobs:
       - name: Build & Push Docker Image
         if: github.ref_name == 'main'
         env:
-          IMAGE_NAME: 'iexecblockchaincomputing/voucher-subgraph-deployer' # Replace with your public Docker Hub repo
+          IMAGE_NAME: 'iexecblockchaincomputing/voucher-subgraph-deployer'
         run: |
           echo "Extracting npm version..."
           npm_version=$(npm pkg get version | tr -d '"')
