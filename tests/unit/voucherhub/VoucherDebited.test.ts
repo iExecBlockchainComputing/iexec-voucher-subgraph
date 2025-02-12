@@ -27,8 +27,8 @@ describe('VoucherDebitedEvent', () => {
         // Initialize required entities
         createAndSaveVoucherType(
             VOUCHER_TYPE_ID,
-            VOUCHER_DESCRIPTION,
-            VOUCHER_DURATION,
+            VOUCHER_TYPE_DESCRIPTION,
+            VOUCHER_TYPE_DURATION,
             VOUCHER_TYPE_ELIGIBLE_ASSETS,
         );
     });
@@ -45,7 +45,7 @@ describe('VoucherDebitedEvent', () => {
             VOUCHER_EXPIRATION,
             [],
         );
-        // Debit an amount less than the current balance
+        // Sponsored amount less than the current balance
         const sponsoredAmount = BigDecimal.fromString('20.45'); // 20.45 < 50.456
 
         // --- WHEN
