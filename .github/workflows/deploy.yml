@@ -3,7 +3,7 @@ name: Deploy Subgraph
 on:
   workflow_dispatch:
     inputs:
-      START_BLOCK:
+      VOUCHER_HUB_START_BLOCK:
         description: 'Start Block for Subgraph Deployment'
         required: false
         default: '30306387'
@@ -70,7 +70,7 @@ jobs:
           fi
       - name: Deploy Subgraph
         env:
-          START_BLOCK: ${{ inputs.START_BLOCK }}
+          VOUCHER_HUB_START_BLOCK: ${{ inputs.VOUCHER_HUB_START_BLOCK }}
           VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
           SUBGRAPH_NAME: ${{ env.SUBGRAPH_NAME }}
         run: |
