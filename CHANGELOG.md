@@ -2,6 +2,7 @@
 
 ## vNEXT
 
+- Refactor constants in unit tests for better maintainability and readability.(#30)
 - Add unit tests for :
   - VoucherHub Events :
     - `VoucherDebited` (#28)
