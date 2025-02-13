@@ -3,6 +3,8 @@ import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/as
 import { VoucherType } from '../../../generated/schema';
 import { handleEligibleAssetAdded } from '../../../src/voucherHub';
 import {
+    ASSET_ID,
+    INVALID_ASSET_ID,
     VOUCHER_TYPE_DESCRIPTION,
     VOUCHER_TYPE_DURATION,
     VOUCHER_TYPE_ID,
@@ -14,12 +16,6 @@ import {
     mockRegistryAddress,
 } from '../utils/mocks';
 import { createEligibleAssetAddedEvent } from '../utils/utils';
-
-// Asset IDs
-const APP_ID = '0x0e7bc972c99187c191a17f3cae4a2711a4188c3f';
-const DATASET_ID = '0x123456789012345678901234567890abcdefabcd';
-const WORKERPOOL_ID = '0xabcdef1234567890abcdef1234567890abcdef12';
-const INVALID_ASSET_ID = '0x1111111111111111111111111111111111111111';
 
 // Registry addresses
 const APP_REGISTRY_ADDRESS = '0x0e7bc972c99187c191a17f3cae4a2711a4188c3f';
@@ -42,7 +38,7 @@ describe('EligibleAssetAddedEvent', () => {
         mockRegistryAddress(POCO_ADDRESS, 'datasetregistry', DATASET_REGISTRY_ADDRESS);
         mockRegistryAddress(POCO_ADDRESS, 'workerpoolregistry', WORKERPOOL_REGISTRY_ADDRESS);
 
-        // Mock getter functions
+        // Mock getter functions for specific asset IDs
         mockGetterFunction(APP_REGISTRY_ADDRESS, 'm_appName', 'Mocked App Name');
         mockGetterFunction(DATASET_REGISTRY_ADDRESS, 'm_datasetName', 'Mocked Dataset Name');
         mockGetterFunction(
@@ -50,14 +46,19 @@ describe('EligibleAssetAddedEvent', () => {
             'm_workerpoolDescription',
             'Mocked Workerpool Description',
         );
+
+        // Ensure the specific asset ID used in tests is also mocked
+        mockGetterFunction(ASSET_ID, 'm_appName', 'Mocked App Name');
+        mockGetterFunction(ASSET_ID, 'm_datasetName', 'Mocked Dataset Name');
+        mockGetterFunction(ASSET_ID, 'm_workerpoolDescription', 'Mocked Workerpool Description');
     });
 
     test('Should add an APP as eligibleAssets when the entity exists', () => {
         // --- GIVEN
         // Mock registry responses
-        mockIsRegistered(APP_REGISTRY_ADDRESS, APP_ID, true);
-        mockIsRegistered(DATASET_REGISTRY_ADDRESS, APP_ID, false);
-        mockIsRegistered(WORKERPOOL_REGISTRY_ADDRESS, APP_ID, false);
+        mockIsRegistered(APP_REGISTRY_ADDRESS, ASSET_ID, true);
+        mockIsRegistered(DATASET_REGISTRY_ADDRESS, ASSET_ID, false);
+        mockIsRegistered(WORKERPOOL_REGISTRY_ADDRESS, ASSET_ID, false);
 
         let voucherType = new VoucherType(VOUCHER_TYPE_ID);
         voucherType.description = VOUCHER_TYPE_DESCRIPTION;
@@ -68,20 +69,20 @@ describe('EligibleAssetAddedEvent', () => {
         // WHEN
         let event = createEligibleAssetAddedEvent(
             BigInt.fromString(VOUCHER_TYPE_ID),
-            Address.fromString(APP_ID),
+            Address.fromString(ASSET_ID),
         );
         handleEligibleAssetAdded(event);
 
         // THEN
-        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${APP_ID}]`);
+        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${ASSET_ID}]`);
     });
 
     test('Should add a DATASET as eligibleAssets when the entity exists', () => {
         // --- GIVEN
         // Mock registry responses
-        mockIsRegistered(DATASET_REGISTRY_ADDRESS, DATASET_ID, true);
-        mockIsRegistered(APP_REGISTRY_ADDRESS, DATASET_ID, false);
-        mockIsRegistered(WORKERPOOL_REGISTRY_ADDRESS, DATASET_ID, false);
+        mockIsRegistered(DATASET_REGISTRY_ADDRESS, ASSET_ID, true);
+        mockIsRegistered(APP_REGISTRY_ADDRESS, ASSET_ID, false);
+        mockIsRegistered(WORKERPOOL_REGISTRY_ADDRESS, ASSET_ID, false);
 
         let voucherType = new VoucherType(VOUCHER_TYPE_ID);
         voucherType.description = VOUCHER_TYPE_DESCRIPTION;
@@ -92,20 +93,20 @@ describe('EligibleAssetAddedEvent', () => {
         // WHEN
         let event = createEligibleAssetAddedEvent(
             BigInt.fromString(VOUCHER_TYPE_ID),
-            Address.fromString(DATASET_ID),
+            Address.fromString(ASSET_ID),
         );
         handleEligibleAssetAdded(event);
 
         // THEN
-        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${DATASET_ID}]`);
+        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${ASSET_ID}]`);
     });
 
     test('Should add a WORKERPOOL as eligibleAssets when the entity exists', () => {
         // --- GIVEN
         // Mock registry responses
-        mockIsRegistered(WORKERPOOL_REGISTRY_ADDRESS, WORKERPOOL_ID, true);
-        mockIsRegistered(APP_REGISTRY_ADDRESS, WORKERPOOL_ID, false);
-        mockIsRegistered(DATASET_REGISTRY_ADDRESS, WORKERPOOL_ID, false);
+        mockIsRegistered(WORKERPOOL_REGISTRY_ADDRESS, ASSET_ID, true);
+        mockIsRegistered(APP_REGISTRY_ADDRESS, ASSET_ID, false);
+        mockIsRegistered(DATASET_REGISTRY_ADDRESS, ASSET_ID, false);
 
         let voucherType = new VoucherType(VOUCHER_TYPE_ID);
         voucherType.description = VOUCHER_TYPE_DESCRIPTION;
@@ -116,12 +117,12 @@ describe('EligibleAssetAddedEvent', () => {
         // WHEN
         let event = createEligibleAssetAddedEvent(
             BigInt.fromString(VOUCHER_TYPE_ID),
-            Address.fromString(WORKERPOOL_ID),
+            Address.fromString(ASSET_ID),
         );
         handleEligibleAssetAdded(event);
 
         // THEN
-        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${WORKERPOOL_ID}]`);
+        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${ASSET_ID}]`);
     });
 
     test('Should NOT add INVALID asset as eligibleAssets', () => {
