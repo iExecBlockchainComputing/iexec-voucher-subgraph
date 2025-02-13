@@ -9,8 +9,8 @@ import {
 
 // Shared constants
 const VOUCHER_TYPE_ID = '1';
-const VOUCHER_DESCRIPTION = 'Test Voucher Type';
-const VOUCHER_DURATION = BigInt.fromI32(86400);
+const VOUCHER_TYPE_DESCRIPTION = 'Test Voucher Type';
+const VOUCHER_TYPE_DURATION = BigInt.fromI32(86400);
 const VOUCHER_TYPE_ELIGIBLE_ASSETS: string[] = [];
 
 const VOUCHER_OWNER = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
@@ -24,8 +24,8 @@ describe('AccountUnauthorizedEvent', () => {
         clearStore();
         createAndSaveVoucherType(
             VOUCHER_TYPE_ID,
-            VOUCHER_DESCRIPTION,
-            VOUCHER_DURATION,
+            VOUCHER_TYPE_DESCRIPTION,
+            VOUCHER_TYPE_DURATION,
             VOUCHER_TYPE_ELIGIBLE_ASSETS,
         );
     });
