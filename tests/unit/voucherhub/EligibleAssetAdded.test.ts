@@ -3,11 +3,16 @@ import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/as
 import { VoucherType } from '../../../generated/schema';
 import { handleEligibleAssetAdded } from '../../../src/voucherHub';
 import {
+    APP_REGISTRY_ADDRESS,
     ASSET_ID,
+    DATASET_REGISTRY_ADDRESS,
     INVALID_ASSET_ID,
+    POCO_ADDRESS,
+    VOUCHER_HUB_ADDRESS,
     VOUCHER_TYPE_DESCRIPTION,
     VOUCHER_TYPE_DURATION,
     VOUCHER_TYPE_ID,
+    WORKERPOOL_REGISTRY_ADDRESS,
 } from '../utils/constant';
 import {
     mockGetIexecPoco,
@@ -16,15 +21,6 @@ import {
     mockRegistryAddress,
 } from '../utils/mocks';
 import { createEligibleAssetAddedEvent } from '../utils/utils';
-
-// Registry addresses
-const APP_REGISTRY_ADDRESS = '0x0e7bc972c99187c191a17f3cae4a2711a4188c3f';
-const DATASET_REGISTRY_ADDRESS = '0x123456789012345678901234567890abcdefabcd';
-const WORKERPOOL_REGISTRY_ADDRESS = '0xabcdef1234567890abcdef1234567890abcdef12';
-
-// Contract addresses
-const POCO_ADDRESS = '0x1234567890123456789012345678901234567890';
-const VOUCHER_HUB_ADDRESS = '0xa16000000000000000000000000000000000ec2a';
 
 describe('EligibleAssetAddedEvent', () => {
     beforeEach(() => {
