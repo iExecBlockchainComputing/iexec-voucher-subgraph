@@ -1,31 +1,10 @@
-name: Deploy Subgraph
-
-on:
-  workflow_dispatch:
-    inputs:
-      VOUCHER_HUB_START_BLOCK:
-        description: 'Start Block for Subgraph Deployment'
-        required: false
-        default: '30306387'
-      VOUCHER_HUB_ADDRESS:
-        description: 'Voucher Hub Address'
-        required: false
-        default: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
-      TARGET:
-        description: 'Deployment Target (tmp, staging, prod)'
-        required: true
-        type: choice
-        options:
-          - tmp
-          - staging
-          - prod
+on: [push, pull_request]
 
 jobs:
   deploy-subgraph:
     runs-on:
       group: Azure_runners
       labels: [ self-hosted, Linux, X64 ]
-
     steps:
       - name: Validate Target
         run: |
@@ -84,29 +63,29 @@ jobs:
 
           echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
           npm run deploy:prepare-manifest
-          npx graph create --node $GRAPHNODE_URL $SUBGRAPH_NAME
-          npx graph deploy --node $GRAPHNODE_URL $SUBGRAPH_NAME --ipfs $IPFS_URL --version-label $(npm pkg get version)
-
-      # --- Main branch only ---
+  docker-build-and-push:
+    if: github.event.inputs.TARGET == 'prod' && github.ref_name == 'main'
+    runs-on:
+      group: Azure_runners
+      labels: [ self-hosted, Linux, X64 ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Login to Docker Hub
-        if: github.event.inputs.TARGET == 'prod' && github.ref_name == 'main'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      - name: Build & Push Docker Image
-        if: github.ref_name == 'main'
-        env:
-          IMAGE_NAME: 'iexecblockchaincomputing/voucher-subgraph-deployer'
-        run: |
-          echo "Extracting npm version..."
-          npm_version=$(npm pkg get version | tr -d '"')
-
-          echo "NPM_VERSION=$npm_version"
-
-          TAGS="latest prod-${npm_version}"
-
-          for tag in $TAGS; do
-            docker build -t $IMAGE_NAME:$tag ./docker
-            docker push $IMAGE_NAME:$tag
-          done
+          password: ${{ secrets.DOCKERHUB_PAT }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Get package version
+        id: package_version
+        run: echo "VERSION=$(npm pkg get version | tr -d '\"')" >> $GITHUB_ENVs
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          file: docker/Dockerfile          
+          push: true
+          tags: iexecblockchaincomputing/voucher-subgraph-deployer:prod-${{ env.VERSION }}
