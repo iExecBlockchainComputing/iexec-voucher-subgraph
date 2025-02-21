@@ -1,4 +1,25 @@
-on: [push, pull_request]
+name: Deploy Subgraph
+
+on:
+  workflow_dispatch:
+    inputs:
+      VOUCHER_HUB_START_BLOCK:
+        description: 'Start Block for Subgraph Deployment'
+        required: false
+        default: '30306387'
+      VOUCHER_HUB_ADDRESS:
+        description: 'Voucher Hub Address'
+        required: false
+        default: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
+      TARGET:
+        description: 'Deployment Target (tmp, staging, prod)'
+        required: true
+        type: choice
+        options:
+          - tmp
+          - staging
+          - prod
+
 
 jobs:
   deploy-subgraph:
