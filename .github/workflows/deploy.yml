@@ -120,4 +120,4 @@ jobs:
         with:
           file: docker/Dockerfile          
           push: true
-          tags: iexecblockchaincomputing/voucher-subgraph-deployer:prod-${{ env.VERSION }}
+          tags: iexechub/voucher-subgraph-deployer:prod-${{ env.VERSION }}
