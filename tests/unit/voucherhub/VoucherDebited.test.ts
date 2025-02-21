@@ -1,7 +1,7 @@
 import { Address, BigDecimal } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { toNanoRLC } from '../../../src/utils';
-import { handleVoucherDrained } from '../../../src/voucherHub';
+import { handleVoucherDebited } from '../../../src/voucherHub';
 import {
     VOUCHER_ADDRESS,
     VOUCHER_BALANCE,
@@ -16,10 +16,10 @@ import {
 import {
     createAndSaveVoucher,
     createAndSaveVoucherType,
-    createVoucherDrainedEvent,
+    createVoucherDebitedEvent,
 } from '../utils/utils';
 
-describe('VoucherDrainedEvent', () => {
+describe('VoucherDebitedEvent', () => {
     beforeEach(() => {
         clearStore();
 
@@ -32,7 +32,9 @@ describe('VoucherDrainedEvent', () => {
         );
     });
 
-    test('Should handle drain to exactly zero balance', () => {
+    test('Should handle debit correctly', () => {
+        // --- GIVEN
+        // Create a voucher with a balance of 50.456
         createAndSaveVoucher(
             VOUCHER_ADDRESS,
             VOUCHER_TYPE_ID,
@@ -42,14 +44,24 @@ describe('VoucherDrainedEvent', () => {
             VOUCHER_EXPIRATION,
             [],
         );
+        // Sponsored amount less than the current balance
+        const sponsoredAmount = BigDecimal.fromString('20.45'); // 20.45 < 50.456
 
-        const event = createVoucherDrainedEvent(
+        // --- WHEN
+        const event = createVoucherDebitedEvent(
             Address.fromString(VOUCHER_ADDRESS),
-            toNanoRLC(VOUCHER_BALANCE),
+            toNanoRLC(sponsoredAmount),
         );
-        handleVoucherDrained(event);
+        handleVoucherDebited(event);
 
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', '0');
+        // --- THEN
+        const expectedRemainingBalance = VOUCHER_BALANCE.minus(sponsoredAmount);
+        assert.fieldEquals(
+            'Voucher',
+            VOUCHER_ADDRESS,
+            'balance',
+            expectedRemainingBalance.toString(),
+        );
         // Verify other fields remain unchanged
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'value', VOUCHER_VALUE.toString());
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'voucherType', VOUCHER_TYPE_ID);
@@ -57,38 +69,20 @@ describe('VoucherDrainedEvent', () => {
         assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'expiration', VOUCHER_EXPIRATION.toString());
     });
 
-    test('Should handle partial drain correctly', () => {
-        createAndSaveVoucher(
-            VOUCHER_ADDRESS,
-            VOUCHER_TYPE_ID,
-            VOUCHER_OWNER,
-            VOUCHER_VALUE,
-            VOUCHER_BALANCE,
-            VOUCHER_EXPIRATION,
-            [],
-        );
-
-        const partialDrainAmount = VOUCHER_BALANCE.div(BigDecimal.fromString('2'));
-        const event = createVoucherDrainedEvent(
-            Address.fromString(VOUCHER_ADDRESS),
-            toNanoRLC(partialDrainAmount),
-        );
-        handleVoucherDrained(event);
-
-        const expectedBalance = VOUCHER_BALANCE.minus(partialDrainAmount);
-        assert.fieldEquals('Voucher', VOUCHER_ADDRESS, 'balance', expectedBalance.toString());
-    });
-
-    test('Should handle drain for non-existent voucher', () => {
-        const nonExistentVoucherAddress = '0x0000000000000000000000000000000000000000';
+    test('Should handle debit for non-existent voucher', () => {
+        // --- GIVEN
+        const nonExistentVoucherAddress = '0x0000000000000000000000000000000000000001';
         assert.entityCount('Voucher', 0);
 
-        const event = createVoucherDrainedEvent(
+        // --- WHEN
+        const event = createVoucherDebitedEvent(
             Address.fromString(nonExistentVoucherAddress),
             toNanoRLC(VOUCHER_BALANCE),
         );
-        handleVoucherDrained(event);
+        handleVoucherDebited(event);
 
+        // --- THEN
+        // No voucher entity should be created or modified
         assert.entityCount('Voucher', 0);
     });
 });
