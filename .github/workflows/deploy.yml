@@ -3,9 +3,6 @@ name: Deploy Subgraph
 on:
   workflow_dispatch:
     inputs:
-      IMAGE_TAG:
-        description: 'Docker Image Tag'
-        required: true
       VOUCHER_HUB_START_BLOCK:
         description: 'Start Block for Subgraph Deployment'
         required: false
