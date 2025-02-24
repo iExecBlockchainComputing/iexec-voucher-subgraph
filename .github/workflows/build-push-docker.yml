@@ -16,6 +16,11 @@ on:
         description: 'Deployment Target (staging, prod)'
         required: true
         type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_PAT:
+        required: true
 
 jobs:
   validate-branch:
