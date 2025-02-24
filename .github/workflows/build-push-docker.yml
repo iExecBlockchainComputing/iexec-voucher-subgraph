@@ -26,10 +26,7 @@ jobs:
           TARGET="${{ github.event.inputs.TARGET }}"
           BRANCH="${{ github.ref_name }}"
 
-          if [[ "$TARGET" == "staging" ]]; then
-            echo "❌ ERROR: Staging deployments are only allowed from the develop branch."
-            exit 1
-          elif [[ "$TARGET" == "prod" && "$BRANCH" != "main" ]]; then
+          if [[ "$TARGET" == "prod" && "$BRANCH" != "main" ]]; then
             echo "❌ ERROR: Production deployments are only allowed from the main branch."
             exit 1
           fi
