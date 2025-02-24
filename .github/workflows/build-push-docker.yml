@@ -1,9 +1,6 @@
 name: Build and Push Subgraph Docker Image
 
 on:
-  pull_request:
-    branches:
-      - "**"
   workflow_dispatch:
     inputs:
       TARGET:
