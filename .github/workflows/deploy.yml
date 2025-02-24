@@ -55,6 +55,12 @@ jobs:
       labels: [ self-hosted, Linux, X64 ]
     needs: trigger-build-and-push-docker-image
     steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
       - name: Retrieve Docker Image Tag
         run: |
           TARGET="${{ github.event.inputs.TARGET }}"
