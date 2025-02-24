@@ -43,9 +43,7 @@ jobs:
           echo "✅ Target $TARGET is valid for branch $BRANCH"
 
   build-and-push:
-    runs-on:
-      group: Azure_runners
-      labels: [ self-hosted, Linux, X64 ]
+    runs-on: ubuntu-latest
     needs: validate-branch
     steps:
       - name: Checkout
