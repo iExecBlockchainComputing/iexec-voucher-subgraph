@@ -16,10 +16,8 @@ concurrency:
 
 jobs:
   build-subgraph:
-    runs-on:
-      group: Azure_runners
-      labels: [ self-hosted, Linux, X64 ]
-
+    runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4

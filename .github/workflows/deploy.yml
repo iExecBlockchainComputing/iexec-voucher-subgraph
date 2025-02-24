@@ -21,27 +21,7 @@ on:
           - prod
 
 jobs:
-  validate-branch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check branch compatibility
-        run: |
-          TARGET="${{ github.event.inputs.TARGET }}"
-          BRANCH="${{ github.ref_name }}"
-
-          if [[ "$TARGET" == "staging" && "$BRANCH" == "develop" ]]; then
-            echo "✅ Valid target: $TARGET on branch $BRANCH"
-          elif [[ "$TARGET" == "tmp" && "$BRANCH" == "main" ]]; then
-            echo "✅ Valid target: $TARGET on branch $BRANCH"
-          elif [[ "$TARGET" == "prod" && "$BRANCH" == "main" ]]; then
-            echo "✅ Valid target: $TARGET on branch $BRANCH"
-          else
-            echo "❌ ERROR: Invalid target ($TARGET) for branch ($BRANCH)"
-            exit 1
-          fi
-
   build-and-push-docker-image:
-    needs: validate-branch
     uses: ./.github/workflows/build-push-docker.yml
     with:
       TARGET: ${{ github.event.inputs.TARGET == 'staging' && 'staging' || 'prod' }}
@@ -54,6 +34,7 @@ jobs:
       group: Azure_runners
       labels: [ self-hosted, Linux, X64 ]
     needs: build-and-push-docker-image
+    environment: ${{ github.event.inputs.TARGET == 'staging' && 'staging' || 'prod' }}
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v4
