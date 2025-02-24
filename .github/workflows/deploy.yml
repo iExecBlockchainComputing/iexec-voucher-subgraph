@@ -3,6 +3,9 @@ name: Deploy Subgraph
 on:
   workflow_dispatch:
     inputs:
+      IMAGE_TAG:
+        description: 'Docker Image Tag'
+        required: true
       VOUCHER_HUB_START_BLOCK:
         description: 'Start Block for Subgraph Deployment'
         required: false
@@ -20,14 +23,11 @@ on:
           - staging
           - prod
 
-
 jobs:
-  deploy-subgraph:
-    runs-on:
-      group: Azure_runners
-      labels: [ self-hosted, Linux, X64 ]
+  validate-branch:
+    runs-on: ubuntu-latest
     steps:
-      - name: Validate Target
+      - name: Check branch compatibility
         run: |
           TARGET="${{ github.event.inputs.TARGET }}"
           BRANCH="${{ github.ref_name }}"
@@ -43,26 +43,28 @@ jobs:
             exit 1
           fi
 
-      - name: Checkout
-        uses: actions/checkout@v4
+  trigger-build-and-push-docker-image:
+    needs: validate-branch
+    uses: ./.github/workflows/build-push-docker.yml
+    with:
+      TARGET: ${{ github.event.inputs.TARGET == 'staging' && 'staging' || 'prod' }}
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Init
-        run: npm ci
-
-      - name: Check Format
-        run: npm run check-format
-
-      - name: Run unit tests
-        run: npm run test
-
-      - name: Codegen
-        run: npm run codegen
+  deploy-subgraph:
+    runs-on:
+      group: Azure_runners
+      labels: [ self-hosted, Linux, X64 ]
+    needs: trigger-build-and-push-docker-image
+    steps:
+      - name: Retrieve Docker Image Tag
+        run: |
+          TARGET="${{ github.event.inputs.TARGET }}"
+          if [[ "$TARGET" == "prod" || "$TARGET" == "tmp" ]]; then
+            VERSION=$(npm pkg get version | tr -d '"')
+          else
+            VERSION=$(echo $GITHUB_SHA | cut -c1-8)
+          fi
+          IMAGE_TAG="iexechub/voucher-subgraph-deployer:$TARGET-$VERSION"
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Set Subgraph Name
         run: |
@@ -76,7 +78,7 @@ jobs:
             echo "SUBGRAPH_NAME=bellecour/iexec-voucher" >> $GITHUB_ENV
           fi
 
-      - name: Deploy Subgraph
+      - name: Deploy Subgraph using Docker
         env:
           VOUCHER_HUB_START_BLOCK: ${{ inputs.VOUCHER_HUB_START_BLOCK }}
           VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
@@ -91,33 +93,11 @@ jobs:
           fi
 
           echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
-          npm run deploy:prepare-manifest
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PAT }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Get version
-        id: version
-        run: |
-          if [[ "${{ github.event.inputs.TARGET }}" == "prod" && "${{ github.ref_name }}" == "main" ]]; then
-            VERSION=$(npm pkg get version | tr -d '"')
-          else
-            VERSION=$(echo $GITHUB_SHA | cut -c1-8)
-          fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          file: docker/Dockerfile          
-          push: true
-          tags: iexechub/voucher-subgraph-deployer:prod-${{ env.VERSION }}
+          
+          docker run --rm \
+            -e VOUCHER_HUB_START_BLOCK="${VOUCHER_HUB_START_BLOCK}" \
+            -e VOUCHER_HUB_ADDRESS="${VOUCHER_HUB_ADDRESS}" \
+            -e SUBGRAPH_NAME="${SUBGRAPH_NAME}" \
+            -e GRAPHNODE_URL="${GRAPHNODE_URL}" \
+            -e IPFS_URL="${IPFS_URL}" \
+            "${{ env.IMAGE_TAG }}" npm run deploy
