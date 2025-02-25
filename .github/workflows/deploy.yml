@@ -68,6 +68,9 @@ jobs:
       labels: [ self-hosted, Linux, X64 ]
     environment: ${{ github.event.inputs.TARGET == 'staging' && 'staging' || 'prod' }}
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
