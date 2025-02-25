@@ -26,6 +26,9 @@ jobs:
   verify-npm-version:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
       - name: Ensure npm package version matches Git tag
         uses: nick-y-ito/gha-npm-version-match@v1
         with:
