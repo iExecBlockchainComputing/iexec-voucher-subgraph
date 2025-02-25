@@ -3,25 +3,62 @@ name: Build and Push Subgraph Deployer Docker Image
 #TODO: See how to automate the run of this workflow
 on:
   workflow_dispatch
-
+  
 jobs:
   #TODO: See how to ensure that the default CI workflow has run before this workflow
 
+  get-latest-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      latest_tag: ${{ steps.latest_tag.outputs.tag }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Latest Git Tag
+        id: latest_tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+
+      - name: Ensure Tag Exists
+        run: |
+          if [[ -z "${{ steps.latest_tag.outputs.tag }}" ]]; then
+            echo "❌ No Git tag found! Stopping CI."
+            exit 1
+          fi
+
+          echo "✅ Latest Git Tag: ${{ steps.latest_tag.outputs.tag }}"
+
   verify-npm-version:
+    needs: get-latest-tag
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Ensure npm package version matches Git tag
-        uses: nick-y-ito/gha-npm-version-match@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST_TAG="${{ needs.get-latest-tag.outputs.latest_tag }}"
+          PACKAGE_VERSION=$(npm pkg get version | tr -d '"')
+
+          echo "🔹 Latest Git Tag: $LATEST_TAG"
+          echo "🔹 package.json Version: $PACKAGE_VERSION"
+
+          if [[ "$LATEST_TAG" != "v$PACKAGE_VERSION" ]]; then
+            echo "❌ Tag version ($LATEST_TAG) does not match package.json version (v$PACKAGE_VERSION)"
+            exit 1
+          fi
+
+          echo "✅ Versions match! Proceeding..."
 
   build-and-push:
-    needs: verify-npm-version
+    needs: 
+      - get-latest-tag
+      - verify-npm-version
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -34,15 +71,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Get Latest Git Tag
-        id: latest_tag
-        uses: WyriHaximus/github-action-get-previous-tag@v1
-
       - name: Determine Docker Image Tag
         id: version
         run: |
           BRANCH="${{ github.ref_name }}"
-          LAST_TAG="${{ steps.latest_tag.outputs.tag }}"
+          LAST_TAG="${{ needs.get-latest-tag.outputs.latest_tag }}"
 
           if [[ "$BRANCH" == "main" ]]; then
             VERSION="$LAST_TAG"  # Use last Git tag
