@@ -72,7 +72,7 @@ jobs:
 
           if [[ "$BRANCH" == "main" ]]; then
             VERSION="$LAST_TAG"  # Use last Git tag
-          elif [[ "$BRANCH" == "develop" ]]; then
+          elif [[ "$BRANCH" == "feature/move-to-github-action-ci" ]]; then
             VERSION="dev"  # Rolling tag
           elif [[ "$BRANCH" == release/* ]]; then
             VERSION="${LAST_TAG}-rc"  # Last Git tag with -rc suffix
