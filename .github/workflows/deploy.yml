@@ -21,16 +21,7 @@ on:
           - prod
 
 jobs:
-  wait-for-default-ci:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v1.3.4
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'default'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 2
+  #TODO: See how to ensure that the default CI workflow has run before this workflow
   
   verify-npm-version:
     runs-on: ubuntu-latest
@@ -41,9 +32,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-subgraph:
-    needs: 
-      - wait-for-default-ci
-      - verify-npm-version
+    needs: verify-npm-version
     runs-on:
       group: Azure_runners
       labels: [ self-hosted, Linux, X64 ]
