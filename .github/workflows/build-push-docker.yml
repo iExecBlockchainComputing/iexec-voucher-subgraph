@@ -1,49 +1,45 @@
 name: Build and Push Subgraph Deployer Docker Image
 
+#TODO: See how to automate the run of this workflow
 on:
-  workflow_dispatch:
-    inputs:
-      TARGET:
-        description: 'Deployment Target (staging, prod)'
-        required: true
-        type: choice
-        options:
-          - staging
-          - prod
-  workflow_call:
-    inputs:
-      TARGET:
-        description: 'Deployment Target (staging, prod)'
-        required: true
-        type: string
-    secrets:
-      DOCKERHUB_USERNAME:
-        required: true
-      DOCKERHUB_PAT:
-        required: true
+  workflow_dispatch
 
 jobs:
-  build-and-push:
+  wait-for-default-ci:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.TARGET == 'staging' && 'staging' || 'prod' }}
     steps:
-      - name: Checkout
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'default'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 2
+  
+  verify-npm-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure npm package version matches Git tag
+        uses: nick-y-ito/gha-npm-version-match@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-push:
+    needs: 
+      - wait-for-default-ci
+      - verify-npm-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history to get tags
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-
-      - name: Init
-        run: npm ci
-
-      - name: Check Format
-        run: npm run check-format
-
-      - name: Run unit tests
-        run: npm run test
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -57,19 +53,30 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Get version based on target
+      - name: Get Latest Git Tag
+        id: latest_tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+
+      - name: Determine Docker Image Tag
         id: version
         run: |
-          TARGET="${{ github.event.inputs.TARGET }}"
+          BRANCH="${{ github.ref_name }}"
+          LAST_TAG="${{ steps.latest_tag.outputs.tag }}"
 
-          if [[ "$TARGET" == "prod" ]]; then
-            VERSION=$(npm pkg get version | tr -d '"')
+          if [[ "$BRANCH" == "main" ]]; then
+            VERSION="$LAST_TAG"  # Use last Git tag
+          elif [[ "$BRANCH" == "develop" ]]; then
+            VERSION="dev"  # Rolling tag
+          elif [[ "$BRANCH" == release/* ]]; then
+            VERSION="${LAST_TAG}-rc"  # Last Git tag with -rc suffix
           else
-            VERSION=$(echo $GITHUB_SHA | cut -c1-8)
+            echo "❌ Unsupported branch: $BRANCH"
+            exit 1
           fi
 
-          IMAGE_TAG="iexechub/voucher-subgraph-deployer:$TARGET-$VERSION"
+          IMAGE_TAG="iexechub/voucher-subgraph-deployer:$VERSION"
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "✅ Resolved IMAGE_TAG: $IMAGE_TAG"
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
