@@ -1,4 +1,4 @@
-name: Build and Push Subgraph Docker Image
+name: Build and Push Subgraph Deployer Docker Image
 
 on:
   workflow_dispatch:
