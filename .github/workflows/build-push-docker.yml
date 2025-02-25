@@ -14,19 +14,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Get Latest Git Tag
         id: latest_tag
         uses: WyriHaximus/github-action-get-previous-tag@v1
-
-      - name: Ensure Tag Exists
-        run: |
-          if [[ -z "${{ steps.latest_tag.outputs.tag }}" ]]; then
-            echo "❌ No Git tag found! Stopping CI."
-            exit 1
-          fi
-
-          echo "✅ Latest Git Tag: ${{ steps.latest_tag.outputs.tag }}"
 
   verify-npm-version:
     needs: get-latest-tag
