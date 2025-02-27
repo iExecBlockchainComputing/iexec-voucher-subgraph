@@ -2,51 +2,25 @@ name: Build and Push Subgraph Deployer Docker Image
 
 # TODO: See how to automate the run of this workflow
 on:
-  workflow_dispatch
+  push:
+    branches:
+      - develop
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build from'
+        required: true
+        type: choice
+        options:
+          - develop
+          - feature/*
   
 jobs:
   # TODO: See how to ensure that the default CI workflow has run before this workflow
-
-  get-latest-tag:
-    runs-on: ubuntu-latest
-    outputs:
-      latest_tag: ${{ steps.latest_tag.outputs.tag }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Get Latest Git Tag
-        id: latest_tag
-        uses: WyriHaximus/github-action-get-previous-tag@v1
-
-  verify-npm-version:
-    needs: get-latest-tag
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Ensure npm package version matches Git tag
-        run: |
-          LATEST_TAG="${{ needs.get-latest-tag.outputs.latest_tag }}"
-          PACKAGE_VERSION=$(npm pkg get version | tr -d '"')
-
-          echo "🔹 Latest Git Tag: $LATEST_TAG"
-          echo "🔹 package.json Version: $PACKAGE_VERSION"
-
-          if [[ "$LATEST_TAG" != "v$PACKAGE_VERSION" ]]; then
-            echo "❌ Tag version ($LATEST_TAG) does not match package.json version (v$PACKAGE_VERSION)"
-            exit 1
-          fi
-
-          echo "✅ Versions match! Proceeding..."
-
   build-and-push:
-    needs: 
-      - get-latest-tag
-      - verify-npm-version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -64,26 +38,44 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Determine Docker Image Tag
+      # Next line will fail if git tag and npm package version does not match
+      - uses: nick-y-ito/gha-npm-version-match@v1
+
+      - name: Determine Docker Image Tags
         id: version
         run: |
           BRANCH="${{ github.ref_name }}"
-          LAST_TAG="${{ needs.get-latest-tag.outputs.latest_tag }}"
-
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          IMAGE_NAME="iexechub/voucher-subgraph-deployer"
+          SHORT_COMMIT=$(git rev-parse --short HEAD)
+          
+          # Initialize TAGS variable
+          TAGS=""
+          
           if [[ "$BRANCH" == "main" ]]; then
-            VERSION="$LAST_TAG"  # Use last Git tag
-          elif [[ "$BRANCH" == "develop" ]]; then
-             VERSION="dev-$COMMIT_HASH"
+            TAGS="$IMAGE_NAME:$TAG_VERSION,$IMAGE_NAME:latest"
           elif [[ "$BRANCH" == release/* ]]; then
-            VERSION="${LAST_TAG}-rc"  # Last Git tag with -rc suffix
+            if [[ ! $TAG_VERSION == *"-rc"* ]]; then
+              echo "❌ Release branches must use RC tags"
+              exit 1
+            fi
+            TAGS="$IMAGE_NAME:$TAG_VERSION"
+          elif [[ "$BRANCH" == "develop" ]]; then
+            if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+              TAGS="$IMAGE_NAME:dev,$IMAGE_NAME:dev-$SHORT_COMMIT"
+            else
+              TAGS="$IMAGE_NAME:dev"
+            fi
+          elif [[ "$BRANCH" == feature/* && "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            FEATURE_NAME=${BRANCH#feature/}
+            TAGS="$IMAGE_NAME:feature-$FEATURE_NAME-$SHORT_COMMIT"
           else
             echo "❌ Unsupported branch: $BRANCH"
             exit 1
           fi
-
-          IMAGE_TAG="iexechub/voucher-subgraph-deployer:$VERSION"
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-          echo "✅ Resolved IMAGE_TAG: $IMAGE_TAG"
+          
+          echo "TAGS=$TAGS" >> $GITHUB_ENV
+          echo "✅ Resolved TAGS: $TAGS"
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
@@ -91,4 +83,4 @@ jobs:
           file: docker/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ env.IMAGE_TAG }}
+          tags: ${{ env.TAGS }}
