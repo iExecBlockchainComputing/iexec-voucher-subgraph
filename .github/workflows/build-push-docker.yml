@@ -11,10 +11,12 @@ jobs:
   # TODO: See how to ensure that the default CI workflow has run before this workflow
   build-and-push:
     if: |
-      github.event_name == 'workflow_dispatch' &&
       (
-        github.ref == 'refs/heads/develop' ||
-        startsWith(github.ref, 'refs/heads/feature/')
+        github.event_name == 'workflow_dispatch' &&
+        (
+          github.ref == 'refs/heads/develop' ||
+          startsWith(github.ref, 'refs/heads/feature/')
+        )
       ) ||
       (
         github.event_name == 'push' && (
