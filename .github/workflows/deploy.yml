@@ -3,127 +3,114 @@ name: Deploy Subgraph
 on:
   workflow_dispatch:
     inputs:
-      VOUCHER_HUB_START_BLOCK:
-        description: 'Start Block for Subgraph Deployment'
-        required: false
-        default: '30306387'
-      VOUCHER_HUB_ADDRESS:
-        description: 'Voucher Hub Address'
-        required: false
-        default: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
-      TARGET:
-        description: 'Deployment Target (tmp, staging, prod)'
+      environment:
+        description: 'Select deployment environment'
         required: true
         type: choice
         options:
-          - tmp
+          - custom
           - staging
+          - tmp
           - prod
+      networkName:
+        description: 'Network Name'
+        required: true
+        default: 'bellecour'
+        type: string
+      voucherHubAddress:
+        description: 'Voucher Hub Address'
+        required: true
+        default: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
+        type: string
+      voucherHubStartBlock:
+        description: 'Start Block for Voucher Hub'
+        required: true
+        default: '30306387'
+        type: string
+      versionLabel:
+        description: 'Version Label for Subgraph Deployment'
+        required: true
+        default: 'develop'
+        type: string
+      dockerImageVersion:
+        description: 'Version of the deployer docker image to use'
+        required: true
+        type: string
+      # Custom environment inputs
+      customGraphNodeUrl:
+        description: 'Custom Graph Node URL (only for custom environment)'
+        required: false
+        type: string
+      customIpfsUrl:
+        description: 'Custom IPFS URL (only for custom environment)'
+        required: false
+        type: string
 
 jobs:
   # TODO: See how to ensure that the default CI workflow has run before this workflow
 
-  get-latest-tag:
-    runs-on: ubuntu-latest
-    outputs:
-      latest_tag: ${{ steps.latest_tag.outputs.tag }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Get Latest Git Tag
-        id: latest_tag
-        uses: WyriHaximus/github-action-get-previous-tag@v1
-
-  verify-npm-version:
-    needs: get-latest-tag
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Ensure npm package version matches Git tag
-        run: |
-          LATEST_TAG="${{ needs.get-latest-tag.outputs.latest_tag }}"
-          PACKAGE_VERSION=$(npm pkg get version | tr -d '"')
-
-          echo "🔹 Latest Git Tag: $LATEST_TAG"
-          echo "🔹 package.json Version: $PACKAGE_VERSION"
-
-          if [[ "$LATEST_TAG" != "v$PACKAGE_VERSION" ]]; then
-            echo "❌ Tag version ($LATEST_TAG) does not match package.json version (v$PACKAGE_VERSION)"
-            exit 1
-          fi
-
-          echo "✅ Versions match! Proceeding..."
-
   deploy-subgraph:
-    needs: 
-      - get-latest-tag
-      - verify-npm-version
-    runs-on:
-      group: Azure_runners
-      labels: [ self-hosted, Linux, X64 ]
-    environment: ${{ github.event.inputs.TARGET == 'staging' && 'staging' || 'prod' }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
 
-      - name: Retrieve Docker Image Tag
+      - name: Validate Docker Image Version
+        if: ${{ !inputs.dockerImageVersion }}
         run: |
-          TARGET="${{ github.event.inputs.TARGET }}"
-          LAST_TAG="${{ needs.get-latest-tag.outputs.latest_tag }}"
+          echo "❌ Docker image version parameter cannot be null or empty."
+          exit 1
 
-          if [[ "$TARGET" == "prod" || "$TARGET" == "tmp" ]]; then
-            VERSION="$LAST_TAG"  # Use last Git tag
-          else
-            VERSION="${LAST_TAG}-rc"  # Append "-rc" for staging releases
-          fi
-
-          IMAGE_TAG="iexechub/voucher-subgraph-deployer:$VERSION"
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-          echo "✅ Resolved IMAGE_TAG: $IMAGE_TAG"
-
-      - name: Set Subgraph Name
+      - name: Set Environment Variables
+        id: set-env
         run: |
-          TARGET="${{ github.event.inputs.TARGET }}"
+          # Initialize variables
+          GRAPH_NODE_URL=""
+          IPFS_URL=""
+          ENV_NAME=""
 
-          if [[ "$TARGET" == "staging" ]]; then
-            echo "SUBGRAPH_NAME=bellecour/staging-iexec-voucher" >> $GITHUB_ENV
-          elif [[ "$TARGET" == "tmp" ]]; then
-            echo "SUBGRAPH_NAME=bellecour/tmp-iexec-voucher" >> $GITHUB_ENV
-          elif [[ "$TARGET" == "prod" ]]; then
-            echo "SUBGRAPH_NAME=bellecour/iexec-voucher" >> $GITHUB_ENV
-          fi
+          case "${{ inputs.environment }}" in
+            "prod"|"tmp"|"staging")
+              echo "GRAPH_NODE_URL=${{ vars.GRAPH_NODE_URL }}" >> $GITHUB_ENV
+              echo "IPFS_URL=${{ vars.IPFS_URL }}" >> $GITHUB_ENV
+              echo "ENV_NAME=${{ vars.ENV_NAME }}" >> $GITHUB_ENV
+              ;;
+            "custom")
+              if [[ -z "${{ inputs.customGraphNodeUrl }}" || -z "${{ inputs.customIpfsUrl }}" ]]; then
+                echo "❌ Custom URLs are required when using custom environment"
+                exit 1
+              fi
+              echo "GRAPH_NODE_URL=${{ inputs.customGraphNodeUrl }}" >> $GITHUB_ENV
+              echo "IPFS_URL=${{ inputs.customIpfsUrl }}" >> $GITHUB_ENV
+              echo "ENV_NAME=" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "❌ Invalid environment selected"
+              exit 1
+              ;;
+          esac
 
-      - name: Deploy Subgraph using Docker
-        env:
-          VOUCHER_HUB_START_BLOCK: ${{ inputs.VOUCHER_HUB_START_BLOCK }}
-          VOUCHER_HUB_ADDRESS: ${{ inputs.VOUCHER_HUB_ADDRESS }}
-          SUBGRAPH_NAME: ${{ env.SUBGRAPH_NAME }}
+          # Print deployment information
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Graph Node URL: $GRAPH_NODE_URL"
+          echo "IPFS URL: $IPFS_URL"
+          echo "Network Name: ${{ inputs.networkName }}"
+          echo "Voucher Hub Address: ${{ inputs.voucherHubAddress }}"
+          echo "Start Block: ${{ inputs.voucherHubStartBlock }}"
+          echo "Version Label: ${{ inputs.versionLabel }}"
+          echo "Deployer image version: ${{ inputs.dockerImageVersion }}"
+
+      - name: Deploy Subgraph
         run: |
-          if [ "${{ github.event.inputs.TARGET }}" == "staging" ]; then
-            export GRAPHNODE_URL="${{ vars.STAGING_GRAPHNODE_URL }}"
-            export IPFS_URL="${{ vars.STAGING_IPFS }}"
-          else
-            export GRAPHNODE_URL="${{ vars.GRAPHNODE_URL }}"
-            export IPFS_URL="${{ vars.IPFS_URL }}"
-          fi
-
-          echo "Deploying commit $GITHUB_SHA on subgraph $SUBGRAPH_NAME"
-          
-          docker run --rm \
-            -e VOUCHER_HUB_START_BLOCK="${VOUCHER_HUB_START_BLOCK}" \
-            -e VOUCHER_HUB_ADDRESS="${VOUCHER_HUB_ADDRESS}" \
-            -e SUBGRAPH_NAME="${SUBGRAPH_NAME}" \
-            -e GRAPHNODE_URL="${GRAPHNODE_URL}" \
-            -e IPFS_URL="${IPFS_URL}" \
-            "${{ env.IMAGE_TAG }}"
+          docker run \
+            --rm \
+            -e NETWORK_NAME='${{ inputs.networkName }}' \
+            -e DEPLOY_ENV='${{ env.ENV_NAME }}' \
+            -e VOUCHER_HUB_ADDRESS='${{ inputs.voucherHubAddress }}' \
+            -e VOUCHER_HUB_START_BLOCK='${{ inputs.voucherHubStartBlock }}' \
+            -e IPFS_URL='${{ env.IPFS_URL }}' \
+            -e GRAPHNODE_URL='${{ env.GRAPH_NODE_URL }}' \
+            -e VERSION_LABEL='${{ inputs.versionLabel }}' \
+            iexechub/voucher-subgraph-deployer:${{ inputs.dockerImageVersion }}
