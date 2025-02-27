@@ -58,7 +58,7 @@ jobs:
           TAGS=""
 
           if [[ "$BRANCH" == "main" ]]; then
-            TAGS="$IMAGE_NAME:$TAG_VERSION,$IMAGE_NAME:latest"
+            TAGS="$IMAGE_NAME:$TAG_VERSION"
           elif [[ "$BRANCH" == release/* ]]; then
             TAGS="$IMAGE_NAME:$TAG_VERSION"
           elif [[ "$BRANCH" == "develop" || "$BRANCH" == feature/* ]]; then
