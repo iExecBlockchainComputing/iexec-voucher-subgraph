@@ -15,54 +15,12 @@ on:
         required: true
         type: choice
         options:
-          - main
           - develop
-          - release/*
           - feature/*
   
 jobs:
   # TODO: See how to ensure that the default CI workflow has run before this workflow
-
-  get-latest-tag:
-    runs-on: ubuntu-latest
-    outputs:
-      latest_tag: ${{ steps.latest_tag.outputs.tag }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Get Latest Git Tag
-        id: latest_tag
-        uses: WyriHaximus/github-action-get-previous-tag@v1
-
-  verify-npm-version:
-    needs: get-latest-tag
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Ensure npm package version matches Git tag
-        run: |
-          LATEST_TAG="${{ needs.get-latest-tag.outputs.latest_tag }}"
-          PACKAGE_VERSION=$(npm pkg get version | tr -d '"')
-
-          echo "🔹 Latest Git Tag: $LATEST_TAG"
-          echo "🔹 package.json Version: $PACKAGE_VERSION"
-
-          if [[ "$LATEST_TAG" != "v$PACKAGE_VERSION" ]]; then
-            echo "❌ Tag version ($LATEST_TAG) does not match package.json version (v$PACKAGE_VERSION)"
-            exit 1
-          fi
-
-          echo "✅ Versions match! Proceeding..."
-
   build-and-push:
-    needs: 
-      - get-latest-tag
-      - verify-npm-version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -80,34 +38,34 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Next line will fail if git tag and npm package version does not match
+      - uses: nick-y-ito/gha-npm-version-match@v1
+
       - name: Determine Docker Image Tags
         id: version
         run: |
           BRANCH="${{ github.ref_name }}"
-          LAST_TAG="${{ needs.get-latest-tag.outputs.latest_tag }}"
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
           IMAGE_NAME="iexechub/voucher-subgraph-deployer"
           SHORT_COMMIT=$(git rev-parse --short HEAD)
-          
-          # Remove 'v' prefix from tag
-          VERSION=${LAST_TAG#v}
           
           # Initialize TAGS variable
           TAGS=""
           
           if [[ "$BRANCH" == "main" ]]; then
-            TAGS="$IMAGE_NAME:$VERSION,$IMAGE_NAME:latest"
+            TAGS="$IMAGE_NAME:$TAG_VERSION,$IMAGE_NAME:latest"
+          elif [[ "$BRANCH" == release/* ]]; then
+            if [[ ! $TAG_VERSION == *"-rc"* ]]; then
+              echo "❌ Release branches must use RC tags"
+              exit 1
+            fi
+            TAGS="$IMAGE_NAME:$TAG_VERSION"
           elif [[ "$BRANCH" == "develop" ]]; then
             if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
               TAGS="$IMAGE_NAME:dev,$IMAGE_NAME:dev-$SHORT_COMMIT"
             else
               TAGS="$IMAGE_NAME:dev"
             fi
-          elif [[ "$BRANCH" == release/* ]]; then
-            if [[ ! $VERSION == *"-rc"* ]]; then
-              echo "❌ Release branches must use RC tags"
-              exit 1
-            fi
-            TAGS="$IMAGE_NAME:$VERSION"
           elif [[ "$BRANCH" == feature/* && "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             FEATURE_NAME=${BRANCH#feature/}
             TAGS="$IMAGE_NAME:feature-$FEATURE_NAME-$SHORT_COMMIT"
