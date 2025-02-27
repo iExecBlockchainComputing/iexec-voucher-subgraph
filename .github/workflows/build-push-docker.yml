@@ -7,6 +7,8 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
   workflow_dispatch:
 
+env:
+  IS_TAG_TRIGGER: ${{ startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release/') }}
 jobs:
   # TODO: See how to ensure that the default CI workflow has run before this workflow
   build-and-push:
