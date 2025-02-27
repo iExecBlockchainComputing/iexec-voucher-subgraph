@@ -46,9 +46,6 @@ jobs:
             TAGS="$IMAGE_NAME:$TAG_VERSION"
           elif [[ "$BRANCH" == "develop" || "$BRANCH" == feature/* ]]; then
             TAGS="$IMAGE_NAME:dev-$SHORT_COMMIT"
-          else
-            echo "❌ Unsupported branch: $BRANCH"
-            exit 1
           fi
 
           echo "TAGS=$TAGS" >> $GITHUB_ENV
