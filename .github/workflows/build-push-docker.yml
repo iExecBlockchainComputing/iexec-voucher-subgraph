@@ -37,17 +37,17 @@ jobs:
           IMAGE_NAME="iexechub/voucher-subgraph-deployer"
           SHORT_COMMIT=$(git rev-parse --short HEAD)
 
-          # Initialize TAGS variable
-          TAGS=""
+          # Initialize IMAGE_TAG variable
+          IMAGE_TAG=""
 
           if [[ "$BRANCH" == "main" || "$BRANCH" == release/* ]]; then
-            TAGS="$IMAGE_NAME:$TAG_VERSION"
+            IMAGE_TAG="$IMAGE_NAME:$TAG_VERSION"
           elif [[ "$BRANCH" == "develop" || "$BRANCH" == feature/* ]]; then
-            TAGS="$IMAGE_NAME:dev-$SHORT_COMMIT"
+            IMAGE_TAG="$IMAGE_NAME:dev-$SHORT_COMMIT"
           fi
 
-          echo "TAGS=$TAGS" >> $GITHUB_ENV
-          echo "✅ Resolved TAGS: $TAGS"
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "✅ Resolved IMAGE_TAG: $IMAGE_TAG"
 
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -70,4 +70,4 @@ jobs:
           file: docker/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ env.TAGS }}
+          tags: ${{ env.IMAGE_TAG }}
