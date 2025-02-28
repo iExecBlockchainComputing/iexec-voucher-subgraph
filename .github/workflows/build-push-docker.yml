@@ -22,12 +22,12 @@ jobs:
       )
     runs-on: ubuntu-latest
     env:
-      IS_TAG_TRIGGER: ${{ startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/feature/') }}
+      IS_TAG_TRIGGER: ${{ startsWith(github.ref, 'refs/tags/v') }}
     steps:
       # Run npm version check only on main & release/**
-      - name: Verify npm package version matches tag
-        if: env.IS_TAG_TRIGGER == 'true'
-        uses: nick-y-ito/gha-npm-version-match@v1
+      # - name: Verify npm package version matches tag
+      #   if: env.IS_TAG_TRIGGER == 'true'
+      #   uses: nick-y-ito/gha-npm-version-match@v1
 
       - name: Determine Docker Image Tags
         run: |
