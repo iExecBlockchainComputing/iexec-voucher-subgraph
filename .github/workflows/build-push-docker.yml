@@ -25,9 +25,9 @@ jobs:
       IS_TAG_TRIGGER: ${{ startsWith(github.ref, 'refs/tags/v') }}
     steps:
       # Run npm version check only on main & release/**
-      # - name: Verify npm package version matches tag
-      #   if: env.IS_TAG_TRIGGER
-      #   uses: nick-y-ito/gha-npm-version-match@v1
+      - name: Verify npm package version matches tag
+        if: env.IS_TAG_TRIGGER
+        uses: nick-y-ito/gha-npm-version-match@v1
 
       - name: Determine Docker Image Tags
         run: |
@@ -36,7 +36,6 @@ jobs:
           IMAGE_TAG=""
           
           if [[ env.IS_TAG_TRIGGER ]]; then
-            echo "✅ Detected tag trigger"
             TAG_VERSION=${GITHUB_REF#refs/tags/v}
             IMAGE_TAG="$IMAGE_NAME:$TAG_VERSION"
           else
