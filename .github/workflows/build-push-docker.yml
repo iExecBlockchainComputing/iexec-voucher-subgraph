@@ -22,7 +22,7 @@ jobs:
       )
     runs-on: ubuntu-latest
     env:
-      IS_TAG_TRIGGER: ${{ startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release/') }}
+      IS_TAG_TRIGGER: ${{ startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/feature/') }}
     steps:
       # Run npm version check only on main & release/**
       - name: Verify npm package version matches tag
