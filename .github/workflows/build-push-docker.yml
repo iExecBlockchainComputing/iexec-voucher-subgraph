@@ -33,16 +33,15 @@ jobs:
       - name: Determine Docker Image Tags
         run: |
           BRANCH="${{ github.ref_name }}"
-          TAG_VERSION=${GITHUB_REF#refs/tags/v}
           IMAGE_NAME="iexechub/voucher-subgraph-deployer"
-          SHORT_COMMIT=$(git rev-parse --short HEAD)
-
           # Initialize IMAGE_TAG variable
           IMAGE_TAG=""
-
+          
           if [[ "$BRANCH" == "main" || "$BRANCH" == release/* ]]; then
+            TAG_VERSION=${GITHUB_REF#refs/tags/v}
             IMAGE_TAG="$IMAGE_NAME:$TAG_VERSION"
           elif [[ "$BRANCH" == "develop" || "$BRANCH" == feature/* ]]; then
+            SHORT_COMMIT=$(git rev-parse --short HEAD)
             IMAGE_TAG="$IMAGE_NAME:dev-$SHORT_COMMIT"
           fi
 
