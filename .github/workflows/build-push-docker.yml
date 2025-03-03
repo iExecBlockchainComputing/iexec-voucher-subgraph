@@ -24,7 +24,7 @@ jobs:
 
       # Verify tag is on main or release branch
       - name: Verify tag is on main or release branch
-        if: env.IS_TAG_TRIGGER
+        if: env.IS_TAG_TRIGGER == 'true'
         run: |
           if [[ "${{ steps.branch-names.outputs.base_ref_branch }}" == "main" || "${{ steps.branch-names.outputs.base_ref_branch }}" =~ ^release/ ]]; then
             echo "✅ Tag ${{ steps.branch-names.outputs.tag }} is on an allowed branch: ${{ steps.branch-names.outputs.base_ref_branch }}"
@@ -36,7 +36,7 @@ jobs:
 
       # Run npm version check only on main & release/**
       - name: Verify npm package version matches tag
-        if: env.IS_TAG_TRIGGER
+        if: env.IS_TAG_TRIGGER == 'true'
         uses: nick-y-ito/gha-npm-version-match@v1
 
       - name: Determine Docker Image Tags
