@@ -38,6 +38,9 @@ jobs:
       - name: Verify npm package version matches tag
         if: env.IS_TAG_TRIGGER == 'true'
         uses: nick-y-ito/gha-npm-version-match@v1
+    
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Determine Docker Image Tags
         run: |
@@ -55,9 +58,6 @@ jobs:
 
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "✅ Resolved IMAGE_TAG: $IMAGE_TAG"
-
-      - name: Checkout Repository
-        uses: actions/checkout@v4
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
