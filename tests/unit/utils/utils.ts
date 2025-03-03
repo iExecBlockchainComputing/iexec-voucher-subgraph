@@ -8,6 +8,7 @@ import {
     VoucherCreated,
     VoucherDebited,
     VoucherDrained,
+    VoucherRefunded,
     VoucherToppedUp,
     VoucherTypeCreated,
     VoucherTypeDescriptionUpdated,
@@ -247,6 +248,27 @@ export function createAccountUnauthorizedEvent(
 export function createVoucherDrainedEvent(voucher: Address, amount: BigInt): VoucherDrained {
     let mockEvent = newMockEvent();
     let event = new VoucherDrained(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        mockEvent.parameters,
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init()
+        .address('voucher', voucher)
+        .bigInt('amount', amount)
+        .build();
+
+    return event;
+}
+
+export function createVoucherRefundedEvent(voucher: Address, amount: BigInt): VoucherRefunded {
+    let mockEvent = newMockEvent();
+    let event = new VoucherRefunded(
         mockEvent.address,
         mockEvent.logIndex,
         mockEvent.transactionLogIndex,
