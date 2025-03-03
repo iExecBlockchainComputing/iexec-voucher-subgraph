@@ -12,13 +12,30 @@ jobs:
   # TODO: Ensure that tags are properly pushed to the main or release branches.
   build-and-push:
     if: |
-      github.event_name == 'workflow_dispatch' && (
+      (github.event_name == 'workflow_dispatch' && (
         github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/')
-      )
+      )) || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     env:
       IS_TAG_TRIGGER: ${{ startsWith(github.ref, 'refs/tags/v') }}
     steps:
+      # Get branch names using tj-actions/branch-names
+      - name: Get branch names
+        id: branch-names
+        uses: tj-actions/branch-names@v8
+
+      # Verify tag is on main or release branch (simpler approach)
+      - name: Verify tag is on main or release branch
+        if: env.IS_TAG_TRIGGER
+        run: |
+          if [[ "${{ steps.branch-names.outputs.base_ref_branch }}" == "main" || "${{ steps.branch-names.outputs.base_ref_branch }}" =~ ^release/ ]]; then
+            echo "✅ Tag ${{ steps.branch-names.outputs.tag }} is on an allowed branch: ${{ steps.branch-names.outputs.base_ref_branch }}"
+          else
+            echo "Current base branch: ${{ steps.branch-names.outputs.base_ref_branch }}"
+            echo "Tags must be created on main or release/* branches."
+            exit 1
+          fi
+
       # Run npm version check only on main & release/**
       - name: Verify npm package version matches tag
         if: env.IS_TAG_TRIGGER
