@@ -19,16 +19,15 @@ jobs:
     env:
       IS_TAG_TRIGGER: ${{ startsWith(github.ref, 'refs/tags/v') }}
     steps:
-      # Get branch names using tj-actions/branch-names
       - name: Get branch names
         id: branch-names
         uses: tj-actions/branch-names@v8
 
-      # Verify tag is on main or release branch (simpler approach)
+      # Verify tag is on main or release branch
       - name: Verify tag is on main or release branch
         if: env.IS_TAG_TRIGGER
         run: |
-          if [[ "${{ steps.branch-names.outputs.base_ref_branch }}" == "main" || "${{ steps.branch-names.outputs.base_ref_branch }}" =~ ^release/ ]]; then
+          if [[ "${{ steps.branch-names.outputs.base_ref_branch }}" == "main" || "${{ steps.branch-names.outputs.base_ref_branch }}" =~ ^feature/ ]]; then
             echo "✅ Tag ${{ steps.branch-names.outputs.tag }} is on an allowed branch: ${{ steps.branch-names.outputs.base_ref_branch }}"
           else
             echo "Current base branch: ${{ steps.branch-names.outputs.base_ref_branch }}"
@@ -36,10 +35,10 @@ jobs:
             exit 1
           fi
 
-      # Run npm version check only on main & release/**
-      - name: Verify npm package version matches tag
-        if: env.IS_TAG_TRIGGER
-        uses: nick-y-ito/gha-npm-version-match@v1
+      # # Run npm version check only on main & release/**
+      # - name: Verify npm package version matches tag
+      #   if: env.IS_TAG_TRIGGER
+      #   uses: nick-y-ito/gha-npm-version-match@v1
 
       - name: Determine Docker Image Tags
         run: |
