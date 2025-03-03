@@ -9,7 +9,6 @@ on:
  
 jobs:
   # TODO: See how to ensure that the default CI workflow has run before this workflow
-  # TODO: Ensure that tags are properly pushed to the main or release branches.
   build-and-push:
     if: |
       (github.event_name == 'workflow_dispatch' && (
