@@ -24,7 +24,7 @@ jobs:
           # Initialize IMAGE_TAG variable
           IMAGE_TAG=""
 
-          if [[ env.IS_TAG_TRIGGER ]]; then
+          if [[ "$IS_TAG_TRIGGER" == "true" ]]; then
             TAG_VERSION=${GITHUB_REF#refs/tags/v}
             IMAGE_TAG="$IMAGE_NAME:$TAG_VERSION"
             echo "tag to use: $IMAGE_TAG"
