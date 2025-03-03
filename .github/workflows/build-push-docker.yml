@@ -36,3 +36,6 @@ jobs:
 
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "✅ Resolved IMAGE_TAG: $IMAGE_TAG"
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
