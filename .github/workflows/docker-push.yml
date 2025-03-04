@@ -1,0 +1,33 @@
+name: Build and Push Subgraph Deployer Docker Image
+
+on:
+  push:
+    tags:
+      - '*' # Trigger on any tag it is pushed by release workflow
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    if: github.event.ref_type == 'tag'
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@fix/docker/types
+    with:
+      image-name: 'iexechub/voucher-subgraph-deployer'
+      image-tag:  ${{ github.ref_name }}
+      security-scan: false
+      hadolint: false
+      push: true
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-pat: ${{ secrets.DOCKERHUB_PAT }}
+  build-and-push:
+    if: github.event_name == 'workflow_dispatch'
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@fix/docker/types
+    with:
+      image-name: 'iexechub/voucher-subgraph-deployer'
+      image-tag:  '${{ github.ref }}+dev+${{ github.sha }}'
+      security-scan: false
+      hadolint: false
+      push: true
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-pat: ${{ secrets.DOCKERHUB_PAT }}
