@@ -1,6 +1,6 @@
 # iexec-voucher-subgraph deployer
 
-FROM node:18
+FROM node:20
 
 WORKDIR /iexec-voucher-subgraph
 
