@@ -26,7 +26,7 @@ jobs:
       - name: Verify tag is on main or release branch
         if: env.IS_TAG_TRIGGER == 'true'
         run: |
-          if [[ "${{ steps.branch-names.outputs.base_ref_branch }}" == "main" || "${{ steps.branch-names.outputs.base_ref_branch }}" =~ ^feature/ ]]; then
+          if [[ "${{ steps.branch-names.outputs.base_ref_branch }}" == "main" || "${{ steps.branch-names.outputs.base_ref_branch }}" =~ ^release/ ]]; then
             echo "✅ Tag ${{ steps.branch-names.outputs.tag }} is on an allowed branch: ${{ steps.branch-names.outputs.base_ref_branch }}"
           else
             echo "Current base branch: ${{ steps.branch-names.outputs.base_ref_branch }}"
@@ -34,10 +34,10 @@ jobs:
             exit 1
           fi
 
-      # # Run npm version check only on main & release/**
-      # - name: Verify npm package version matches tag
-      #   if: env.IS_TAG_TRIGGER == 'true'
-      #   uses: nick-y-ito/gha-npm-version-match@v1
+      # Run npm version check only on main & release/**
+      - name: Verify npm package version matches tag
+        if: env.IS_TAG_TRIGGER == 'true'
+        uses: nick-y-ito/gha-npm-version-match@v1
     
       - name: Checkout Repository
         uses: actions/checkout@v4
