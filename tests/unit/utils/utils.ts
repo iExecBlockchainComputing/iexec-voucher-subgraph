@@ -266,7 +266,7 @@ export function createVoucherDrainedEvent(voucher: Address, amount: BigInt): Vou
     return event;
 }
 
-export function createVoucherRefundedEvent(voucher: Address, amount: BigInt): VoucherRefunded {
+export function createVoucherRefundedEvent(voucher: string, amount: BigInt): VoucherRefunded {
     let mockEvent = newMockEvent();
     let event = new VoucherRefunded(
         mockEvent.address,

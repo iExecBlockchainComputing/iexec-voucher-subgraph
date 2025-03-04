@@ -1,4 +1,4 @@
-import { Address, BigDecimal } from '@graphprotocol/graph-ts';
+import { BigDecimal } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { toNanoRLC } from '../../../src/utils';
 import { handleVoucherRefunded } from '../../../src/voucherHub';
@@ -46,10 +46,7 @@ describe('VoucherRefundedEvent', () => {
 
         // --- WHEN
         const refundAmount = BigDecimal.fromString('2.5');
-        const event = createVoucherRefundedEvent(
-            Address.fromString(VOUCHER_ADDRESS),
-            toNanoRLC(refundAmount),
-        );
+        const event = createVoucherRefundedEvent(VOUCHER_ADDRESS, toNanoRLC(refundAmount));
         handleVoucherRefunded(event);
 
         // --- THEN
@@ -77,10 +74,7 @@ describe('VoucherRefundedEvent', () => {
 
         // --- WHEN
         const refundAmount = BigDecimal.fromString('1.0');
-        const event = createVoucherRefundedEvent(
-            Address.fromString(VOUCHER_ADDRESS),
-            toNanoRLC(refundAmount),
-        );
+        const event = createVoucherRefundedEvent(VOUCHER_ADDRESS, toNanoRLC(refundAmount));
         handleVoucherRefunded(event);
 
         // --- THEN
@@ -99,7 +93,7 @@ describe('VoucherRefundedEvent', () => {
 
         // --- WHEN
         const event = createVoucherRefundedEvent(
-            Address.fromString(nonExistentVoucherAddress),
+            nonExistentVoucherAddress,
             toNanoRLC(BigDecimal.fromString('1.0')),
         );
         handleVoucherRefunded(event);
