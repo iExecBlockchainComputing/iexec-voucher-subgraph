@@ -280,7 +280,7 @@ export function createVoucherRefundedEvent(voucher: Address, amount: BigInt): Vo
     );
 
     event.parameters = EventParamBuilder.init()
-        .address('voucher', voucher)
+        .address('voucher', Address.fromString(voucher))
         .bigInt('amount', amount)
         .build();
 
