@@ -86,7 +86,7 @@ services:
   voucher-subgraph-deployer:
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: ../Dockerfile
     environment:
       GRAPHNODE_URL: http://graphnode:8020
       IPFS_URL: http://ipfs:5001
