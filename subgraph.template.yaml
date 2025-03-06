@@ -30,7 +30,7 @@ dataSources:
         - name: VoucherHub
           file: node_modules/@iexec/voucher-contracts/artifacts/contracts/VoucherHub.sol/VoucherHub.json
         - name: PoCo
-          file: node_modules/@iexec/poco/build/contracts/IexecInterfaceNative.json
+          file: node_modules/@iexec/poco/artifacts/contracts/IexecInterfaceNative.sol/IexecInterfaceNative.json
         - name: AppRegistry
           file: node_modules/@iexec/poco/build/contracts/AppRegistry.json
         - name: DatasetRegistry
@@ -94,7 +94,7 @@ templates:
         - name: VoucherHub
           file: node_modules/@iexec/voucher-contracts/artifacts/contracts/VoucherHub.sol/VoucherHub.json
         - name: PoCo
-          file: node_modules/@iexec/poco/build/contracts/IexecInterfaceNative.json
+          file: node_modules/@iexec/poco/artifacts/contracts/IexecInterfaceNative.sol/IexecInterfaceNative.json
         - name: AppRegistry
           file: node_modules/@iexec/poco/build/contracts/AppRegistry.json
         - name: DatasetRegistry

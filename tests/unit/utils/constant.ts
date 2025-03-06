@@ -21,3 +21,22 @@ export const WORKERPOOL_REGISTRY_ADDRESS = '0xabcdef1234567890abcdef1234567890ab
 // Contract addresses
 export const POCO_ADDRESS = '0x1234567890123456789012345678901234567890';
 export const VOUCHER_HUB_ADDRESS = '0xa16000000000000000000000000000000000ec2a';
+
+export const DEAL_ID = '0x1234567890123456789012345678901234567890123456789012345678901234';
+export const DEAL_BOT_SIZE = '5';
+// App constants
+export const APP_ADDRESS = '0x0000000000000000000000000000000000000008';
+export const APP_PRICE = BigDecimal.fromString('2.25');
+export const APP_NAME = 'Mocked App Name';
+
+// Dataset constants
+export const DATASET_ADDRESS = '0x0000000000000000000000000000000000000009';
+export const DATASET_PRICE = BigDecimal.fromString('3.25');
+export const DATASET_NAME = 'Mocked Dataset Name';
+
+// Workerpool constants
+export const WORKERPOOL_ADDRESS = '0x0000000000000000000000000000000000000010';
+export const WORKERPOOL_PRICE = BigDecimal.fromString('4.25');
+export const WORKERPOOL_NAME = 'Mocked Workerpool Description';
+
+export const TOTAL_PRICE = APP_PRICE.plus(DATASET_PRICE).plus(WORKERPOOL_PRICE);
