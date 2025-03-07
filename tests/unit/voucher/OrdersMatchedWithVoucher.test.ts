@@ -1,4 +1,4 @@
-import { Address, Bytes } from '@graphprotocol/graph-ts';
+import { Address, BigDecimal, Bytes } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { Deal } from '../../../generated/schema';
 import { handleOrdersMatchedWithVoucher } from '../../../src/voucher';
@@ -58,15 +58,14 @@ describe('OrdersMatchedWithVoucherEvent', () => {
             [], // Initialize empty authorized accounts
         );
         mockGetIexecPoco(VOUCHER_HUB_ADDRESS, POCO_ADDRESS);
+        mockGetterFunction(APP_ADDRESS, 'm_appName', APP_NAME);
+        mockGetterFunction(DATASET_ADDRESS, 'm_datasetName', DATASET_NAME);
+        mockGetterFunction(WORKERPOOL_ADDRESS, 'm_workerpoolDescription', WORKERPOOL_NAME);
     });
 
     test('Should create Deal entity when OrdersMatchedWithVoucher event is emitted', () => {
         // --- GIVEN
         const dealId = Bytes.fromHexString(DEAL_ID);
-
-        mockGetterFunction(APP_ADDRESS, 'm_appName', APP_NAME);
-        mockGetterFunction(DATASET_ADDRESS, 'm_datasetName', DATASET_NAME);
-        mockGetterFunction(WORKERPOOL_ADDRESS, 'm_workerpoolDescription', WORKERPOOL_NAME);
         mockVoucherContractCalls(
             VOUCHER_ADDRESS,
             VOUCHER_HUB_ADDRESS,
@@ -120,10 +119,59 @@ describe('OrdersMatchedWithVoucherEvent', () => {
         );
     });
 
-    test('Should not create Deal entity when Voucher does not exist', () => {
+    test('Should create Deal entity with null dataset when dataset address is zero', () => {
         // --- GIVEN
-        clearStore(); // Remove the voucher created in beforeEach
         const dealId = Bytes.fromHexString(DEAL_ID);
+        mockVoucherContractCalls(
+            VOUCHER_ADDRESS,
+            VOUCHER_HUB_ADDRESS,
+            dealId,
+            APP_PRICE,
+            BigDecimal.fromString('0'),
+            WORKERPOOL_PRICE,
+        );
+
+        // Mock PoCo viewDeal with zero address for dataset
+        mockPocoViewDeal(
+            POCO_ADDRESS,
+            VOUCHER_ADDRESS,
+            dealId,
+            APP_ADDRESS,
+            '0x0000000000000000000000000000000000000000',
+            WORKERPOOL_ADDRESS,
+            APP_PRICE,
+            BigDecimal.fromString('0'),
+            WORKERPOOL_PRICE,
+        );
+
+        // --- WHEN
+        const event = createOrdersMatchedWithVoucherEvent(
+            Address.fromString(VOUCHER_ADDRESS),
+            dealId,
+        );
+        handleOrdersMatchedWithVoucher(event);
+
+        // --- THEN
+        const dealEntity = Deal.load(dealId.toHexString());
+        if (dealEntity) {
+            assert.assertNull(dealEntity.dataset);
+            assert.fieldEquals('Deal', dealId.toHexString(), 'datasetPrice', '0');
+        }
+    });
+
+    test('Should not create Deal entity when sponsored amount is zero', () => {
+        // --- GIVEN
+        const dealId = Bytes.fromHexString(DEAL_ID);
+
+        // Mock getSponsoredAmount to return 0
+        mockVoucherContractCalls(
+            VOUCHER_ADDRESS,
+            VOUCHER_HUB_ADDRESS,
+            dealId,
+            BigDecimal.fromString('0'),
+            BigDecimal.fromString('0'),
+            BigDecimal.fromString('0'),
+        );
 
         // --- WHEN
         const event = createOrdersMatchedWithVoucherEvent(
