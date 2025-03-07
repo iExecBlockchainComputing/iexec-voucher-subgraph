@@ -98,38 +98,26 @@ describe('OrdersMatchedWithVoucherEvent', () => {
         // --- THEN
         const dealEntity = Deal.load(dealId.toHexString());
         assert.assertNotNull(dealEntity);
-        if (dealEntity) {
-            assert.fieldEquals('Deal', dealId.toHexString(), 'sponsor', VOUCHER_ADDRESS);
-            assert.fieldEquals(
-                'Deal',
-                dealId.toHexString(),
-                'timestamp',
-                event.block.timestamp.toString(),
-            );
-            assert.fieldEquals(
-                'Deal',
-                dealId.toHexString(),
-                'sponsoredAmount',
-                TOTAL_PRICE.toString(),
-            );
-            assert.fieldEquals('Deal', dealId.toHexString(), 'app', APP_ADDRESS);
-            assert.fieldEquals('Deal', dealId.toHexString(), 'dataset', DATASET_ADDRESS);
-            assert.fieldEquals('Deal', dealId.toHexString(), 'workerpool', WORKERPOOL_ADDRESS);
-            assert.fieldEquals('Deal', dealId.toHexString(), 'botSize', DEAL_BOT_SIZE);
-            assert.fieldEquals('Deal', dealId.toHexString(), 'appPrice', APP_PRICE.toString());
-            assert.fieldEquals(
-                'Deal',
-                dealId.toHexString(),
-                'datasetPrice',
-                DATASET_PRICE.toString(),
-            );
-            assert.fieldEquals(
-                'Deal',
-                dealId.toHexString(),
-                'workerpoolPrice',
-                WORKERPOOL_PRICE.toString(),
-            );
-        }
+        assert.fieldEquals('Deal', dealId.toHexString(), 'sponsor', VOUCHER_ADDRESS);
+        assert.fieldEquals(
+            'Deal',
+            dealId.toHexString(),
+            'timestamp',
+            event.block.timestamp.toString(),
+        );
+        assert.fieldEquals('Deal', dealId.toHexString(), 'sponsoredAmount', TOTAL_PRICE.toString());
+        assert.fieldEquals('Deal', dealId.toHexString(), 'app', APP_ADDRESS);
+        assert.fieldEquals('Deal', dealId.toHexString(), 'dataset', DATASET_ADDRESS);
+        assert.fieldEquals('Deal', dealId.toHexString(), 'workerpool', WORKERPOOL_ADDRESS);
+        assert.fieldEquals('Deal', dealId.toHexString(), 'botSize', DEAL_BOT_SIZE);
+        assert.fieldEquals('Deal', dealId.toHexString(), 'appPrice', APP_PRICE.toString());
+        assert.fieldEquals('Deal', dealId.toHexString(), 'datasetPrice', DATASET_PRICE.toString());
+        assert.fieldEquals(
+            'Deal',
+            dealId.toHexString(),
+            'workerpoolPrice',
+            WORKERPOOL_PRICE.toString(),
+        );
     });
 
     test('Should not create Deal entity when Voucher does not exist', () => {
