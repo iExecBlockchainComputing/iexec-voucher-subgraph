@@ -8,6 +8,8 @@
     - `VoucherDebited` (#28)
     - `VoucherToppedUp` (#29)
     - `VoucherRefunded` (#33)
+  - Voucher Events :
+    - `OrdersMatchedWithVoucher` (#40)
 
 ## v1.1.0
 

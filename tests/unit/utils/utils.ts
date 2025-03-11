@@ -18,6 +18,7 @@ import { App, Dataset, Voucher, VoucherType, Workerpool } from '../../../generat
 import {
     AccountAuthorized,
     AccountUnauthorized,
+    OrdersMatchedWithVoucher,
 } from '../../../generated/templates/Voucher/Voucher';
 import { EventParamBuilder } from './EventParamBuilder';
 
@@ -333,6 +334,27 @@ export function createVoucherToppedUpEvent(
         .bigInt('expiration', expiration)
         .bigInt('value', value)
         .build();
+
+    return event;
+}
+
+export function createOrdersMatchedWithVoucherEvent(
+    voucher: Address,
+    dealId: Bytes,
+): OrdersMatchedWithVoucher {
+    let mockEvent = newMockEvent();
+    let event = new OrdersMatchedWithVoucher(
+        voucher,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init().bytes('dealId', dealId).build();
 
     return event;
 }
