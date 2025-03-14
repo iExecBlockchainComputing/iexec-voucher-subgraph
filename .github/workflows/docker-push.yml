@@ -36,5 +36,5 @@ jobs:
       hadolint: false
       push: true
     secrets:
-      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub-pat: ${{ secrets.DOCKERHUB_PAT }}
+      username: ${{ secrets.DOCKERHUB_USERNAME }}
+      password: ${{ secrets.DOCKERHUB_PAT }}
