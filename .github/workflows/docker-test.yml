@@ -1,9 +1,6 @@
 name: Test Docker Image
 
-on:
-  pull_request:
-    branches:
-      - '*' # Trigger on any pull request
+on: [pull_request]
 
 jobs:
   build-test:
