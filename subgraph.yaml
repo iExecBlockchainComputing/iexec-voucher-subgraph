@@ -64,7 +64,7 @@ dataSources:
         - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
           handler: handleRoleRevoked
       file: ./src/voucherHub.ts
-    network: bellecour
+
 templates:
   - kind: ethereum
     name: Voucher
@@ -109,4 +109,3 @@ templates:
         - event: OrdersMatchedWithVoucher(bytes32)
           handler: handleOrdersMatchedWithVoucher
       file: ./src/voucher.ts
-    network: bellecour
