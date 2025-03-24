@@ -1,14 +1,8 @@
 {
-    "network1": {
-        "VoucherHub": { 
-            "address": "0xabc...",
-            "startBlock": 123456 
-        }
-    },
-    "network2": {
-        "dataSource1": {
-            "address": "0x987...",
-            "startBlock": 123
-        }
+  "bellecour": {
+    "VoucherHub": {
+      "address": "0x5D350f9331F22E54Dc0854CaA80696f0b4fdCd7a",
+      "startBlock": 987654
     }
+  }
 }

@@ -1,17 +1,14 @@
 specVersion: 0.0.6
 description: Subgraph for voucher smart contract
-
 schema:
   file: ./schema.graphql
-
 dataSources:
   - name: VoucherHub
     kind: ethereum/contract
-    network: bellecour
     source:
-      address: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
       abi: VoucherHub
-      startBlock: 30306387
+      address: "0x5D350f9331F22E54Dc0854CaA80696f0b4fdCd7a"
+      startBlock: 987654
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -69,11 +66,10 @@ dataSources:
         - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
           handler: handleRoleRevoked
       file: ./src/voucherHub.ts
-
+    network: bellecour
 templates:
   - kind: ethereum
     name: Voucher
-    network: bellecour
     source:
       abi: Voucher
     mapping:
@@ -115,3 +111,4 @@ templates:
         - event: OrdersMatchedWithVoucher(bytes32)
           handler: handleOrdersMatchedWithVoucher
       file: ./src/voucher.ts
+    network: bellecour
