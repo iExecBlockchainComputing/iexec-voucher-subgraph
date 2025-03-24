@@ -1,0 +1,14 @@
+{
+    "network1": {
+        "VoucherHub": { 
+            "address": "0xabc...",
+            "startBlock": 123456 
+        }
+    },
+    "network2": {
+        "dataSource1": {
+            "address": "0x987...",
+            "startBlock": 123
+        }
+    }
+}

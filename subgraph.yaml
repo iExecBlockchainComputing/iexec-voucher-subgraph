@@ -7,11 +7,11 @@ schema:
 dataSources:
   - name: VoucherHub
     kind: ethereum/contract
-    #NETWORK_NAME#
+    network: bellecour
     source:
-      #VOUCHER_HUB_ADDRESS#
+      address: '0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda'
       abi: VoucherHub
-      #VOUCHER_HUB_START_BLOCK#
+      startBlock: 30306387
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -30,7 +30,7 @@ dataSources:
         - name: VoucherHub
           file: node_modules/@iexec/voucher-contracts/artifacts/contracts/VoucherHub.sol/VoucherHub.json
         - name: PoCo
-          file: node_modules/@iexec/poco/artifacts/contracts/IexecInterfaceNative.sol/IexecInterfaceNative.json
+          file: node_modules/@iexec/poco/build/contracts/IexecInterfaceNative.json
         - name: AppRegistry
           file: node_modules/@iexec/poco/build/contracts/AppRegistry.json
         - name: DatasetRegistry
@@ -73,7 +73,7 @@ dataSources:
 templates:
   - kind: ethereum
     name: Voucher
-    #NETWORK_NAME#
+    network: bellecour
     source:
       abi: Voucher
     mapping:
@@ -94,7 +94,7 @@ templates:
         - name: VoucherHub
           file: node_modules/@iexec/voucher-contracts/artifacts/contracts/VoucherHub.sol/VoucherHub.json
         - name: PoCo
-          file: node_modules/@iexec/poco/artifacts/contracts/IexecInterfaceNative.sol/IexecInterfaceNative.json
+          file: node_modules/@iexec/poco/build/contracts/IexecInterfaceNative.json
         - name: AppRegistry
           file: node_modules/@iexec/poco/build/contracts/AppRegistry.json
         - name: DatasetRegistry
