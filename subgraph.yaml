@@ -3,7 +3,7 @@ description: Subgraph for voucher smart contract
 
 schema:
   file: ./schema.graphql
-  
+
 dataSources:
   - name: VoucherHub
     kind: ethereum/contract
