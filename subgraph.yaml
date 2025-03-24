@@ -7,8 +7,6 @@ dataSources:
     kind: ethereum/contract
     source:
       abi: VoucherHub
-      address: "0x5D350f9331F22E54Dc0854CaA80696f0b4fdCd7a"
-      startBlock: 987654
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
