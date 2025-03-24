@@ -17,6 +17,8 @@ npm run build
 
 ## deploy
 
+This repository supports multi-network deployment. All network configurations and values required by the manifest are stored in the `networks.json` file. If you want to add a new network for regular deployment, modify this file. By default, the command `npm run all` deploys a subgraph locally using the `bellecour` network configuration. If you want to override the values for this network or quickly set up a new one, provide the necessary environment variables following the `.env.template`.
+
 Prerequisites:
 
 - `bellecour` RPC node (can be a test node)
@@ -29,16 +31,12 @@ NB: you can run a dockerized stack with `npm run start-test-stack` (`npm run sto
 env:
 
 - `NETWORK_NAME` (optional): custom graphnode network name (default bellecour)
-- `VOUCHER_HUB_ADDRESS`: `VoucherHub` contract address
-- `VOUCHER_HUB_START_BLOCK`: start `VoucherHub` indexation block number
-- `IPFS_URL`: IPFS admin api url
-- `GRAPHNODE_URL`: graphnode admin api url
+- `VOUCHER_HUB_ADDRESS` (optional): `VoucherHub` contract address (default value on bellecour)
+- `VOUCHER_HUB_START_BLOCK` (optional): start `VoucherHub` indexation block number (default value on bellecour)
+- `IPFS_URL` (optional): IPFS admin api url (default `http://localhost:5001`)
+- `GRAPHNODE_URL` (optional): graphnode admin api url (default `http://localhost:8020`)
 
 ```sh
-# set VoucherHub deployment details
-export VOUCHER_HUB_ADDRESS="0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda"
-export VOUCHER_HUB_START_BLOCK=30306387
-
 # set deployment urls
 export IPFS_URL="http://localhost:5001"
 export GRAPHNODE_URL="http://localhost:8020"
@@ -85,19 +83,3 @@ docker run --rm \
   -e GRAPHNODE_URL="http://graphnode:8020" \
   voucher-subgraph-deployer
 ```
-
-# Voucher Subgraph Jenkins Pipelines
-
-## JenkinsfileBuild
-
-This pipeline handles building the voucher-subgraph Docker image, which is used for deploying the subgraph.
-
-
-## JenkinsfileDeploy
-
-This pipeline is responsible for deploying the voucher-subgraph to the desired environment.
-
-Steps:
-
-1.	User Input: The pipeline prompts the user for input, such as the target host, network name, voucher hub address, and start block.
-2.	Run Docker Image: The Docker container is executed, deploying the subgraph to the specified Graph Node and IPFS node.

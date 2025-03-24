@@ -20,7 +20,7 @@
     "create": "graph create --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
     "remove": "graph remove --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
     "deploy:prepare-manifest": "tsx ./utils/addNetwork.ts",
-    "deploy": "npm run deploy:prepare-manifest && graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher --version-label ${VERSION_LABEL:-develop}",
+    "deploy": "npm run deploy:prepare-manifest && graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} --network ${NETWORK_NAME:-bellecour} --version-label ${VERSION_LABEL:-develop} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
     "clean": "rm -rf generated && rm -rf build",
     "test": "npm run codegen && graph test",
     "all": "npm run clean && npm run codegen && npm run build && npm run create && npm run deploy",
