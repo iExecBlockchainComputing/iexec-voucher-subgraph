@@ -11,7 +11,7 @@ const { NETWORK_NAME, VOUCHER_HUB_ADDRESS, VOUCHER_HUB_START_BLOCK } = process.e
 async function updateNetworks() {
     if (!NETWORK_NAME || !VOUCHER_HUB_ADDRESS || !VOUCHER_HUB_START_BLOCK) {
         console.log(
-            'Missing required environment variables: NETWORK_NAME, VOUCHER_HUB_ADDRESS, VOUCHER_HUB_START_BLOCK',
+            'Missing environment variables: NETWORK_NAME, VOUCHER_HUB_ADDRESS, VOUCHER_HUB_START_BLOCK',
         );
         // Do not exit with error code as Environment variables are not mandatory
         process.exit(0);

@@ -45,6 +45,7 @@
     "lint-staged": "^15.2.10",
     "matchstick-as": "^0.6.0",
     "prettier": "^3.3.3",
-    "prettier-plugin-organize-imports": "^4.1.0"
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "tsx": "^4.19.3"
   }
 }
