@@ -13,6 +13,7 @@ async function updateNetworks() {
         console.log(
             'Missing required environment variables: NETWORK_NAME, VOUCHER_HUB_ADDRESS, VOUCHER_HUB_START_BLOCK',
         );
+        // Do not exit with error code as Environment variables are not mandatory
         process.exit(0);
     }
     const data = await readFile(filePath, 'utf-8');
