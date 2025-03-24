@@ -7,6 +7,7 @@ WORKDIR /iexec-voucher-subgraph
 COPY package*.json .
 COPY schema.graphql .
 COPY subgraph.yaml .
+COPY utils ./utils
 COPY src ./src
 
 RUN npm ci
