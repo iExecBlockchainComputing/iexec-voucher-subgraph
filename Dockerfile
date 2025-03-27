@@ -1,12 +1,14 @@
 # iexec-voucher-subgraph deployer
 
-FROM node:18
+FROM node:20
 
 WORKDIR /iexec-voucher-subgraph
 
 COPY package*.json .
 COPY schema.graphql .
-COPY subgraph.template.yaml .
+COPY subgraph.yaml .
+COPY networks.json .
+COPY utils ./utils
 COPY src ./src
 
 RUN npm ci

@@ -2,12 +2,12 @@ import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { VoucherType } from '../../../generated/schema';
 import { handleEligibleAssetRemoved } from '../../../src/voucherHub';
+import {
+    VOUCHER_TYPE_DESCRIPTION,
+    VOUCHER_TYPE_DURATION,
+    VOUCHER_TYPE_ID,
+} from '../utils/constant';
 import { createAndSaveApp, createEligibleAssetRemovedEvent } from '../utils/utils';
-
-// Shared constants
-const voucherTypeId = '1';
-const voucherDescription = 'Test Voucher Type';
-const voucherDuration = BigInt.fromI32(86400);
 
 describe('EligibleAssetRemovedEvent', () => {
     beforeEach(() => {
@@ -17,29 +17,29 @@ describe('EligibleAssetRemovedEvent', () => {
     test('Should remove asset from voucherType when the entity exists', () => {
         // --- GIVEN
         let appId = '0x0e7bc972c99187c191a17f3cae4a2711a4188c3f';
-        let voucherType = new VoucherType(voucherTypeId);
+        let voucherType = new VoucherType(VOUCHER_TYPE_ID);
 
         // Step 1: Create and save the App entity
         createAndSaveApp(appId, 'Test App');
 
         // Step 2: Initialize the VoucherType with shared constants
-        voucherType.description = voucherDescription;
-        voucherType.duration = voucherDuration;
+        voucherType.description = VOUCHER_TYPE_DESCRIPTION;
+        voucherType.duration = VOUCHER_TYPE_DURATION;
         voucherType.eligibleAssets = [appId];
         voucherType.save();
 
         assert.entityCount('VoucherType', 1);
-        assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[${appId}]`);
+        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${appId}]`);
 
         // --- WHEN
         let event = createEligibleAssetRemovedEvent(
-            BigInt.fromString(voucherTypeId),
+            BigInt.fromString(VOUCHER_TYPE_ID),
             Address.fromString(appId),
         );
         handleEligibleAssetRemoved(event);
 
         // --- THEN
-        assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[]`);
+        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[]`);
     });
 
     test('Should do nothing if the VoucherType does not exist', () => {
@@ -61,28 +61,28 @@ describe('EligibleAssetRemovedEvent', () => {
         // --- GIVEN
         let eligibleAppId = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef';
         let unrelatedAppId = '0x1234567890123456789012345678901234567890';
-        let voucherType = new VoucherType(voucherTypeId);
+        let voucherType = new VoucherType(VOUCHER_TYPE_ID);
 
         // Step 1: Create and save the App
         createAndSaveApp(eligibleAppId, 'Existing App');
 
         // Step 2: Initialize VoucherType with shared constants
-        voucherType.description = voucherDescription;
-        voucherType.duration = voucherDuration;
+        voucherType.description = VOUCHER_TYPE_DESCRIPTION;
+        voucherType.duration = VOUCHER_TYPE_DURATION;
         voucherType.eligibleAssets = [eligibleAppId];
         voucherType.save();
 
         assert.entityCount('VoucherType', 1);
-        assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[${eligibleAppId}]`);
+        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${eligibleAppId}]`);
 
         // --- WHEN
         let event = createEligibleAssetRemovedEvent(
-            BigInt.fromString(voucherTypeId),
+            BigInt.fromString(VOUCHER_TYPE_ID),
             Address.fromString(unrelatedAppId),
         );
         handleEligibleAssetRemoved(event);
 
         // --- THEN
-        assert.fieldEquals('VoucherType', voucherTypeId, 'eligibleAssets', `[${eligibleAppId}]`);
+        assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', `[${eligibleAppId}]`);
     });
 });

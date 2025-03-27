@@ -1,23 +1,22 @@
-import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts';
+import { Address } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { handleAccountAuthorized } from '../../../src/voucher';
+import {
+    VOUCHER_ADDRESS,
+    VOUCHER_BALANCE,
+    VOUCHER_EXPIRATION,
+    VOUCHER_OWNER,
+    VOUCHER_TYPE_DESCRIPTION,
+    VOUCHER_TYPE_DURATION,
+    VOUCHER_TYPE_ELIGIBLE_ASSETS,
+    VOUCHER_TYPE_ID,
+    VOUCHER_VALUE,
+} from '../utils/constant';
 import {
     createAccountAuthorizedEvent,
     createAndSaveVoucher,
     createAndSaveVoucherType,
 } from '../utils/utils';
-
-// Shared constants
-const VOUCHER_TYPE_ID = '1';
-const VOUCHER_DESCRIPTION = 'Test Voucher Type';
-const VOUCHER_DURATION = BigInt.fromI32(86400);
-const VOUCHER_TYPE_ELIGIBLE_ASSETS: string[] = [];
-
-const VOUCHER_OWNER = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-const VOUCHER_VALUE = BigDecimal.fromString('100.123');
-const VOUCHER_BALANCE = BigDecimal.fromString('50.456');
-const VOUCHER_EXPIRATION = BigInt.fromI32(999999);
-const VOUCHER_ADDRESS = '0x1234567890123456789012345678901234567890';
 
 describe('AccountAuthorizedEvent', () => {
     beforeEach(() => {
@@ -26,8 +25,8 @@ describe('AccountAuthorizedEvent', () => {
         // Initialize a VoucherType entity
         createAndSaveVoucherType(
             VOUCHER_TYPE_ID,
-            VOUCHER_DESCRIPTION,
-            VOUCHER_DURATION,
+            VOUCHER_TYPE_DESCRIPTION,
+            VOUCHER_TYPE_DURATION,
             VOUCHER_TYPE_ELIGIBLE_ASSETS,
         );
     });

@@ -2,7 +2,7 @@
 
 A subgraph indexing [`iexec-voucher-contracts`](https://github.com/iExecBlockchainComputing/iexec-voucher-contracts)
 
-## build
+## Build
 
 ```sh
 # install deps
@@ -15,7 +15,9 @@ npm run codegen
 npm run build
 ```
 
-## deploy
+## Deploy
+
+This repository supports multi-network deployment. All network configurations and values required by the manifest are stored in the `networks.json` file. If you want to add a new network for regular deployment, modify this file. By default, the command `npm run all` deploys a subgraph locally using the `bellecour` network configuration. If you want to override the values for this network or quickly set up a new one, provide the necessary environment variables following the `.env.template`.
 
 Prerequisites:
 
@@ -29,16 +31,12 @@ NB: you can run a dockerized stack with `npm run start-test-stack` (`npm run sto
 env:
 
 - `NETWORK_NAME` (optional): custom graphnode network name (default bellecour)
-- `VOUCHER_HUB_ADDRESS`: `VoucherHub` contract address
-- `VOUCHER_HUB_START_BLOCK`: start `VoucherHub` indexation block number
-- `IPFS_URL`: IPFS admin api url
-- `GRAPHNODE_URL`: graphnode admin api url
+- `VOUCHER_HUB_ADDRESS` (optional): `VoucherHub` contract address (default value on bellecour)
+- `VOUCHER_HUB_START_BLOCK` (optional): start `VoucherHub` indexation block number (default value on bellecour)
+- `IPFS_URL` (optional): IPFS admin api url (default `http://localhost:5001`)
+- `GRAPHNODE_URL` (optional): graphnode admin api url (default `http://localhost:8020`)
 
 ```sh
-# set VoucherHub deployment details
-export VOUCHER_HUB_ADDRESS="0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda"
-export VOUCHER_HUB_START_BLOCK=30306387
-
 # set deployment urls
 export IPFS_URL="http://localhost:5001"
 export GRAPHNODE_URL="http://localhost:8020"
@@ -56,17 +54,17 @@ npm run deploy
 
 once deployed the subgraph can be queried via the graphiql interface.
 
-## docker subgraph deployer
+## Docker subgraph deployer
 
 docker image for deploying the subgraph
 
-### build
+### Build Image
 
 ```sh
 docker build -f docker/Dockerfile . -t voucher-subgraph-deployer
 ```
 
-### usage
+### Usage
 
 env:
 
@@ -86,18 +84,32 @@ docker run --rm \
   voucher-subgraph-deployer
 ```
 
-# Voucher Subgraph Jenkins Pipelines
+## Continuous Integration (CI) Workflows
 
-## JenkinsfileBuild
+### Manual Workflow Triggers
 
-This pipeline handles building the voucher-subgraph Docker image, which is used for deploying the subgraph.
+#### Deploying Subgraph
 
+To manually deploy the subgraph to a specific environment:
 
-## JenkinsfileDeploy
+1. Go to the GitHub Actions tab in the repository
+2. Select the "Deploy Subgraph" workflow
+3. Click "Run workflow"
+4. Choose the deployment options:
+   - **Environment**: Select from `staging`, `production`, `tmp`, or `custom`
+   - **Network Name**: Default is `bellecour`, but can be customized
+   - **Voucher Hub Address**: Defaults to `0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda`
+   - **Voucher Hub Start Block**: Defaults to `30306387`
+   - **Version Label**: Defaults to `develop`
 
-This pipeline is responsible for deploying the voucher-subgraph to the desired environment.
+#### Building and Push Docker Image
 
-Steps:
+To manually build and push the Docker image:
 
-1.	User Input: The pipeline prompts the user for input, such as the target host, network name, voucher hub address, and start block.
-2.	Run Docker Image: The Docker container is executed, deploying the subgraph to the specified Graph Node and IPFS node.
+1. Go to the GitHub Actions tab
+2. Select the "Build and Push Subgraph Deployer Docker Image" workflow
+3. Click "Run workflow"
+   - This will trigger a build using the latest Git tag (if available) or a development tag by default.
+4. Once completed, a new Docker image will be available under the `iexechub` Docker Hub organization.
+
+Note: This CI will also be trigger automatically on a tag publication
