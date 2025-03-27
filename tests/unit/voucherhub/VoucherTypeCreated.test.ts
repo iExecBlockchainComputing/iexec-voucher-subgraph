@@ -1,11 +1,8 @@
 import { BigInt } from '@graphprotocol/graph-ts';
 import { assert, beforeEach, clearStore, describe, test } from 'matchstick-as/assembly/index';
 import { handleVoucherTypeCreated } from '../../../src/voucherHub';
+import { VOUCHER_TYPE_DESCRIPTION, VOUCHER_TYPE_DURATION } from '../utils/constant';
 import { createVoucherTypeCreatedEvent } from '../utils/utils';
-
-// Shared constants
-const INITIAL_DESCRIPTION = 'Test Voucher Type';
-const INITIAL_DURATION = BigInt.fromI32(86400);
 
 describe('VoucherTypeCreatedEvent', () => {
     beforeEach(() => {
@@ -15,8 +12,8 @@ describe('VoucherTypeCreatedEvent', () => {
     test('Should create first VoucherType entity with ID 0', () => {
         const event = createVoucherTypeCreatedEvent(
             BigInt.fromI32(0),
-            INITIAL_DESCRIPTION,
-            INITIAL_DURATION,
+            VOUCHER_TYPE_DESCRIPTION,
+            VOUCHER_TYPE_DURATION,
         );
 
         handleVoucherTypeCreated(event);
@@ -24,8 +21,8 @@ describe('VoucherTypeCreatedEvent', () => {
         // Check VoucherType entity
         assert.entityCount('VoucherType', 1);
         assert.fieldEquals('VoucherType', '0', 'id', '0');
-        assert.fieldEquals('VoucherType', '0', 'description', INITIAL_DESCRIPTION);
-        assert.fieldEquals('VoucherType', '0', 'duration', INITIAL_DURATION.toString());
+        assert.fieldEquals('VoucherType', '0', 'description', VOUCHER_TYPE_DESCRIPTION);
+        assert.fieldEquals('VoucherType', '0', 'duration', VOUCHER_TYPE_DURATION.toString());
         assert.fieldEquals('VoucherType', '0', 'eligibleAssets', '[]');
 
         // Check Counter entity
@@ -38,7 +35,7 @@ describe('VoucherTypeCreatedEvent', () => {
         const event1 = createVoucherTypeCreatedEvent(
             BigInt.fromI32(0),
             'First Voucher',
-            INITIAL_DURATION,
+            VOUCHER_TYPE_DURATION,
         );
         handleVoucherTypeCreated(event1);
 
@@ -46,7 +43,7 @@ describe('VoucherTypeCreatedEvent', () => {
         const event2 = createVoucherTypeCreatedEvent(
             BigInt.fromI32(1),
             'Second Voucher',
-            INITIAL_DURATION,
+            VOUCHER_TYPE_DURATION,
         );
         handleVoucherTypeCreated(event2);
 
@@ -61,7 +58,7 @@ describe('VoucherTypeCreatedEvent', () => {
         const event1 = createVoucherTypeCreatedEvent(
             BigInt.fromI32(0),
             'First Voucher',
-            INITIAL_DURATION,
+            VOUCHER_TYPE_DURATION,
         );
         handleVoucherTypeCreated(event1);
 
@@ -69,7 +66,7 @@ describe('VoucherTypeCreatedEvent', () => {
         const event2 = createVoucherTypeCreatedEvent(
             BigInt.fromI32(2),
             'Invalid Voucher',
-            INITIAL_DURATION,
+            VOUCHER_TYPE_DURATION,
         );
         handleVoucherTypeCreated(event2);
 
@@ -81,7 +78,7 @@ describe('VoucherTypeCreatedEvent', () => {
         const event = createVoucherTypeCreatedEvent(
             BigInt.fromI32(1),
             'Invalid ID Voucher',
-            INITIAL_DURATION,
+            VOUCHER_TYPE_DURATION,
         );
         handleVoucherTypeCreated(event);
 
@@ -94,8 +91,8 @@ describe('VoucherTypeCreatedEvent', () => {
         // Create initial voucher type
         const event1 = createVoucherTypeCreatedEvent(
             BigInt.fromI32(0),
-            INITIAL_DESCRIPTION,
-            INITIAL_DURATION,
+            VOUCHER_TYPE_DESCRIPTION,
+            VOUCHER_TYPE_DURATION,
         );
         handleVoucherTypeCreated(event1);
 
@@ -108,8 +105,8 @@ describe('VoucherTypeCreatedEvent', () => {
         handleVoucherTypeCreated(event2);
 
         assert.entityCount('VoucherType', 1);
-        assert.fieldEquals('VoucherType', '0', 'description', INITIAL_DESCRIPTION);
-        assert.fieldEquals('VoucherType', '0', 'duration', INITIAL_DURATION.toString());
+        assert.fieldEquals('VoucherType', '0', 'description', VOUCHER_TYPE_DESCRIPTION);
+        assert.fieldEquals('VoucherType', '0', 'duration', VOUCHER_TYPE_DURATION.toString());
         assert.fieldEquals('Counter', 'VoucherType', 'count', '1');
     });
 });

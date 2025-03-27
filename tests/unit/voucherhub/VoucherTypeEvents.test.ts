@@ -5,16 +5,18 @@ import {
     handleVoucherTypeDurationUpdated,
 } from '../../../src/voucherHub';
 import {
+    VOUCHER_TYPE_DESCRIPTION,
+    VOUCHER_TYPE_DURATION,
+    VOUCHER_TYPE_ELIGIBLE_ASSETS,
+    VOUCHER_TYPE_ID,
+} from '../utils/constant';
+import {
     createAndSaveVoucherType,
     createVoucherTypeDescriptionUpdatedEvent,
     createVoucherTypeDurationUpdatedEvent,
 } from '../utils/utils';
 
 // Shared constants
-const VOUCHER_TYPE_ID = '1';
-const VOUCHER_DESCRIPTION = 'Test Voucher Type';
-const VOUCHER_DURATION = BigInt.fromI32(86400);
-const VOUCHER_TYPE_EMPTY_ELIGIBLE_ASSETS: string[] = [];
 const SEVEN_DAYS_IN_SECONDS = BigInt.fromI32(604800);
 
 describe('VoucherTypeEvents', () => {
@@ -23,9 +25,9 @@ describe('VoucherTypeEvents', () => {
         // Initialize a VoucherType entity
         createAndSaveVoucherType(
             VOUCHER_TYPE_ID,
-            VOUCHER_DESCRIPTION,
-            VOUCHER_DURATION,
-            VOUCHER_TYPE_EMPTY_ELIGIBLE_ASSETS,
+            VOUCHER_TYPE_DESCRIPTION,
+            VOUCHER_TYPE_DURATION,
+            VOUCHER_TYPE_ELIGIBLE_ASSETS,
         );
     });
     describe('VoucherTypeDurationUpdated', () => {
@@ -43,7 +45,12 @@ describe('VoucherTypeEvents', () => {
                 SEVEN_DAYS_IN_SECONDS.toString(),
             );
             // Ensure unrelated fields remain unchanged
-            assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'description', VOUCHER_DESCRIPTION);
+            assert.fieldEquals(
+                'VoucherType',
+                VOUCHER_TYPE_ID,
+                'description',
+                VOUCHER_TYPE_DESCRIPTION,
+            );
             assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', '[]');
         });
 
@@ -77,7 +84,7 @@ describe('VoucherTypeEvents', () => {
                 'VoucherType',
                 VOUCHER_TYPE_ID,
                 'duration',
-                VOUCHER_DURATION.toString(),
+                VOUCHER_TYPE_DURATION.toString(),
             );
             assert.entityCount('VoucherType', 1);
         });
@@ -98,7 +105,7 @@ describe('VoucherTypeEvents', () => {
                 'VoucherType',
                 VOUCHER_TYPE_ID,
                 'duration',
-                VOUCHER_DURATION.toString(),
+                VOUCHER_TYPE_DURATION.toString(),
             );
             assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'eligibleAssets', '[]');
         });
@@ -122,7 +129,12 @@ describe('VoucherTypeEvents', () => {
             );
             handleVoucherTypeDescriptionUpdated(event);
 
-            assert.fieldEquals('VoucherType', VOUCHER_TYPE_ID, 'description', VOUCHER_DESCRIPTION);
+            assert.fieldEquals(
+                'VoucherType',
+                VOUCHER_TYPE_ID,
+                'description',
+                VOUCHER_TYPE_DESCRIPTION,
+            );
             assert.entityCount('VoucherType', 1);
         });
     });

@@ -6,7 +6,10 @@ import {
     RoleGranted,
     RoleRevoked,
     VoucherCreated,
+    VoucherDebited,
     VoucherDrained,
+    VoucherRefunded,
+    VoucherToppedUp,
     VoucherTypeCreated,
     VoucherTypeDescriptionUpdated,
     VoucherTypeDurationUpdated,
@@ -15,6 +18,7 @@ import { App, Dataset, Voucher, VoucherType, Workerpool } from '../../../generat
 import {
     AccountAuthorized,
     AccountUnauthorized,
+    OrdersMatchedWithVoucher,
 } from '../../../generated/templates/Voucher/Voucher';
 import { EventParamBuilder } from './EventParamBuilder';
 
@@ -259,6 +263,98 @@ export function createVoucherDrainedEvent(voucher: Address, amount: BigInt): Vou
         .address('voucher', voucher)
         .bigInt('amount', amount)
         .build();
+
+    return event;
+}
+
+export function createVoucherRefundedEvent(voucher: string, amount: BigInt): VoucherRefunded {
+    let mockEvent = newMockEvent();
+    let event = new VoucherRefunded(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        mockEvent.parameters,
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init()
+        .address('voucher', Address.fromString(voucher))
+        .bigInt('amount', amount)
+        .build();
+
+    return event;
+}
+
+export function createVoucherDebitedEvent(
+    voucher: Address,
+    sponsoredAmount: BigInt,
+): VoucherDebited {
+    let mockEvent = newMockEvent();
+    let event = new VoucherDebited(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        mockEvent.parameters,
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init()
+        .address('voucher', voucher)
+        .bigInt('sponsoredAmount', sponsoredAmount)
+        .build();
+
+    return event;
+}
+
+export function createVoucherToppedUpEvent(
+    voucher: Address,
+    expiration: BigInt,
+    value: BigInt,
+): VoucherToppedUp {
+    let mockEvent = newMockEvent();
+    let event = new VoucherToppedUp(
+        mockEvent.address,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        mockEvent.parameters,
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init()
+        .address('voucher', voucher)
+        .bigInt('expiration', expiration)
+        .bigInt('value', value)
+        .build();
+
+    return event;
+}
+
+export function createOrdersMatchedWithVoucherEvent(
+    voucher: Address,
+    dealId: Bytes,
+): OrdersMatchedWithVoucher {
+    let mockEvent = newMockEvent();
+    let event = new OrdersMatchedWithVoucher(
+        voucher,
+        mockEvent.logIndex,
+        mockEvent.transactionLogIndex,
+        mockEvent.logType,
+        mockEvent.block,
+        mockEvent.transaction,
+        new Array(),
+        mockEvent.receipt,
+    );
+
+    event.parameters = EventParamBuilder.init().bytes('dealId', dealId).build();
 
     return event;
 }

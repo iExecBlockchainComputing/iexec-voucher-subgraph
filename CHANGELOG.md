@@ -2,7 +2,17 @@
 
 ## vNEXT
 
-## 1.1.0
+- Support multi-network deployment as recommended in The Graph documentation. (#47)
+- Refactor constants in unit tests for better maintainability and readability.(#30)
+- Add unit tests for :
+  - VoucherHub Events :
+    - `VoucherDebited` (#28)
+    - `VoucherToppedUp` (#29)
+    - `VoucherRefunded` (#33)
+  - Voucher Events :
+    - `OrdersMatchedWithVoucher` (#40)
+
+## v1.1.0
 
 ### Added
 
@@ -27,11 +37,14 @@
   - value
 
 - Add unit tests for Event:
-  - voucherCreated
-  - AccountAuthorized, AccountUnauthorized (#20)
-  - VoucherTypeDurationUpdated, VoucherTypeDescriptionUpdated (#21)
-  - VoucherTypeCreated (#22)
-  - VoucherDrained (#24)
+  - `EligibleAssetRemoved` (#12)
+  - `voucherCreated` (#12)
+  - `EligibleAssetAdded` (#16)
+  - `Role` (#19)
+  - `AccountAuthorized`, `AccountUnauthorized` (#20)
+  - `VoucherTypeDurationUpdated`, `VoucherTypeDescriptionUpdated` (#21)
+  - `VoucherTypeCreated` (#22)
+  - `VoucherDrained` (#24)
 - Set voucher balance, value, app/dataset/workerpool price as BigDecimal (#23)
 - Update Jenkins deployer to have new IPFS and GraphNode URLs (#25)
 
