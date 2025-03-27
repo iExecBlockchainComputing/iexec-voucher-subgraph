@@ -2,7 +2,7 @@
 
 A subgraph indexing [`iexec-voucher-contracts`](https://github.com/iExecBlockchainComputing/iexec-voucher-contracts)
 
-## build
+## Build
 
 ```sh
 # install deps
@@ -15,7 +15,7 @@ npm run codegen
 npm run build
 ```
 
-## deploy
+## Deploy
 
 This repository supports multi-network deployment. All network configurations and values required by the manifest are stored in the `networks.json` file. If you want to add a new network for regular deployment, modify this file. By default, the command `npm run all` deploys a subgraph locally using the `bellecour` network configuration. If you want to override the values for this network or quickly set up a new one, provide the necessary environment variables following the `.env.template`.
 
@@ -54,17 +54,17 @@ npm run deploy
 
 once deployed the subgraph can be queried via the graphiql interface.
 
-## docker subgraph deployer
+## Docker subgraph deployer
 
 docker image for deploying the subgraph
 
-### build
+### Build Image
 
 ```sh
 docker build -f docker/Dockerfile . -t voucher-subgraph-deployer
 ```
 
-### usage
+### Usage
 
 env:
 
@@ -83,3 +83,33 @@ docker run --rm \
   -e GRAPHNODE_URL="http://graphnode:8020" \
   voucher-subgraph-deployer
 ```
+
+## Continuous Integration (CI) Workflows
+
+### Manual Workflow Triggers
+
+#### Deploying Subgraph
+
+To manually deploy the subgraph to a specific environment:
+
+1. Go to the GitHub Actions tab in the repository
+2. Select the "Deploy Subgraph" workflow
+3. Click "Run workflow"
+4. Choose the deployment options:
+   - **Environment**: Select from `staging`, `production`, `tmp`, or `custom`
+   - **Network Name**: Default is `bellecour`, but can be customized
+   - **Voucher Hub Address**: Defaults to `0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda`
+   - **Voucher Hub Start Block**: Defaults to `30306387`
+   - **Version Label**: Defaults to `develop`
+
+#### Building and Push Docker Image
+
+To manually build and push the Docker image:
+
+1. Go to the GitHub Actions tab
+2. Select the "Build and Push Subgraph Deployer Docker Image" workflow
+3. Click "Run workflow"
+   - This will trigger a build using the latest Git tag (if available) or a development tag by default.
+4. Once completed, a new Docker image will be available under the `iexechub` Docker Hub organization.
+
+Note: This CI will also be trigger automatically on a tag publication
