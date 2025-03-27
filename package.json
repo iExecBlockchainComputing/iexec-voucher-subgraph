@@ -15,12 +15,12 @@
   "homepage": "https://github.com/iExecBlockchainComputing/iexec-voucher-subgraph#readme",
   "scripts": {
     "prepare": "husky",
-    "codegen": "cp subgraph.template.yaml subgraph.yaml && graph codegen",
+    "codegen": "graph codegen",
     "build": "graph build",
     "create": "graph create --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
     "remove": "graph remove --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
-    "deploy:prepare-manifest": "sed -i \"s|#NETWORK_NAME#|network: ${NETWORK_NAME:-bellecour}|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_ADDRESS#|address: \\\"$VOUCHER_HUB_ADDRESS\\\"|g\" subgraph.yaml && sed -i \"s|#VOUCHER_HUB_START_BLOCK#|startBlock: $VOUCHER_HUB_START_BLOCK|g\" subgraph.yaml",
-    "deploy": "npm run deploy:prepare-manifest && graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher --version-label ${VERSION_LABEL:-develop}",
+    "deploy:prepare-manifest": "tsx ./utils/addNetwork.ts",
+    "deploy": "npm run deploy:prepare-manifest && graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} --network ${NETWORK_NAME:-bellecour} --version-label ${VERSION_LABEL:-develop} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
     "clean": "rm -rf generated && rm -rf build",
     "test": "npm run codegen && graph test",
     "all": "npm run clean && npm run codegen && npm run build && npm run create && npm run deploy",
@@ -45,6 +45,7 @@
     "lint-staged": "^15.2.10",
     "matchstick-as": "^0.6.0",
     "prettier": "^3.3.3",
-    "prettier-plugin-organize-imports": "^4.1.0"
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "tsx": "^4.19.3"
   }
 }

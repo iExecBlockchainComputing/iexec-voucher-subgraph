@@ -2,6 +2,7 @@
 
 ## vNEXT
 
+- Support multi-network deployment as recommended in The Graph documentation. (#47)
 - Refactor constants in unit tests for better maintainability and readability.(#30)
 - Add unit tests for :
   - VoucherHub Events :

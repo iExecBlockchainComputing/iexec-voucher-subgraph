@@ -2,7 +2,6 @@ node_modules
 generated
 build
 iexec-voucher-contracts
-subgraph.yaml
 tests/.bin/*
 tests/.latest.json
 .idea

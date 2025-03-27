@@ -7,11 +7,8 @@ schema:
 dataSources:
   - name: VoucherHub
     kind: ethereum/contract
-    #NETWORK_NAME#
     source:
-      #VOUCHER_HUB_ADDRESS#
       abi: VoucherHub
-      #VOUCHER_HUB_START_BLOCK#
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -73,7 +70,6 @@ dataSources:
 templates:
   - kind: ethereum
     name: Voucher
-    #NETWORK_NAME#
     source:
       abi: Voucher
     mapping:
