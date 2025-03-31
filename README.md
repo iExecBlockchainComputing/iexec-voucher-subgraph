@@ -98,8 +98,6 @@ To manually deploy the subgraph to a specific environment:
 4. Choose the deployment options:
    - **Environment**: Select from `staging`, `production`, `tmp`, or `custom`
    - **Network Name**: Default is `bellecour`, but can be customized
-   - **Voucher Hub Address**: Defaults to `0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda`
-   - **Voucher Hub Start Block**: Defaults to `30306387`
    - **Version Label**: Defaults to `develop`
 
 #### Building and Push Docker Image
