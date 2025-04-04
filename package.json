@@ -18,7 +18,6 @@
     "codegen": "graph codegen",
     "build": "graph build --network ${NETWORK_NAME:-bellecour}",
     "create": "graph create --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
-    "remove": "graph remove --node ${GRAPHNODE_URL:-http://localhost:8020} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
     "deploy": "graph deploy --node ${GRAPHNODE_URL:-http://localhost:8020} --ipfs ${IPFS_URL:-http://localhost:5001} --network ${NETWORK_NAME:-bellecour} --version-label ${VERSION_LABEL:-develop} ${NETWORK_NAME:-bellecour}${DEPLOY_ENV:-/}iexec-voucher",
     "clean": "rm -rf generated && rm -rf build",
     "test": "npm run codegen && graph test",

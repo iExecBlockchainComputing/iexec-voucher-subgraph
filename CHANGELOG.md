@@ -11,6 +11,7 @@
     - `VoucherRefunded` (#33)
   - Voucher Events :
     - `OrdersMatchedWithVoucher` (#40)
+- Make test stack agnostic of the network(#)
 
 ## v1.1.0
 

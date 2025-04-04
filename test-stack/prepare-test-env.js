@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-const forkUrl = process.env.BELLECOUR_FORK_URL || 'https://bellecour.iex.ec';
+const forkUrl = process.env.FORK_URL || 'https://bellecour.iex.ec';
 
 fetch(forkUrl, {
     method: 'POST',
@@ -19,8 +19,8 @@ fetch(forkUrl, {
             const LOCAL_STACK_ENV_DIR = 'local-stack-env';
             console.log(`Creating ${LOCAL_STACK_ENV_DIR} directory for drone test-stack`);
             mkdirSync(LOCAL_STACK_ENV_DIR, { recursive: true });
-            writeFileSync(join(LOCAL_STACK_ENV_DIR, 'BELLECOUR_FORK_URL'), forkUrl);
-            writeFileSync(join(LOCAL_STACK_ENV_DIR, 'BELLECOUR_FORK_BLOCK'), `${forkBlockNumber}`);
+            writeFileSync(join(LOCAL_STACK_ENV_DIR, 'FORK_URL'), forkUrl);
+            writeFileSync(join(LOCAL_STACK_ENV_DIR, 'FORK_BLOCK'), `${forkBlockNumber}`);
         } else {
             console.log('Creating .env file for docker-compose test-stack');
             writeFileSync(
@@ -30,9 +30,9 @@ fetch(forkUrl, {
 ################################################
 
 # blockchain node to use as the reference for the local fork
-BELLECOUR_FORK_URL=${forkUrl}
+FORK_URL=${forkUrl}
 # block number to fork from
-BELLECOUR_FORK_BLOCK=${forkBlockNumber}`,
+FORK_BLOCK=${forkBlockNumber}`,
             );
         }
     })

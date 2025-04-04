@@ -1,9 +1,9 @@
 services:
-  bellecour-fork:
+  blockchain-fork:
     restart: "no"
     image: ghcr.io/foundry-rs/foundry:v1.0.0
     entrypoint: anvil
-    command: "--host 0.0.0.0 --port 8545 --hardfork berlin --fork-url $BELLECOUR_FORK_URL --fork-block-number $BELLECOUR_FORK_BLOCK --chain-id 134 --gas-limit 6700000 --gas-price 0"
+    command: "--host 0.0.0.0 --port 8545 --hardfork berlin --fork-url $FORK_URL --fork-block-number $FORK_BLOCK --chain-id 134 --gas-limit 6700000 --gas-price 0"
     expose:
       - 8545
     ports:
@@ -67,10 +67,10 @@ services:
       postgres_pass: password
       postgres_db: graphnode-db
       ipfs: ipfs:5001
-      ethereum: bellecour:http://bellecour-fork:8545
-      GRAPH_ETHEREUM_GENESIS_BLOCK_NUMBER: $BELLECOUR_FORK_BLOCK
+      ethereum: fork-test:http://blockchain-fork:8545
+      GRAPH_ETHEREUM_GENESIS_BLOCK_NUMBER: $FORK_BLOCK
     depends_on:
-      bellecour-fork:
+      blockchain-fork:
         condition: service_healthy
       graphnode-postgres:
         condition: service_healthy
@@ -90,10 +90,9 @@ services:
     environment:
       GRAPHNODE_URL: http://graphnode:8020
       IPFS_URL: http://ipfs:5001
-      VOUCHER_HUB_ADDRESS: "0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda"
-      VOUCHER_HUB_START_BLOCK: $BELLECOUR_FORK_BLOCK
+      NETWORK_NAME: fork-test
     depends_on:
-      bellecour-fork:
+      blockchain-fork:
         condition: service_healthy
       graphnode:
         condition: service_healthy
