@@ -1,10 +1,4 @@
 {
-  "fork-test": {
-    "VoucherHub": {
-      "address": "0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda",
-      "startBlock": 30306387
-    }
-  },
   "bellecour": {
     "VoucherHub": {
       "address": "0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda",
