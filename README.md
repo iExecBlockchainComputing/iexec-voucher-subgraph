@@ -31,8 +31,6 @@ NB: you can run a dockerized stack with `npm run start-test-stack` (`npm run sto
 env:
 
 - `NETWORK_NAME` (optional): custom graphnode network name (default bellecour)
-- `VOUCHER_HUB_ADDRESS` (optional): `VoucherHub` contract address (default value on bellecour)
-- `VOUCHER_HUB_START_BLOCK` (optional): start `VoucherHub` indexation block number (default value on bellecour)
 - `IPFS_URL` (optional): IPFS admin api url (default `http://localhost:5001`)
 - `GRAPHNODE_URL` (optional): graphnode admin api url (default `http://localhost:8020`)
 
@@ -69,16 +67,12 @@ docker build -f docker/Dockerfile . -t voucher-subgraph-deployer
 env:
 
 - `NETWORK_NAME` (optional): custom graphnode network name (default bellecour)
-- `VOUCHER_HUB_ADDRESS`: `VoucherHub` contract address
-- `VOUCHER_HUB_START_BLOCK`: start `VoucherHub` indexation block number
 - `IPFS_URL`: IPFS admin api url
 - `GRAPHNODE_URL`: graphnode admin api url
 
 ```sh
 docker run --rm \
   -e NETWORK_NAME=bellecour \
-  -e VOUCHER_HUB_ADDRESS="0x3137B6DF4f36D338b82260eDBB2E7bab034AFEda" \
-  -e VOUCHER_HUB_START_BLOCK=30306387 \
   -e IPFS_URL="http://ipfs:5001" \
   -e GRAPHNODE_URL="http://graphnode:8020" \
   voucher-subgraph-deployer
