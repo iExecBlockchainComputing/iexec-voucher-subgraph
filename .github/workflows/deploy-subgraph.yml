@@ -44,9 +44,9 @@ jobs:
         env:
           NETWORK_NAME: ${{ github.event.inputs.networkName }}
           VERSION_LABEL: ${{ github.event.inputs.versionLabel }}
-          GRAPHNODE_URL: ${{ secrets.GRAPHNODE_URL }}
-          IPFS_URL: ${{ secrets.IPFS_URL }}
-          DEPLOY_ENV: ${{ secrets.ENV_NAME }}
+          GRAPHNODE_URL: ${{ vars.GRAPHNODE_URL }}
+          IPFS_URL: ${{ vars.IPFS_URL }}
+          DEPLOY_ENV: ${{ vars.ENV_NAME }}
         run: |
           echo "Starting deployment with the following parameters:"
           echo "  Network Name: $NETWORK_NAME"
