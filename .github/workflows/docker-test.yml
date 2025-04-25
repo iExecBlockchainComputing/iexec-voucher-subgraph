@@ -10,3 +10,4 @@ jobs:
       image-tag: ${{ github.sha }}
       push: false
       security-scan: true
+      security-report: "comment"
