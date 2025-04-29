@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   build-test:
-    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@feat/docker-build/enhance-reporting
+    uses: iExecBlockchainComputing/github-actions-workflows/.github/workflows/docker-build.yml@docker-build-v2.2.0
     with:
       image-name: 'iexechub/voucher-subgraph-deployer'
       image-tag: ${{ github.sha }}
