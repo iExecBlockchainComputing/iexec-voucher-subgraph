@@ -1,6 +1,13 @@
 specVersion: 0.0.6
 description: Subgraph for voucher smart contract
 
+features:
+  - grafting
+graft:
+  base: QmTCq9wEMoVPCN5ipoYPaBq4yoahdVt8ATMG3g6DD9Lq1a
+  block: 32801851
+
+
 schema:
   file: ./schema.graphql
 
