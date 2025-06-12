@@ -28,7 +28,9 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Azure_runners
+      labels: [ self-hosted, Linux, X64 ]
     # Associate the job with a GitHub Environment which has pre-defined variables and secrets.
     environment: ${{ github.event.inputs.environment }}
     steps:
