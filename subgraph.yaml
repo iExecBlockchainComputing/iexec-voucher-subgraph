@@ -4,7 +4,7 @@ description: Subgraph for voucher smart contract
 features:
   - grafting
 graft:
-  base: QmTCq9wEMoVPCN5ipoYPaBq4yoahdVt8ATMG3g6DD9Lq1a
+  base: QmTCq9wEMoVPCN5ipoYPaBq4yoahdVt8ATMG3g6DD9Lq1a # to be verified on tmp deployment
   block: 32801851
 
 
