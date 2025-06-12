@@ -12,7 +12,6 @@ on:
           - staging
           - production
           - tmp
-          
       # Add new networks when needed. Do not forget to add necessary data in the networks.json file.
       networkName:
         description: 'Network Name'
