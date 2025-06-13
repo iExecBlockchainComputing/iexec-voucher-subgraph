@@ -1,13 +1,6 @@
 specVersion: 0.0.6
 description: Subgraph for voucher smart contract
 
-features:
-  - grafting
-graft:
-  base: QmTCq9wEMoVPCN5ipoYPaBq4yoahdVt8ATMG3g6DD9Lq1a # to be verified on tmp deployment
-  block: 32801851
-
-
 schema:
   file: ./schema.graphql
 
@@ -76,9 +69,54 @@ dataSources:
 
 templates:
   - kind: ethereum
+    name: VoucherV1
+    source:
+      abi: VoucherV1
+      endBlock: 32801851
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Account
+        - Voucher
+        - VoucherType
+        - Deal
+        - App
+        - Dataset
+        - Workerpool
+      abis:
+        - name: VoucherV1
+          file: node_modules/@iexec/voucher-contracts-v1/artifacts/contracts/beacon/Voucher.sol/Voucher.json
+        - name: VoucherHub
+          file: node_modules/@iexec/voucher-contracts/artifacts/contracts/VoucherHub.sol/VoucherHub.json
+        - name: PoCo
+          file: node_modules/@iexec/poco/artifacts/contracts/IexecInterfaceNative.sol/IexecInterfaceNative.json
+        - name: AppRegistry
+          file: node_modules/@iexec/poco/build/contracts/AppRegistry.json
+        - name: DatasetRegistry
+          file: node_modules/@iexec/poco/build/contracts/DatasetRegistry.json
+        - name: WorkerpoolRegistry
+          file: node_modules/@iexec/poco/build/contracts/WorkerpoolRegistry.json
+        - name: App
+          file: node_modules/@iexec/poco/build/contracts/AppInterface.json
+        - name: Dataset
+          file: node_modules/@iexec/poco/build/contracts/DatasetInterface.json
+        - name: Workerpool
+          file: node_modules/@iexec/poco/build/contracts/WorkerpoolInterface.json
+      eventHandlers:
+        - event: AccountAuthorized(indexed address)
+          handler: handleAccountAuthorized
+        - event: AccountUnauthorized(indexed address)
+          handler: handleAccountUnauthorized
+        - event: OrdersMatchedWithVoucher(bytes32)
+          handler: handleOrdersMatchedWithVoucher
+      file: ./src/voucher.ts
+  - kind: ethernet
     name: Voucher
     source:
       abi: Voucher
+      startBlock: 32801851
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
