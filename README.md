@@ -90,7 +90,7 @@ To manually deploy the subgraph to a specific environment:
 2. Select the "Deploy Subgraph" workflow
 3. Click "Run workflow"
 4. Choose the deployment options:
-   - **Environment**: Select from `staging`, `production`, `tmp`, or `custom`
+   - **Environment**: Select from `staging`, `prod`, `tmp`, or `custom`
    - **Network Name**: Default is `bellecour`, but can be customized
    - **Version Label**: Defaults to `develop`
 
