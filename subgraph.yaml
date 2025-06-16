@@ -1,6 +1,13 @@
 specVersion: 0.0.6
 description: Subgraph for voucher smart contract
 
+features:
+  - grafting
+graft:
+  base: QmTCq9wEMoVPCN5ipoYPaBq4yoahdVt8ATMG3g6DD9Lq1a # to be verified on tmp deployment
+  block: 32801851
+
+
 schema:
   file: ./schema.graphql
 
@@ -108,6 +115,6 @@ templates:
           handler: handleAccountAuthorized
         - event: AccountUnauthorized(indexed address)
           handler: handleAccountUnauthorized
-        - event: OrdersMatchedWithVoucher(bytes32)
+        - event: OrdersMatchedWithVoucher(indexed bytes32)
           handler: handleOrdersMatchedWithVoucher
       file: ./src/voucher.ts
